@@ -17,6 +17,8 @@ First-time setup on a fresh machine (e.g. a cloud session):
 - `debug.keystore` is gitignored but required by the `debugConfig` signing config. Generate it once:
   `keytool -genkeypair -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"`
 - Maven Central may answer `429 Too Many Requests` on the first resolve; simply re-run the build (downloaded artifacts stay cached).
+- Maven Central redirects some large jars (e.g. Robolectric `nativeruntime-dist-compat`) to `gcp.mirrors.maven.org`; in a cloud environment with limited network that host must be in the allowed hosts list.
+- On first run Robolectric downloads `android-all-instrumented` (SDK 36) into `~/.m2` at test time and does not retry on 429; if `ExampleRobolectricTest` fails with `MavenArtifactFetcher` / HTTP 429, wait ~1 minute and re-run that test class.
 - Debug APK output: `app/build/outputs/apk/debug/app-debug.apk`.
 
 ```bash
