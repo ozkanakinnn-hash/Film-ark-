@@ -6,7 +6,18 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,7 +50,8 @@ import com.example.ui.screens.ProfileScreen
 import com.example.ui.screens.RoomScreen
 import com.example.ui.screens.StatsScreen
 import com.example.ui.screens.WheelScreen
-import com.example.ui.theme.CinemaBackground
+import com.example.ui.components.CinematicBackdrop
+import com.example.ui.theme.CinemaMotion
 import com.example.ui.theme.MyApplicationTheme
 import com.example.ui.viewmodel.DecisionViewModel
 import com.example.ui.viewmodel.Screen
@@ -144,20 +156,23 @@ fun DecisionApp(
         }
     }
 
+    CinematicBackdrop {
     Scaffold(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(CinemaBackground),
+        modifier = Modifier.fillMaxSize(),
+        containerColor = Color.Transparent,
         contentWindowInsets = WindowInsets.safeDrawing,
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { innerPadding ->
-        Box(
+        AnimatedContent(
+            targetState = currentScreen,
+            transitionSpec = { screenTransition() },
             modifier = Modifier
                 .fillMaxSize()
-                .background(CinemaBackground)
-                .padding(innerPadding)
-        ) {
-            when (currentScreen) {
+                .padding(innerPadding),
+            label = "screen_transition"
+        ) { screen ->
+          Box(modifier = Modifier.fillMaxSize()) {
+            when (screen) {
                 Screen.HOME -> {
                     HomeScreen(
                         savedDecisions = savedDecisions,
@@ -354,6 +369,54 @@ fun DecisionApp(
                     )
                 }
             }
+          }
         }
     }
+    }
+}
+
+/**
+ * Ekranların gezinme derinliği. Derinlik artıyorsa "ileri", azalıyorsa "geri" geçişi oynatılır.
+ */
+private val Screen.depth: Int
+    get() = when (this) {
+        Screen.HOME -> 0
+        Screen.ROOM_HUB, Screen.CUSTOM_LISTS, Screen.COMPARE, Screen.HISTORY, Screen.PROFILE -> 1
+        Screen.FILTERING, Screen.STATS -> 2
+        Screen.WHEEL -> 3
+        Screen.FLEX -> 4
+    }
+
+/**
+ * Material "shared axis X" esintili geçiş: yeni ekran kısa bir mesafeden kayarak ve belirerek gelir,
+ * eski ekran ters yöne hafifçe kayıp hızla söner. Karar kartı (FLEX) ise sahneye "yakınlaşarak" açılır.
+ */
+private fun AnimatedContentTransitionScope<Screen>.screenTransition(): ContentTransform {
+    val from = initialState
+    val to = targetState
+    val enterDuration = CinemaMotion.DurationLong
+    val exitDuration = CinemaMotion.DurationMedium
+
+    if (to == Screen.FLEX || from == Screen.FLEX) {
+        val opening = to == Screen.FLEX
+        return (fadeIn(tween(enterDuration, delayMillis = 60, easing = CinemaMotion.EmphasizedDecelerate)) +
+            scaleIn(
+                initialScale = if (opening) 0.88f else 1.06f,
+                animationSpec = tween(enterDuration, easing = CinemaMotion.EmphasizedDecelerate)
+            )) togetherWith
+            (fadeOut(tween(exitDuration / 2, easing = CinemaMotion.EmphasizedAccelerate)) +
+                scaleOut(
+                    targetScale = if (opening) 1.04f else 0.92f,
+                    animationSpec = tween(exitDuration, easing = CinemaMotion.EmphasizedAccelerate)
+                ))
+    }
+
+    val forward = to.depth >= from.depth
+    val direction = if (forward) 1 else -1
+    return (slideInHorizontally(tween(enterDuration, easing = CinemaMotion.EmphasizedDecelerate)) { full ->
+        direction * full / 5
+    } + fadeIn(tween(enterDuration, delayMillis = 50, easing = CinemaMotion.EmphasizedDecelerate))) togetherWith
+        (slideOutHorizontally(tween(exitDuration, easing = CinemaMotion.EmphasizedAccelerate)) { full ->
+            -direction * full / 8
+        } + fadeOut(tween(exitDuration / 2, easing = CinemaMotion.EmphasizedAccelerate)))
 }

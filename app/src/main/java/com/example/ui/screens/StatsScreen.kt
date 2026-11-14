@@ -53,7 +53,6 @@ fun StatsScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(CinemaBackground)
             .padding(horizontal = 20.dp)
             .testTag("stats_screen_list"),
         horizontalAlignment = Alignment.CenterHorizontally

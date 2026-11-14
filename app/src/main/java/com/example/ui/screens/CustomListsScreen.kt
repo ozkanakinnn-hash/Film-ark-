@@ -124,7 +124,6 @@ fun CustomListsScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(CinemaBackground)
             .padding(horizontal = 18.dp)
             .testTag("custom_lists_screen"),
         horizontalAlignment = Alignment.CenterHorizontally

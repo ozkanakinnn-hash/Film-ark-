@@ -18,6 +18,7 @@ First-time setup on a fresh machine (e.g. a cloud session):
   `keytool -genkeypair -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"`
 - Cloud sessions: use the personal `Film-ark-` environment. Its setup script installs the SDK, generates `debug.keystore`, and adds a Gradle init script (`~/.gradle/init.d/central-mirror.gradle`) that puts Google's official Maven Central mirror (`maven-central.storage-download.googleapis.com`) first and points Robolectric's `android-all` download at it.
 - Without that mirror, Maven Central answers `429 Too Many Requests` here. Gradle then caches those artifacts as "Could not find", and later runs fail even after the rate limit ends. Do not use `--refresh-dependencies` to fix this, because it triggers more 429s. Use the mirror, or delete `~/.gradle/caches/modules-2/metadata-*` and run again.
+- Visual check without an emulator: a throwaway Robolectric test with `@GraphicsMode(NATIVE)` and `@Config(qualifiers = "w400dp-h860dp-xhdpi")` can draw `activity.window.decorView` into a `Bitmap` (`captureToImage()` times out under Robolectric). With `mainClock.autoAdvance = false` you can capture animation frames. Delete the test afterwards.
 - Debug APK output: `app/build/outputs/apk/debug/app-debug.apk`.
 
 ```bash
@@ -55,7 +56,10 @@ First-time setup on a fresh machine (e.g. a cloud session):
 ### UI Screens & Components (`app/src/main/java/com/example/ui/`)
 - `screens/` — `HomeScreen`, `RoomScreen`, `FilterScreen`, `WheelScreen`, `CompareScreen`, `CustomListsScreen`, `HistoryScreen` ("Geçmişte Ne Seçtik?"), `ProfileScreen`, `StatsScreen`, `FlexScreen`.
 - `components/` — `AnimatedDecisionWheel`, `WheelCanvas`, `CinematicRevealEffects` (genre-based reveal animations), `DecisionHistoryDashboard` (Room DB top genres & top selected movies dashboard), `GenreStatisticsPanel`, `NewReleasesBannerStrip`, `SocialShareSheet`, `StoryShareCard`, `MoviePoster`.
-- `theme/` — `Theme.kt`, `Color.kt`, `WheelThemeManager.kt` (auto dark/light wheel recoloring).
+- `components/GenreRevealOverlay.kt` — Full-screen genre-specific reveal scene shown by `WheelScreen` after a real spin finishes (curtains, warp field, confetti, explosion, radar…). Driven by ONE finite `Animatable` timeline (0→1, 3.8 s) so it ends on its own under the Compose test clock; tap or back skips it. Avoid infinite transitions inside it.
+- `components/CinematicBackdrop.kt` — Ambient projector glow, vignette and film grain behind every screen (wrapped in `MainActivity`). Screen roots are transparent; do not add `.background(CinemaBackground)` back to them.
+- `theme/` — `Theme.kt`, `Color.kt`, `Type.kt` (full typography scale), `Motion.kt` (`CinemaMotion` easing/duration tokens, `CinemaShapes`, `Modifier.pressScale`), `WheelThemeManager.kt` (auto dark/light wheel recoloring).
+- Navigation transitions: `MainActivity` wraps screens in `AnimatedContent`; `Screen.depth` decides forward/back slide direction, FLEX opens with a scale transition. Give new screens a depth.
 - `widget/` — `MovieWheelAppWidgetProvider.kt` & `WidgetMovieStateStore.kt` for home-screen widget spins and daily recommendation.
 
 ## Conventions

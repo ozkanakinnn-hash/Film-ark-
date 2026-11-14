@@ -107,7 +107,6 @@ fun HomeScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(CinemaBackground)
             .padding(horizontal = 20.dp)
             .testTag("home_screen_list"),
         horizontalAlignment = Alignment.CenterHorizontally

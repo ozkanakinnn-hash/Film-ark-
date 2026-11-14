@@ -157,7 +157,6 @@ fun ProfileScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(CinemaBackground)
             .padding(horizontal = 20.dp)
             .testTag("profile_screen_list"),
         horizontalAlignment = Alignment.CenterHorizontally

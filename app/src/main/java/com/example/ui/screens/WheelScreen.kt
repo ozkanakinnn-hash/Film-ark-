@@ -9,6 +9,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -98,6 +99,9 @@ import com.example.ui.components.WheelCanvas
 import com.example.ui.components.WheelRevealAnimationBanner
 import com.example.ui.components.isHorrorMovie
 import com.example.ui.components.resolveGenreRevealStyle
+import com.example.ui.components.GenreRevealOverlay
+import com.example.ui.theme.pressScale
+import com.example.ui.theme.rememberPressSource
 import com.example.ui.theme.CinemaBackground
 import com.example.ui.theme.CinemaBorder
 import com.example.ui.theme.CinemaSurface
@@ -155,6 +159,9 @@ fun WheelScreen(
 ) {
     BackHandler { onBack() }
     val view = LocalView.current
+    var revealMovie by remember { mutableStateOf<Movie?>(null) }
+    var lastRevealMovie by remember { mutableStateOf<Movie?>(null) }
+    BackHandler(enabled = revealMovie != null) { revealMovie = null }
     var showDirectShareSheet by remember { mutableStateOf(false) }
     var isShakeEnabled by remember { mutableStateOf(true) }
     var isHapticEnabled by remember { mutableStateOf(true) }
@@ -246,886 +253,907 @@ fun WheelScreen(
             }
         }
         onSpinCompleted(event.id)
+        lastRevealMovie = event.winner
+        revealMovie = event.winner
     }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(CinemaBackground)
-            .padding(horizontal = 20.dp)
-            .testTag("wheel_screen_list"),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        item {
-            Spacer(modifier = Modifier.height(24.dp))
+    Box(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 20.dp)
+                .testTag("wheel_screen_list"),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            item {
+                Spacer(modifier = Modifier.height(24.dp))
 
-            // App Bar
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(
-                    onClick = onBack,
-                    modifier = Modifier
-                        .minimumInteractiveComponentSize()
-                        .size(48.dp)
-                        .background(CinemaSurface, CircleShape)
-                        .testTag("wheel_back_button")
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Geri",
-                        tint = TextPrimary
-                    )
-                }
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Surface(
-                        color = if (room != null) NeonPurple else CinemaTheme.colors.filmTeal,
-                        shape = RoundedCornerShape(8.dp)
-                    ) {
-                        Text(
-                            text = if (room != null) "ORTAK ODA: ${room.roomCode}" else "TEK BAŞINA",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Black,
-                            color = if (room != null) CinemaTheme.colors.onAccentCrimson else CinemaTheme.colors.onAccentTeal,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                        )
-                    }
-                }
-
+                // App Bar
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(
-                        onClick = onToggleTheme,
+                        onClick = onBack,
                         modifier = Modifier
                             .minimumInteractiveComponentSize()
                             .size(48.dp)
                             .background(CinemaSurface, CircleShape)
-                            .testTag("wheel_theme_toggle_button")
+                            .testTag("wheel_back_button")
                     ) {
                         Icon(
-                            imageVector = if (isDarkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
-                            contentDescription = if (isDarkTheme) "Açık Temaya Geç" else "Koyu Temaya Geç",
-                            tint = PopcornGold
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Geri",
+                            tint = TextPrimary
                         )
                     }
 
-                    if (selectedMovie != null) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Surface(
+                            color = if (room != null) NeonPurple else CinemaTheme.colors.filmTeal,
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(
+                                text = if (room != null) "ORTAK ODA: ${room.roomCode}" else "TEK BAŞINA",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Black,
+                                color = if (room != null) CinemaTheme.colors.onAccentCrimson else CinemaTheme.colors.onAccentTeal,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                            )
+                        }
+                    }
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
                         IconButton(
-                            onClick = onOpenStoryModal,
+                            onClick = onToggleTheme,
                             modifier = Modifier
                                 .minimumInteractiveComponentSize()
                                 .size(48.dp)
                                 .background(CinemaSurface, CircleShape)
-                                .testTag("open_story_modal_header_button")
+                                .testTag("wheel_theme_toggle_button")
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Share,
-                                contentDescription = "Paylaş",
+                                imageVector = if (isDarkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
+                                contentDescription = if (isDarkTheme) "Açık Temaya Geç" else "Koyu Temaya Geç",
                                 tint = PopcornGold
                             )
                         }
+
+                        if (selectedMovie != null) {
+                            IconButton(
+                                onClick = onOpenStoryModal,
+                                modifier = Modifier
+                                    .minimumInteractiveComponentSize()
+                                    .size(48.dp)
+                                    .background(CinemaSurface, CircleShape)
+                                    .testTag("open_story_modal_header_button")
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Share,
+                                    contentDescription = "Paylaş",
+                                    tint = PopcornGold
+                                )
+                            }
+                        }
                     }
                 }
-            }
 
-            Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(14.dp))
 
-            if (activeCustomList != null) {
-                val listAccent = Color(activeCustomList.accentColorHex)
-                Surface(
-                    color = listAccent.copy(alpha = 0.16f),
-                    shape = RoundedCornerShape(14.dp),
-                    border = BorderStroke(1.2.dp, listAccent),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 12.dp)
-                        .semantics(mergeDescendants = true) {}
-                        .clickable { onOpenCustomLists() }
-                        .testTag("wheel_custom_list_badge")
-                ) {
-                    Row(
+                if (activeCustomList != null) {
+                    val listAccent = Color(activeCustomList.accentColorHex)
+                    Surface(
+                        color = listAccent.copy(alpha = 0.16f),
+                        shape = RoundedCornerShape(14.dp),
+                        border = BorderStroke(1.2.dp, listAccent),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 14.dp, vertical = 9.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                            .padding(bottom = 12.dp)
+                            .semantics(mergeDescendants = true) {}
+                            .clickable { onOpenCustomLists() }
+                            .testTag("wheel_custom_list_badge")
                     ) {
-                        Text(
-                            text = "${activeCustomList.emoji} Özel Çark: ${activeCustomList.name} (${movies.size} Film)",
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Black,
-                            color = TextPrimary,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Listeler ✎",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = listAccent
-                        )
-                    }
-                }
-            }
-
-            val hasActiveNarrowing = selectedGenres.isNotEmpty() || selectedAudioOptions.isNotEmpty() || minYear > 1970 || maxYear < 2026 || minRating > 0.0
-            if (hasActiveNarrowing) {
-                FlowRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 12.dp)
-                        .testTag("wheel_active_filters_row"),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
-                    verticalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    selectedGenres.forEach { genre ->
-                        Surface(
-                            color = CinemaTheme.colors.selectedChipFill,
-                            shape = RoundedCornerShape(8.dp),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, NeonPurple)
-                        ) {
-                            Text(
-                                text = "🎬 $genre",
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = PopcornGold,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                            )
-                        }
-                    }
-                    selectedAudioOptions.forEach { audioId ->
-                        val label = AudioLanguageOption.entries.find { it.id == audioId }?.label ?: audioId
-                        Surface(
-                            color = Color(0x3306B6D4),
-                            shape = RoundedCornerShape(8.dp),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, ElectricCyan)
-                        ) {
-                            Text(
-                                text = "🎧 $label",
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = ElectricCyan,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                            )
-                        }
-                    }
-                    if (minYear > 1970 || maxYear < 2026) {
-                        Surface(
-                            color = Color(0x3306B6D4),
-                            shape = RoundedCornerShape(8.dp),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, ElectricCyan)
-                        ) {
-                            Text(
-                                text = "📅 $minYear-$maxYear",
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = ElectricCyan,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                            )
-                        }
-                    }
-                    if (minRating > 0.0) {
-                        Surface(
-                            color = Color(0x33F59E0B),
-                            shape = RoundedCornerShape(8.dp),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, PopcornGold)
-                        ) {
-                            Text(
-                                text = "★ ${String.format(Locale.US, "%.1f", minRating)}+",
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = PopcornGold,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                            )
-                        }
-                    }
-                    Surface(
-                        color = CinemaSurfaceVariant,
-                        shape = RoundedCornerShape(8.dp)
-                    ) {
-                        Text(
-                            text = "${movies.size} Film",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = EmeraldGreen,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                        )
-                    }
-                }
-            }
-
-            // Veto Status Banner
-            if (isDecisionLocked) {
-                Surface(
-                    color = Color(0x3310B981),
-                    shape = RoundedCornerShape(12.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, EmeraldGreen),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Lock,
-                            contentDescription = null,
-                            tint = EmeraldGreen,
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = "KADER KİLİTLENDİ! İtiraz yasaktır, mısırları patlatın! 🍿",
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = EmeraldGreen
-                        )
-                    }
-                }
-            } else if (isVetoedOnce) {
-                Surface(
-                    color = VetoRed.copy(alpha = 0.14f),
-                    shape = RoundedCornerShape(12.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, VetoRed),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = "1 Veto Kullanıldı • Bu tur son karardır! 🔒",
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = VetoRed
-                        )
-                    }
-                }
-            } else {
-                Surface(
-                    color = CinemaSurfaceVariant,
-                    shape = RoundedCornerShape(12.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, CinemaBorder),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = "🎯 Günlük 1 Veto Hakkı Mevcuttur (1/1)",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = PopcornGold,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(14.dp))
-
-            // MINIMUM IMDb PUANI FILTER BAR (Directly updates wheel pool)
-            WheelMinImdbFilterBar(
-                currentMinRating = minRating,
-                poolCount = movies.size,
-                isSpinning = isSpinning,
-                onSelectMinRating = onWheelMinRatingChange
-            )
-
-            Spacer(modifier = Modifier.height(14.dp))
-
-            val wheelTheme = WheelThemeManager.current
-
-            // THE INTERACTIVE WHEEL CANVAS
-            WheelCanvas(
-                movies = movies,
-                rotationProvider = { wheelRotation.value },
-                needleDeflectionProvider = { needleAngle.value },
-                isSpinning = isSpinning,
-                selectedMovie = selectedMovie,
-                wheelTheme = wheelTheme,
-                onWheelClick = {
-                    if (!isSpinning && movies.isNotEmpty()) {
-                        onSpinClick()
-                    }
-                },
-                modifier = Modifier
-                    .widthIn(max = 340.dp)
-                    .fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(6.dp))
-
-            // Active Wheel Theme Palette Indicator Pill
-            Surface(
-                color = CinemaSurfaceVariant,
-                shape = RoundedCornerShape(999.dp),
-                border = BorderStroke(1.dp, wheelTheme.outerRimColor.copy(alpha = 0.45f)),
-                modifier = Modifier
-                    .semantics(mergeDescendants = true) {}
-                    .testTag("wheel_theme_badge")
-            ) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Palette,
-                        contentDescription = "Aktif çark teması",
-                        tint = wheelTheme.outerRimColor,
-                        modifier = Modifier.size(14.dp)
-                    )
-                    Text(
-                        text = wheelTheme.themeLabel,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = TextSecondary
-                    )
-                }
-            }
-
-            if (isSpinning) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Surface(
-                    color = ElectricCyan.copy(alpha = 0.14f),
-                    shape = RoundedCornerShape(999.dp),
-                    border = BorderStroke(1.dp, ElectricCyan.copy(alpha = 0.65f)),
-                    modifier = Modifier
-                        .semantics(mergeDescendants = true) {}
-                        .testTag("wheel_spinning_badge")
-                ) {
-                    Text(
-                        text = "🎡 Çark Dönüyor • Rotalar Hesaplanıyor...",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = ElectricCyan,
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp)
-                    )
-                }
-            } else if (selectedMovie != null) {
-                val revealStyle = selectedMovie.resolveGenreRevealStyle()
-                Spacer(modifier = Modifier.height(8.dp))
-                Surface(
-                    color = revealStyle.primaryColor.copy(alpha = 0.16f),
-                    shape = RoundedCornerShape(999.dp),
-                    border = BorderStroke(1.dp, revealStyle.primaryColor.copy(alpha = 0.7f)),
-                    modifier = Modifier
-                        .semantics(mergeDescendants = true) {}
-                        .testTag("wheel_winner_highlight_badge")
-                ) {
-                    Text(
-                        text = "✨ Seçilen Film Vurgulandı (${revealStyle.badgeLabel}): ${selectedMovie.title}",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = revealStyle.secondaryColor,
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp)
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(14.dp))
-
-            // ACCELEROMETER SHAKE-TO-SPIN, HAPTIC VIBRATION & SOUND ENGINE CARD
-            ShakeToSpinSensorCard(
-                hasAccelerometer = hasAccelerometer,
-                isShakeEnabled = isShakeEnabled,
-                isHapticEnabled = isHapticEnabled,
-                isSoundEnabled = isSoundEnabled,
-                isSpinning = isSpinning,
-                shakeIntensity = animatedShakeIntensity,
-                onToggleShake = { isShakeEnabled = !isShakeEnabled },
-                onToggleHaptic = { isHapticEnabled = !isHapticEnabled },
-                onToggleSound = {
-                    val nextEnabled = !isSoundEnabled
-                    isSoundEnabled = nextEnabled
-                    feedbackCoordinator.soundEngine.isEnabled = nextEnabled
-                    if (nextEnabled) {
-                        feedbackCoordinator.soundEngine.playPreviewClick()
-                    } else {
-                        feedbackCoordinator.soundEngine.stopAll()
-                    }
-                }
-            )
-
-            Spacer(modifier = Modifier.height(14.dp))
-
-            // Spin CTA Button (Manual fallback / accessibility)
-            if (selectedMovie == null || isSpinning) {
-                Button(
-                    onClick = onSpinClick,
-                    enabled = !isSpinning && movies.isNotEmpty(),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp)
-                        .testTag("spin_wheel_button"),
-                    colors = ButtonDefaults.buttonColors(containerColor = PopcornGold),
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    if (isSpinning) {
-                        Text(
-                            text = "Kader Dönüyor... 🎡",
-                            fontSize = 17.sp,
-                            fontWeight = FontWeight.Black,
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
-                    } else {
-                        Icon(
-                            imageVector = Icons.Default.PlayArrow,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Çarkı Çevir! 🍿",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Black,
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-
-        // Selected Movie Reveal Section
-        if (selectedMovie != null && !isSpinning) {
-            item {
-                val isHorrorReveal = selectedMovie.isHorrorMovie()
-                LaunchedEffect(selectedMovie.id, isHorrorReveal, isHapticEnabled) {
-                    if (isHorrorReveal && isHapticEnabled) {
-                        runCatching {
-                            view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
-                        }
-                    }
-                }
-
-                AnimatedVisibility(
-                    visible = true,
-                    enter = fadeIn() + slideInVertically { it / 2 }
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        // Cinematic or Horror Reveal Animation Banner
-                        WheelRevealAnimationBanner(movie = selectedMovie)
-
-                        Spacer(modifier = Modifier.height(14.dp))
-
-                        // Genre-matched Movie Card Border
-                        val revealStyle = selectedMovie.resolveGenreRevealStyle()
-                        val cardBorderBrush = Brush.verticalGradient(
-                            listOf(revealStyle.primaryColor, revealStyle.secondaryColor)
-                        )
-                        Card(
+                        Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .border(
-                                    1.6.dp,
-                                    cardBorderBrush,
-                                    RoundedCornerShape(24.dp)
-                                ),
-                            shape = RoundedCornerShape(24.dp),
-                            colors = CardDefaults.cardColors(containerColor = CinemaSurface)
+                                .padding(horizontal = 14.dp, vertical = 9.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Column(
+                            Text(
+                                text = "${activeCustomList.emoji} Özel Çark: ${activeCustomList.name} (${movies.size} Film)",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Black,
+                                color = TextPrimary,
+                                modifier = Modifier.weight(1f)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "Listeler ✎",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = listAccent
+                            )
+                        }
+                    }
+                }
+
+                val hasActiveNarrowing = selectedGenres.isNotEmpty() || selectedAudioOptions.isNotEmpty() || minYear > 1970 || maxYear < 2026 || minRating > 0.0
+                if (hasActiveNarrowing) {
+                    FlowRow(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 12.dp)
+                            .testTag("wheel_active_filters_row"),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        selectedGenres.forEach { genre ->
+                            Surface(
+                                color = CinemaTheme.colors.selectedChipFill,
+                                shape = RoundedCornerShape(8.dp),
+                                border = androidx.compose.foundation.BorderStroke(1.dp, NeonPurple)
+                            ) {
+                                Text(
+                                    text = "🎬 $genre",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = PopcornGold,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                )
+                            }
+                        }
+                        selectedAudioOptions.forEach { audioId ->
+                            val label = AudioLanguageOption.entries.find { it.id == audioId }?.label ?: audioId
+                            Surface(
+                                color = Color(0x3306B6D4),
+                                shape = RoundedCornerShape(8.dp),
+                                border = androidx.compose.foundation.BorderStroke(1.dp, ElectricCyan)
+                            ) {
+                                Text(
+                                    text = "🎧 $label",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = ElectricCyan,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                )
+                            }
+                        }
+                        if (minYear > 1970 || maxYear < 2026) {
+                            Surface(
+                                color = Color(0x3306B6D4),
+                                shape = RoundedCornerShape(8.dp),
+                                border = androidx.compose.foundation.BorderStroke(1.dp, ElectricCyan)
+                            ) {
+                                Text(
+                                    text = "📅 $minYear-$maxYear",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = ElectricCyan,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                )
+                            }
+                        }
+                        if (minRating > 0.0) {
+                            Surface(
+                                color = Color(0x33F59E0B),
+                                shape = RoundedCornerShape(8.dp),
+                                border = androidx.compose.foundation.BorderStroke(1.dp, PopcornGold)
+                            ) {
+                                Text(
+                                    text = "★ ${String.format(Locale.US, "%.1f", minRating)}+",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = PopcornGold,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                )
+                            }
+                        }
+                        Surface(
+                            color = CinemaSurfaceVariant,
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text(
+                                text = "${movies.size} Film",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = EmeraldGreen,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                            )
+                        }
+                    }
+                }
+
+                // Veto Status Banner
+                if (isDecisionLocked) {
+                    Surface(
+                        color = Color(0x3310B981),
+                        shape = RoundedCornerShape(12.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, EmeraldGreen),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Lock,
+                                contentDescription = null,
+                                tint = EmeraldGreen,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "KADER KİLİTLENDİ! İtiraz yasaktır, mısırları patlatın! 🍿",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = EmeraldGreen
+                            )
+                        }
+                    }
+                } else if (isVetoedOnce) {
+                    Surface(
+                        color = VetoRed.copy(alpha = 0.14f),
+                        shape = RoundedCornerShape(12.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, VetoRed),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "1 Veto Kullanıldı • Bu tur son karardır! 🔒",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = VetoRed
+                            )
+                        }
+                    }
+                } else {
+                    Surface(
+                        color = CinemaSurfaceVariant,
+                        shape = RoundedCornerShape(12.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, CinemaBorder),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "🎯 Günlük 1 Veto Hakkı Mevcuttur (1/1)",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = PopcornGold,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                // MINIMUM IMDb PUANI FILTER BAR (Directly updates wheel pool)
+                WheelMinImdbFilterBar(
+                    currentMinRating = minRating,
+                    poolCount = movies.size,
+                    isSpinning = isSpinning,
+                    onSelectMinRating = onWheelMinRatingChange
+                )
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                val wheelTheme = WheelThemeManager.current
+
+                // THE INTERACTIVE WHEEL CANVAS
+                WheelCanvas(
+                    movies = movies,
+                    rotationProvider = { wheelRotation.value },
+                    needleDeflectionProvider = { needleAngle.value },
+                    isSpinning = isSpinning,
+                    selectedMovie = selectedMovie,
+                    wheelTheme = wheelTheme,
+                    onWheelClick = {
+                        if (!isSpinning && movies.isNotEmpty()) {
+                            onSpinClick()
+                        }
+                    },
+                    modifier = Modifier
+                        .widthIn(max = 340.dp)
+                        .fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                // Active Wheel Theme Palette Indicator Pill
+                Surface(
+                    color = CinemaSurfaceVariant,
+                    shape = RoundedCornerShape(999.dp),
+                    border = BorderStroke(1.dp, wheelTheme.outerRimColor.copy(alpha = 0.45f)),
+                    modifier = Modifier
+                        .semantics(mergeDescendants = true) {}
+                        .testTag("wheel_theme_badge")
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Palette,
+                            contentDescription = "Aktif çark teması",
+                            tint = wheelTheme.outerRimColor,
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Text(
+                            text = wheelTheme.themeLabel,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = TextSecondary
+                        )
+                    }
+                }
+
+                if (isSpinning) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Surface(
+                        color = ElectricCyan.copy(alpha = 0.14f),
+                        shape = RoundedCornerShape(999.dp),
+                        border = BorderStroke(1.dp, ElectricCyan.copy(alpha = 0.65f)),
+                        modifier = Modifier
+                            .semantics(mergeDescendants = true) {}
+                            .testTag("wheel_spinning_badge")
+                    ) {
+                        Text(
+                            text = "🎡 Çark Dönüyor • Rotalar Hesaplanıyor...",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = ElectricCyan,
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp)
+                        )
+                    }
+                } else if (selectedMovie != null) {
+                    val revealStyle = selectedMovie.resolveGenreRevealStyle()
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Surface(
+                        color = revealStyle.primaryColor.copy(alpha = 0.16f),
+                        shape = RoundedCornerShape(999.dp),
+                        border = BorderStroke(1.dp, revealStyle.primaryColor.copy(alpha = 0.7f)),
+                        modifier = Modifier
+                            .semantics(mergeDescendants = true) {}
+                            .testTag("wheel_winner_highlight_badge")
+                    ) {
+                        Text(
+                            text = "✨ Seçilen Film Vurgulandı (${revealStyle.badgeLabel}): ${selectedMovie.title}",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = revealStyle.secondaryColor,
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                // ACCELEROMETER SHAKE-TO-SPIN, HAPTIC VIBRATION & SOUND ENGINE CARD
+                ShakeToSpinSensorCard(
+                    hasAccelerometer = hasAccelerometer,
+                    isShakeEnabled = isShakeEnabled,
+                    isHapticEnabled = isHapticEnabled,
+                    isSoundEnabled = isSoundEnabled,
+                    isSpinning = isSpinning,
+                    shakeIntensity = animatedShakeIntensity,
+                    onToggleShake = { isShakeEnabled = !isShakeEnabled },
+                    onToggleHaptic = { isHapticEnabled = !isHapticEnabled },
+                    onToggleSound = {
+                        val nextEnabled = !isSoundEnabled
+                        isSoundEnabled = nextEnabled
+                        feedbackCoordinator.soundEngine.isEnabled = nextEnabled
+                        if (nextEnabled) {
+                            feedbackCoordinator.soundEngine.playPreviewClick()
+                        } else {
+                            feedbackCoordinator.soundEngine.stopAll()
+                        }
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                // Spin CTA Button (Manual fallback / accessibility)
+                if (selectedMovie == null || isSpinning) {
+                    val spinPressSource = rememberPressSource()
+                    Button(
+                        onClick = onSpinClick,
+                        enabled = !isSpinning && movies.isNotEmpty(),
+                        interactionSource = spinPressSource,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp)
+                            .pressScale(spinPressSource)
+                            .testTag("spin_wheel_button"),
+                        colors = ButtonDefaults.buttonColors(containerColor = PopcornGold),
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
+                        if (isSpinning) {
+                            Text(
+                                text = "Kader Dönüyor... 🎡",
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.Black,
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Default.PlayArrow,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "Çarkı Çevir! 🍿",
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Black,
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            // Selected Movie Reveal Section
+            if (selectedMovie != null && !isSpinning) {
+                item {
+                    val isHorrorReveal = selectedMovie.isHorrorMovie()
+                    LaunchedEffect(selectedMovie.id, isHorrorReveal, isHapticEnabled) {
+                        if (isHorrorReveal && isHapticEnabled) {
+                            runCatching {
+                                view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                            }
+                        }
+                    }
+
+                    AnimatedVisibility(
+                        visible = true,
+                        enter = fadeIn() + slideInVertically { it / 2 }
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            // Cinematic or Horror Reveal Animation Banner
+                            WheelRevealAnimationBanner(movie = selectedMovie)
+
+                            Spacer(modifier = Modifier.height(14.dp))
+
+                            // Genre-matched Movie Card Border
+                            val revealStyle = selectedMovie.resolveGenreRevealStyle()
+                            val cardBorderBrush = Brush.verticalGradient(
+                                listOf(revealStyle.primaryColor, revealStyle.secondaryColor)
+                            )
+                            Card(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(20.dp)
+                                    .border(
+                                        1.6.dp,
+                                        cardBorderBrush,
+                                        RoundedCornerShape(24.dp)
+                                    ),
+                                shape = RoundedCornerShape(24.dp),
+                                colors = CardDefaults.cardColors(containerColor = CinemaSurface)
                             ) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    verticalAlignment = Alignment.Top
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(20.dp)
                                 ) {
-                                    MoviePosterImage(
-                                        title = selectedMovie.title,
-                                        posterPath = selectedMovie.posterPath,
-                                        posterUrl = selectedMovie.posterUrl,
-                                        accentColorHex = selectedMovie.colorHex,
-                                        cornerRadius = 14.dp,
-                                        testTag = "wheel_movie_poster",
-                                        modifier = Modifier
-                                            .width(92.dp)
-                                            .height(136.dp)
-                                    )
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.Top
+                                    ) {
+                                        MoviePosterImage(
+                                            title = selectedMovie.title,
+                                            posterPath = selectedMovie.posterPath,
+                                            posterUrl = selectedMovie.posterUrl,
+                                            accentColorHex = selectedMovie.colorHex,
+                                            cornerRadius = 14.dp,
+                                            testTag = "wheel_movie_poster",
+                                            modifier = Modifier
+                                                .width(92.dp)
+                                                .height(136.dp)
+                                        )
 
-                                    Spacer(modifier = Modifier.width(14.dp))
+                                        Spacer(modifier = Modifier.width(14.dp))
 
-                                    Column(modifier = Modifier.weight(1f)) {
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            verticalAlignment = Alignment.Top
-                                        ) {
-                                            Column(modifier = Modifier.weight(1f).padding(end = 6.dp)) {
-                                                Text(
-                                                    text = selectedMovie.title,
-                                                    fontSize = 20.sp,
-                                                    fontWeight = FontWeight.Black,
-                                                    color = TextPrimary,
-                                                    lineHeight = 24.sp,
-                                                    modifier = Modifier.testTag("wheel_selected_movie_title")
-                                                )
-                                                if (selectedMovie.originalTitle.isNotEmpty() && selectedMovie.originalTitle != selectedMovie.title) {
-                                                    Spacer(modifier = Modifier.height(2.dp))
+                                        Column(modifier = Modifier.weight(1f)) {
+                                            Row(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                verticalAlignment = Alignment.Top
+                                            ) {
+                                                Column(modifier = Modifier.weight(1f).padding(end = 6.dp)) {
                                                     Text(
-                                                        text = selectedMovie.originalTitle,
-                                                        fontSize = 12.sp,
-                                                        color = TextSecondary
+                                                        text = selectedMovie.title,
+                                                        fontSize = 20.sp,
+                                                        fontWeight = FontWeight.Black,
+                                                        color = TextPrimary,
+                                                        lineHeight = 24.sp,
+                                                        modifier = Modifier.testTag("wheel_selected_movie_title")
                                                     )
+                                                    if (selectedMovie.originalTitle.isNotEmpty() && selectedMovie.originalTitle != selectedMovie.title) {
+                                                        Spacer(modifier = Modifier.height(2.dp))
+                                                        Text(
+                                                            text = selectedMovie.originalTitle,
+                                                            fontSize = 12.sp,
+                                                            color = TextSecondary
+                                                        )
+                                                    }
+                                                }
+
+                                                Surface(
+                                                    color = Color(0x33F59E0B),
+                                                    shape = RoundedCornerShape(10.dp)
+                                                ) {
+                                                    Row(
+                                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                                        verticalAlignment = Alignment.CenterVertically
+                                                    ) {
+                                                        Icon(
+                                                            imageVector = Icons.Default.Star,
+                                                            contentDescription = null,
+                                                            tint = PopcornGold,
+                                                            modifier = Modifier.size(16.dp)
+                                                        )
+                                                        Spacer(modifier = Modifier.width(4.dp))
+                                                        Text(
+                                                            text = "${selectedMovie.imdb}",
+                                                            fontSize = 13.sp,
+                                                            fontWeight = FontWeight.Bold,
+                                                            color = PopcornGold
+                                                        )
+                                                    }
                                                 }
                                             }
 
+                                            Spacer(modifier = Modifier.height(8.dp))
+
+                                            Text(
+                                                text = "${selectedMovie.year} • ${selectedMovie.durationMins} dakika",
+                                                fontSize = 12.sp,
+                                                color = TextSecondary
+                                            )
+                                            Spacer(modifier = Modifier.height(2.dp))
+                                            Text(
+                                                text = selectedMovie.genre,
+                                                fontSize = 12.sp,
+                                                fontWeight = FontWeight.SemiBold,
+                                                color = ElectricCyan
+                                            )
+                                        }
+                                    }
+
+                                    Spacer(modifier = Modifier.height(10.dp))
+
+                                    // Platforms & Audio Badges
+                                    FlowRow(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                                    ) {
+                                        selectedMovie.platforms.forEach { platform ->
                                             Surface(
-                                                color = Color(0x33F59E0B),
-                                                shape = RoundedCornerShape(10.dp)
+                                                color = CinemaSurfaceVariant,
+                                                shape = RoundedCornerShape(8.dp),
+                                                border = androidx.compose.foundation.BorderStroke(1.dp, CinemaBorder)
                                             ) {
-                                                Row(
-                                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                                                    verticalAlignment = Alignment.CenterVertically
-                                                ) {
-                                                    Icon(
-                                                        imageVector = Icons.Default.Star,
-                                                        contentDescription = null,
-                                                        tint = PopcornGold,
-                                                        modifier = Modifier.size(16.dp)
-                                                    )
-                                                    Spacer(modifier = Modifier.width(4.dp))
-                                                    Text(
-                                                        text = "${selectedMovie.imdb}",
-                                                        fontSize = 13.sp,
-                                                        fontWeight = FontWeight.Bold,
-                                                        color = PopcornGold
-                                                    )
-                                                }
+                                                Text(
+                                                    text = platform,
+                                                    fontSize = 11.sp,
+                                                    fontWeight = FontWeight.SemiBold,
+                                                    color = ElectricCyan,
+                                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                                )
                                             }
                                         }
-
-                                        Spacer(modifier = Modifier.height(8.dp))
-
-                                        Text(
-                                            text = "${selectedMovie.year} • ${selectedMovie.durationMins} dakika",
-                                            fontSize = 12.sp,
-                                            color = TextSecondary
-                                        )
-                                        Spacer(modifier = Modifier.height(2.dp))
-                                        Text(
-                                            text = selectedMovie.genre,
-                                            fontSize = 12.sp,
-                                            fontWeight = FontWeight.SemiBold,
-                                            color = ElectricCyan
-                                        )
-                                    }
-                                }
-
-                                Spacer(modifier = Modifier.height(10.dp))
-
-                                // Platforms & Audio Badges
-                                FlowRow(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                                    verticalArrangement = Arrangement.spacedBy(6.dp)
-                                ) {
-                                    selectedMovie.platforms.forEach { platform ->
                                         Surface(
-                                            color = CinemaSurfaceVariant,
+                                            color = NeonPurple.copy(alpha = 0.16f),
                                             shape = RoundedCornerShape(8.dp),
-                                            border = androidx.compose.foundation.BorderStroke(1.dp, CinemaBorder)
+                                            border = androidx.compose.foundation.BorderStroke(1.dp, NeonPurple.copy(alpha = 0.55f)),
+                                            modifier = Modifier.testTag("wheel_movie_audio_badge")
                                         ) {
                                             Text(
-                                                text = platform,
+                                                text = "🎧 ${selectedMovie.audioBadgesText()}",
                                                 fontSize = 11.sp,
                                                 fontWeight = FontWeight.SemiBold,
-                                                color = ElectricCyan,
+                                                color = PopcornGold,
                                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                                             )
                                         }
                                     }
-                                    Surface(
-                                        color = NeonPurple.copy(alpha = 0.16f),
-                                        shape = RoundedCornerShape(8.dp),
-                                        border = androidx.compose.foundation.BorderStroke(1.dp, NeonPurple.copy(alpha = 0.55f)),
-                                        modifier = Modifier.testTag("wheel_movie_audio_badge")
+
+                                    Spacer(modifier = Modifier.height(14.dp))
+
+                                    // Synopsis
+                                    Text(
+                                        text = selectedMovie.logline,
+                                        fontSize = 13.sp,
+                                        color = TextPrimary,
+                                        lineHeight = 18.sp
+                                    )
+
+                                    Spacer(modifier = Modifier.height(12.dp))
+
+                                    // Witty Recommendation Hook
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .background(CinemaTheme.colors.calloutSurface, RoundedCornerShape(12.dp))
+                                            .border(1.dp, CinemaBorder, RoundedCornerShape(12.dp))
+                                            .padding(12.dp)
                                     ) {
-                                        Text(
-                                            text = "🎧 ${selectedMovie.audioBadgesText()}",
-                                            fontSize = 11.sp,
-                                            fontWeight = FontWeight.SemiBold,
-                                            color = PopcornGold,
-                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                                        )
-                                    }
-                                }
-
-                                Spacer(modifier = Modifier.height(14.dp))
-
-                                // Synopsis
-                                Text(
-                                    text = selectedMovie.logline,
-                                    fontSize = 13.sp,
-                                    color = TextPrimary,
-                                    lineHeight = 18.sp
-                                )
-
-                                Spacer(modifier = Modifier.height(12.dp))
-
-                                // Witty Recommendation Hook
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .background(CinemaTheme.colors.calloutSurface, RoundedCornerShape(12.dp))
-                                        .border(1.dp, CinemaBorder, RoundedCornerShape(12.dp))
-                                        .padding(12.dp)
-                                ) {
-                                    Column {
-                                        Text(
-                                            text = "💡 Neden Bu Film?",
-                                            fontSize = 11.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            color = PopcornGold
-                                        )
-                                        Spacer(modifier = Modifier.height(4.dp))
-                                        Text(
-                                            text = selectedMovie.whyWatch,
-                                            fontSize = 12.sp,
-                                            color = TextSecondary,
-                                            lineHeight = 16.sp
-                                        )
+                                        Column {
+                                            Text(
+                                                text = "💡 Neden Bu Film?",
+                                                fontSize = 11.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                color = PopcornGold
+                                            )
+                                            Spacer(modifier = Modifier.height(4.dp))
+                                            Text(
+                                                text = selectedMovie.whyWatch,
+                                                fontSize = 12.sp,
+                                                color = TextSecondary,
+                                                lineHeight = 16.sp
+                                            )
+                                        }
                                     }
                                 }
                             }
-                        }
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(16.dp))
 
-                        val isSelectedWatched = watchedMovieIds.contains(selectedMovie.id)
+                            val isSelectedWatched = watchedMovieIds.contains(selectedMovie.id)
 
-                        // MARK AS WATCHED ACTION (Excludes from future spins & saves to Profile)
-                        if (isSelectedWatched) {
-                            Surface(
-                                color = Color(0x3310B981),
-                                shape = RoundedCornerShape(16.dp),
-                                border = androidx.compose.foundation.BorderStroke(1.5.dp, EmeraldGreen),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .testTag("watched_confirmed_badge")
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Center
+                            // MARK AS WATCHED ACTION (Excludes from future spins & saves to Profile)
+                            if (isSelectedWatched) {
+                                Surface(
+                                    color = Color(0x3310B981),
+                                    shape = RoundedCornerShape(16.dp),
+                                    border = androidx.compose.foundation.BorderStroke(1.5.dp, EmeraldGreen),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .testTag("watched_confirmed_badge")
+                                ) {
+                                    Row(
+                                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.CheckCircle,
+                                            contentDescription = "İzlendi",
+                                            tint = EmeraldGreen,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(
+                                            text = "İzlediklerime Eklendi • Çarktan Çıkarıldı",
+                                            color = EmeraldGreen,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 13.sp
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = Modifier.height(10.dp))
+                            } else {
+                                OutlinedButton(
+                                    onClick = { onMarkAsWatched(selectedMovie) },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(52.dp)
+                                        .testTag("mark_watched_button"),
+                                    shape = RoundedCornerShape(16.dp),
+                                    border = androidx.compose.foundation.BorderStroke(1.5.dp, EmeraldGreen)
                                 ) {
                                     Icon(
-                                        imageVector = Icons.Default.CheckCircle,
-                                        contentDescription = "İzlendi",
+                                        imageVector = Icons.Default.Visibility,
+                                        contentDescription = "İzledim olarak işaretle",
                                         tint = EmeraldGreen,
                                         modifier = Modifier.size(20.dp)
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(
-                                        text = "İzlediklerime Eklendi • Çarktan Çıkarıldı",
+                                        text = "Bu Filmi İzledim ✓ (Çarktan Çıkar)",
                                         color = EmeraldGreen,
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 13.sp
                                     )
                                 }
+                                Spacer(modifier = Modifier.height(10.dp))
                             }
+
+                            // ACTION BUTTONS: VETO & SOCIAL SHARE
+                            // VETO ACTION: Elides the chosen movie and immediately re-spins the wheel
+                            if (!isVetoedOnce && !isDecisionLocked && !isSelectedWatched) {
+                                OutlinedButton(
+                                    onClick = onVetoClick,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(54.dp)
+                                        .testTag("veto_action_button"),
+                                    shape = RoundedCornerShape(16.dp),
+                                    border = androidx.compose.foundation.BorderStroke(1.5.dp, VetoRed)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Block,
+                                        contentDescription = null,
+                                        tint = VetoRed,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = "Bu Filmi VETO ET! (1/1 Hak - Çarkı Yeniden Çevir)",
+                                        color = VetoRed,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 13.sp
+                                    )
+                                }
+
+                                Spacer(modifier = Modifier.height(10.dp))
+                            }
+
+                            // DIRECT SOCIAL SHARE & FAVORITE TOGGLE ROW
+                            val isFavorite = favoriteMovieIds.contains(selectedMovie.id)
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                Button(
+                                    onClick = { showDirectShareSheet = true },
+                                    modifier = Modifier
+                                        .weight(1.3f)
+                                        .height(52.dp)
+                                        .testTag("wheel_direct_share_button"),
+                                    colors = ButtonDefaults.buttonColors(containerColor = PopcornGold),
+                                    shape = RoundedCornerShape(16.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Share,
+                                        contentDescription = "Sosyal medyada paylaş",
+                                        tint = MaterialTheme.colorScheme.onPrimary,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = "Paylaş",
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                        fontWeight = FontWeight.Black,
+                                        fontSize = 14.sp
+                                    )
+                                }
+
+                                OutlinedButton(
+                                    onClick = { onToggleFavorite(selectedMovie) },
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(52.dp)
+                                        .testTag("wheel_favorite_button"),
+                                    shape = RoundedCornerShape(16.dp),
+                                    border = BorderStroke(
+                                        1.5.dp,
+                                        if (isFavorite) NeonPink else CinemaBorder
+                                    )
+                                ) {
+                                    Icon(
+                                        imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                        contentDescription = if (isFavorite) "Favorilerden çıkar" else "Favorilere ekle",
+                                        tint = if (isFavorite) NeonPink else TextSecondary,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = if (isFavorite) "Favorimde" else "Favorile",
+                                        color = if (isFavorite) NeonPink else TextPrimary,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 13.sp,
+                                        maxLines = 1
+                                    )
+                                }
+                            }
+
                             Spacer(modifier = Modifier.height(10.dp))
-                        } else {
+
+                            // SOCIAL FLEX / INSTAGRAM 9:16 STORY CARD BUTTON
                             OutlinedButton(
-                                onClick = { onMarkAsWatched(selectedMovie) },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(52.dp)
-                                    .testTag("mark_watched_button"),
-                                shape = RoundedCornerShape(16.dp),
-                                border = androidx.compose.foundation.BorderStroke(1.5.dp, EmeraldGreen)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Visibility,
-                                    contentDescription = "İzledim olarak işaretle",
-                                    tint = EmeraldGreen,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = "Bu Filmi İzledim ✓ (Çarktan Çıkar)",
-                                    color = EmeraldGreen,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 13.sp
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(10.dp))
-                        }
-
-                        // ACTION BUTTONS: VETO & SOCIAL SHARE
-                        // VETO ACTION: Elides the chosen movie and immediately re-spins the wheel
-                        if (!isVetoedOnce && !isDecisionLocked && !isSelectedWatched) {
-                            OutlinedButton(
-                                onClick = onVetoClick,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(54.dp)
-                                    .testTag("veto_action_button"),
-                                shape = RoundedCornerShape(16.dp),
-                                border = androidx.compose.foundation.BorderStroke(1.5.dp, VetoRed)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Block,
-                                    contentDescription = null,
-                                    tint = VetoRed,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = "Bu Filmi VETO ET! (1/1 Hak - Çarkı Yeniden Çevir)",
-                                    color = VetoRed,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 13.sp
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.height(10.dp))
-                        }
-
-                        // DIRECT SOCIAL SHARE & FAVORITE TOGGLE ROW
-                        val isFavorite = favoriteMovieIds.contains(selectedMovie.id)
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            Button(
-                                onClick = { showDirectShareSheet = true },
-                                modifier = Modifier
-                                    .weight(1.3f)
-                                    .height(52.dp)
-                                    .testTag("wheel_direct_share_button"),
-                                colors = ButtonDefaults.buttonColors(containerColor = PopcornGold),
-                                shape = RoundedCornerShape(16.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Share,
-                                    contentDescription = "Sosyal medyada paylaş",
-                                    tint = MaterialTheme.colorScheme.onPrimary,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(
-                                    text = "Paylaş",
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                    fontWeight = FontWeight.Black,
-                                    fontSize = 14.sp
-                                )
-                            }
-
-                            OutlinedButton(
-                                onClick = { onToggleFavorite(selectedMovie) },
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(52.dp)
-                                    .testTag("wheel_favorite_button"),
-                                shape = RoundedCornerShape(16.dp),
-                                border = BorderStroke(
-                                    1.5.dp,
-                                    if (isFavorite) NeonPink else CinemaBorder
-                                )
-                            ) {
-                                Icon(
-                                    imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                    contentDescription = if (isFavorite) "Favorilerden çıkar" else "Favorilere ekle",
-                                    tint = if (isFavorite) NeonPink else TextSecondary,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(
-                                    text = if (isFavorite) "Favorimde" else "Favorile",
-                                    color = if (isFavorite) NeonPink else TextPrimary,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 13.sp,
-                                    maxLines = 1
-                                )
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        // SOCIAL FLEX / INSTAGRAM 9:16 STORY CARD BUTTON
-                        OutlinedButton(
-                            onClick = onOpenStoryModal,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(48.dp)
-                                .testTag("open_story_modal_button"),
-                            shape = RoundedCornerShape(14.dp),
-                            border = BorderStroke(1.dp, NeonPurple)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Share,
-                                contentDescription = null,
-                                tint = PopcornGold,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = "9:16 Hikaye Kartı Oluştur (Flex) 🍿",
-                                color = TextPrimary,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 13.sp
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        // Spin Again if locked or already watched
-                        if (isDecisionLocked || isSelectedWatched) {
-                            OutlinedButton(
-                                onClick = onSpinClick,
+                                onClick = onOpenStoryModal,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(48.dp)
-                                    .testTag("spin_again_button"),
-                                shape = RoundedCornerShape(14.dp)
+                                    .testTag("open_story_modal_button"),
+                                shape = RoundedCornerShape(14.dp),
+                                border = BorderStroke(1.dp, NeonPurple)
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.Refresh,
+                                    imageVector = Icons.Default.Share,
                                     contentDescription = null,
-                                    tint = TextSecondary,
+                                    tint = PopcornGold,
                                     modifier = Modifier.size(16.dp)
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Text(
-                                    text = "Yeni Bir Film İçin Çevir",
-                                    color = TextSecondary,
+                                    text = "9:16 Hikaye Kartı Oluştur (Flex) 🍿",
+                                    color = TextPrimary,
+                                    fontWeight = FontWeight.Bold,
                                     fontSize = 13.sp
                                 )
                             }
-                        }
 
-                        Spacer(modifier = Modifier.height(18.dp))
+                            Spacer(modifier = Modifier.height(12.dp))
 
-                        val similarAlternatives = remember(selectedMovie.id, excludedWheelMovieIds) {
-                            MovieRepository.findSimilarAlternatives(
+                            // Spin Again if locked or already watched
+                            if (isDecisionLocked || isSelectedWatched) {
+                                OutlinedButton(
+                                    onClick = onSpinClick,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(48.dp)
+                                        .testTag("spin_again_button"),
+                                    shape = RoundedCornerShape(14.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Refresh,
+                                        contentDescription = null,
+                                        tint = TextSecondary,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = "Yeni Bir Film İçin Çevir",
+                                        color = TextSecondary,
+                                        fontSize = 13.sp
+                                    )
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(18.dp))
+
+                            val similarAlternatives = remember(selectedMovie.id, excludedWheelMovieIds) {
+                                MovieRepository.findSimilarAlternatives(
+                                    targetMovie = selectedMovie,
+                                    excludedMovieIds = excludedWheelMovieIds,
+                                    limit = 3
+                                )
+                            }
+
+                            SimilarMoviesSection(
                                 targetMovie = selectedMovie,
-                                excludedMovieIds = excludedWheelMovieIds,
-                                limit = 3
+                                isTargetWatched = isSelectedWatched,
+                                recommendations = similarAlternatives,
+                                onSelectAlternative = onSelectAlternative
                             )
+
+                            Spacer(modifier = Modifier.height(40.dp))
                         }
-
-                        SimilarMoviesSection(
-                            targetMovie = selectedMovie,
-                            isTargetWatched = isSelectedWatched,
-                            recommendations = similarAlternatives,
-                            onSelectAlternative = onSelectAlternative
-                        )
-
-                        Spacer(modifier = Modifier.height(40.dp))
                     }
                 }
+            }
+        }
+
+        // Çark durduğunda türe özel tam ekran sinematik açılış sahnesi
+        AnimatedVisibility(
+            visible = revealMovie != null,
+            enter = fadeIn(tween(160)),
+            exit = fadeOut(tween(220))
+        ) {
+            val movieForReveal = revealMovie ?: lastRevealMovie
+            if (movieForReveal != null) {
+                GenreRevealOverlay(
+                    movie = movieForReveal,
+                    onFinished = { revealMovie = null }
+                )
             }
         }
     }

@@ -106,7 +106,6 @@ fun RoomScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(CinemaBackground)
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 20.dp)
             .padding(bottom = 32.dp),

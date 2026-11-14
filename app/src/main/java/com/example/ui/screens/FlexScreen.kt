@@ -236,7 +236,6 @@ ${if (roomCode != null) "Ortak Oda Kodu: $roomCode • " else ""}Seçim krizine 
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(CinemaBackground)
             .padding(horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

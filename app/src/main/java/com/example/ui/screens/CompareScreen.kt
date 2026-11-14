@@ -123,7 +123,6 @@ fun CompareScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(CinemaBackground)
             .padding(horizontal = 16.dp)
             .testTag("compare_screen_list"),
         horizontalAlignment = Alignment.CenterHorizontally

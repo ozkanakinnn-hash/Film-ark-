@@ -19,6 +19,14 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.Icon
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.foundation.border
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -164,6 +172,18 @@ fun WheelCanvas(
             val sweepAngle = 360f / sliceCount
             val currentRotation = rotationProvider()
             val revealProgress = if (hasWinnerHighlight) winnerRevealAnim.value.coerceIn(0f, 1.15f) else 0f
+
+            // Zemin gölgesi: çarkı sahneden "kaldıran" yumuşak gölge
+            val shadowCenter = Offset(center.x, center.y + 10.dp.toPx())
+            drawCircle(
+                brush = Brush.radialGradient(
+                    colors = listOf(Color.Black.copy(alpha = if (wheelTheme.isDark) 0.55f else 0.22f), Color.Transparent),
+                    center = shadowCenter,
+                    radius = outerRadius + 14.dp.toPx()
+                ),
+                radius = outerRadius + 14.dp.toPx(),
+                center = shadowCenter
+            )
 
             // Cinematic projector halo, rotating spotlight rays & smooth motion trails while spinning
             if (isSpinning) {
@@ -361,12 +381,30 @@ fun WheelCanvas(
                     center = center,
                     style = Stroke(width = 2.dp.toPx())
                 )
+                // Metalik çerçeve: açık-koyu tonlar arasında dönen ışık yansıması
+                val rimLight = lerp(rimGold, Color.White, 0.55f)
+                val rimDark = lerp(rimGold, Color.Black, 0.35f)
                 drawCircle(
-                    color = rimGold,
+                    brush = Brush.sweepGradient(
+                        colors = listOf(rimGold, rimLight, rimGold, rimDark, rimGold, rimLight, rimGold),
+                        center = center
+                    ),
                     radius = outerRadius,
                     center = center,
-                    style = Stroke(width = 8.dp.toPx())
+                    style = Stroke(width = 9.dp.toPx())
                 )
+
+                // Dilim sınırlarındaki pimler (ibrenin çarptığı noktalar)
+                for (p in 0 until sliceCount) {
+                    val pegRad = Math.toRadians((p * sweepAngle - 90f).toDouble())
+                    val pegDist = outerRadius - 1.dp.toPx()
+                    val peg = Offset(
+                        center.x + (pegDist * cos(pegRad)).toFloat(),
+                        center.y + (pegDist * sin(pegRad)).toFloat()
+                    )
+                    drawCircle(color = rimDark, radius = 4.2.dp.toPx(), center = peg)
+                    drawCircle(color = rimLight, radius = 2.4.dp.toPx(), center = peg)
+                }
 
                 val dotCount = sliceCount * 3
                 for (j in 0 until dotCount) {
@@ -405,12 +443,64 @@ fun WheelCanvas(
                     center = center,
                     style = Stroke(width = 3.dp.toPx())
                 )
-                drawCircle(
-                    color = hubCenterAccent,
-                    radius = (hubRadius * 0.24f).coerceAtLeast(3f),
-                    center = center
-                )
             }
+
+            // Sabit cam parlaması: ışık kaynağı dönmez, çark altında döner (3B kubbe hissi)
+            val glossCenter = Offset(center.x - outerRadius * 0.38f, center.y - outerRadius * 0.48f)
+            drawCircle(
+                brush = Brush.radialGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = if (wheelTheme.isDark) 0.16f else 0.22f),
+                        Color.White.copy(alpha = 0.04f),
+                        Color.Transparent
+                    ),
+                    center = glossCenter,
+                    radius = outerRadius * 1.05f
+                ),
+                radius = outerRadius - 4.dp.toPx(),
+                center = center
+            )
+        }
+
+        // Göbek içeriği: boştayken "çevir" ikonu, kazanan belli olunca filmin afişi
+        val winnerMovie = if (hasWinnerHighlight) selectedMovie else null
+        if (winnerMovie != null) {
+            MoviePosterImage(
+                title = winnerMovie.title,
+                posterPath = winnerMovie.posterPath,
+                posterUrl = winnerMovie.posterUrl,
+                accentColorHex = winnerMovie.colorHex,
+                cornerRadius = 28.dp,
+                showFallbackTitleBadge = false,
+                modifier = Modifier
+                    .size(56.dp)
+                    .graphicsLayer {
+                        val p = winnerRevealAnim.value.coerceIn(0f, 1.2f)
+                        scaleX = p
+                        scaleY = p
+                        alpha = p.coerceAtMost(1f)
+                    }
+                    .shadow(10.dp, CircleShape)
+                    .clip(CircleShape)
+                    .border(2.dp, hubBorderColor, CircleShape)
+                    .testTag("wheel_hub_winner_poster")
+            )
+        } else {
+            Icon(
+                imageVector = Icons.Default.PlayArrow,
+                contentDescription = if (onWheelClick != null && !isSpinning) "Çarkı çevir" else null,
+                tint = hubCenterAccent,
+                modifier = Modifier
+                    .size(30.dp)
+                    .graphicsLayer {
+                        // Dönerken ikon küçülüp kaybolur, hazırken hafifçe "nefes alır"
+                        val idle = if (isSpinning) 0f else 1f
+                        val breathe = 1f + pulsePhase * 0.08f * idle
+                        scaleX = breathe * (0.6f + 0.4f * idle)
+                        scaleY = breathe * (0.6f + 0.4f * idle)
+                        alpha = 0.25f + 0.75f * idle
+                    }
+            )
         }
 
         // Static Needle / Indicator at Top (Pointing Down)
