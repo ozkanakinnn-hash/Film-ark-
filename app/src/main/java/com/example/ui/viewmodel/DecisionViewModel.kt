@@ -1,0 +1,922 @@
+package com.example.ui.viewmodel
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.data.local.ThemePreferences
+import com.example.data.local.WatchedMovieEntity
+import com.example.data.model.AudioLanguageOption
+import com.example.data.model.CustomWheelList
+import com.example.data.model.HistoryDashboardSummary
+import com.example.data.model.Mood
+import com.example.data.model.Movie
+import com.example.data.model.OTHER_PLATFORM_NAME
+import com.example.data.model.Room
+import com.example.data.repository.CustomWheelListRepository
+import com.example.data.repository.MovieRepository
+import com.example.data.repository.PlaceholderTrendingCinemaRepository
+import com.example.data.repository.RoomRepository
+import com.example.data.repository.SavedDecision
+import com.example.data.repository.TrendingCinemaRepository
+import com.example.data.repository.TrendingCinemaUiState
+import com.example.data.repository.WatchedMovieRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+
+enum class Screen {
+    HOME,
+    ROOM_HUB,
+    FILTERING,
+    CUSTOM_LISTS,
+    WHEEL,
+    COMPARE,
+    HISTORY,
+    PROFILE,
+    STATS,
+    FLEX
+}
+
+data class SpinEvent(
+    val id: Long,
+    val winner: Movie,
+    val targetAngle: Float
+)
+
+data class CompareUiState(
+    val leftMovie: Movie? = null,
+    val rightMovie: Movie? = null,
+    val queue: List<Movie> = emptyList(),
+    val roundNumber: Int = 1,
+    val totalRounds: Int = 5,
+    val selectedGenreFilter: String? = null,
+    val champion: Movie? = null,
+    val currentStreakMovieId: String? = null,
+    val currentStreakCount: Int = 0
+)
+
+class DecisionViewModel(
+    private val trendingRepository: TrendingCinemaRepository = PlaceholderTrendingCinemaRepository()
+) : ViewModel() {
+
+    private val _currentScreen = MutableStateFlow(Screen.HOME)
+    val currentScreen: StateFlow<Screen> = _currentScreen.asStateFlow()
+
+    val currentRoom: StateFlow<Room?> = RoomRepository.currentRoom
+    val savedDecisions: StateFlow<List<SavedDecision>> = RoomRepository.savedDecisions
+    val historyDashboardStats: StateFlow<HistoryDashboardSummary> = RoomRepository.historyDashboardStats
+    val watchedMovies: StateFlow<List<WatchedMovieEntity>> = WatchedMovieRepository.watchedMovies
+    val watchedMovieIds: StateFlow<Set<String>> = WatchedMovieRepository.watchedMovieIds
+    val excludedWheelMovieIds: StateFlow<Set<String>> = WatchedMovieRepository.excludedWheelMovieIds
+    val favoriteMovieIds: StateFlow<Set<String>> = WatchedMovieRepository.favoriteMovieIds
+    val customWheelLists: StateFlow<List<CustomWheelList>> = CustomWheelListRepository.customLists
+    val isDarkTheme: StateFlow<Boolean> = ThemePreferences.isDarkMode
+
+    private val _activeCustomList = MutableStateFlow<CustomWheelList?>(null)
+    val activeCustomList: StateFlow<CustomWheelList?> = _activeCustomList.asStateFlow()
+
+    val dailyNewReleases: StateFlow<List<Movie>> = MovieRepository.dailyUpdatedMovies
+    val dailyFeedDateLabel: StateFlow<String> = MovieRepository.dailyFeedLastUpdated
+
+    private val _weeklyTrendsState = MutableStateFlow<TrendingCinemaUiState>(TrendingCinemaUiState.Loading)
+    val weeklyTrendsState: StateFlow<TrendingCinemaUiState> = _weeklyTrendsState.asStateFlow()
+
+    private val _isSoloMode = MutableStateFlow(true)
+    val isSoloMode: StateFlow<Boolean> = _isSoloMode.asStateFlow()
+
+    // Host / User Filters
+    private val _selectedMoods = MutableStateFlow<Set<String>>(setOf(Mood.EASY_WATCH.id))
+    val selectedMoods: StateFlow<Set<String>> = _selectedMoods.asStateFlow()
+
+    private val _selectedPlatforms = MutableStateFlow<Set<String>>(setOf("Netflix", "Prime Video"))
+    val selectedPlatforms: StateFlow<Set<String>> = _selectedPlatforms.asStateFlow()
+
+    // Partner / Guest Filters (Simulated or Real-time)
+    private val _partnerMoods = MutableStateFlow<Set<String>>(setOf(Mood.COMEDY.id))
+    val partnerMoods: StateFlow<Set<String>> = _partnerMoods.asStateFlow()
+
+    private val _partnerPlatforms = MutableStateFlow<Set<String>>(setOf("Netflix", "Disney+"))
+    val partnerPlatforms: StateFlow<Set<String>> = _partnerPlatforms.asStateFlow()
+
+    // Advanced Filter Criteria (Tür, Yıl, Puan)
+    private val _isAdvancedFilterMode = MutableStateFlow(false)
+    val isAdvancedFilterMode: StateFlow<Boolean> = _isAdvancedFilterMode.asStateFlow()
+
+    private val _selectedGenres = MutableStateFlow<Set<String>>(emptySet())
+    val selectedGenres: StateFlow<Set<String>> = _selectedGenres.asStateFlow()
+
+    private val _selectedAudioOptions = MutableStateFlow<Set<String>>(emptySet())
+    val selectedAudioOptions: StateFlow<Set<String>> = _selectedAudioOptions.asStateFlow()
+
+    private val _selectedYearOptionId = MutableStateFlow("all")
+    val selectedYearOptionId: StateFlow<String> = _selectedYearOptionId.asStateFlow()
+
+    private val _minYear = MutableStateFlow(1970)
+    val minYear: StateFlow<Int> = _minYear.asStateFlow()
+
+    private val _maxYear = MutableStateFlow(2026)
+    val maxYear: StateFlow<Int> = _maxYear.asStateFlow()
+
+    private val _minRating = MutableStateFlow(0.0)
+    val minRating: StateFlow<Double> = _minRating.asStateFlow()
+
+    private var activeSpinModeOverride: String? = null
+
+    // Active Movies in Wheel
+    private val _activeWheelMovies = MutableStateFlow<List<Movie>>(emptyList())
+    val activeWheelMovies: StateFlow<List<Movie>> = _activeWheelMovies.asStateFlow()
+
+    // Wheel spin state (animated in Compose UI with MonotonicFrameClock)
+    private val _spinEvent = MutableStateFlow<SpinEvent?>(null)
+    val spinEvent: StateFlow<SpinEvent?> = _spinEvent.asStateFlow()
+    private var spinCounter = 0L
+
+    private val _isSpinning = MutableStateFlow(false)
+    val isSpinning: StateFlow<Boolean> = _isSpinning.asStateFlow()
+
+    private val _selectedMovie = MutableStateFlow<Movie?>(null)
+    val selectedMovie: StateFlow<Movie?> = _selectedMovie.asStateFlow()
+
+    private val _isVetoedOnce = MutableStateFlow(false)
+    val isVetoedOnce: StateFlow<Boolean> = _isVetoedOnce.asStateFlow()
+
+    private val _isDecisionLocked = MutableStateFlow(false)
+    val isDecisionLocked: StateFlow<Boolean> = _isDecisionLocked.asStateFlow()
+
+    private val _showStoryModal = MutableStateFlow(false)
+    val showStoryModal: StateFlow<Boolean> = _showStoryModal.asStateFlow()
+
+    private val _roomCodeInput = MutableStateFlow("")
+    val roomCodeInput: StateFlow<String> = _roomCodeInput.asStateFlow()
+
+    private val _feedbackToast = MutableStateFlow<String?>(null)
+    val feedbackToast: StateFlow<String?> = _feedbackToast.asStateFlow()
+
+    private val _compareState = MutableStateFlow(CompareUiState())
+    val compareState: StateFlow<CompareUiState> = _compareState.asStateFlow()
+
+    init {
+        refreshWeeklyTrends(forceRefresh = false)
+    }
+
+    fun refreshWeeklyTrends(forceRefresh: Boolean = true) {
+        viewModelScope.launch {
+            _weeklyTrendsState.value = TrendingCinemaUiState.Loading
+            try {
+                val result = trendingRepository.fetchWeeklyTrends(forceRefresh = forceRefresh)
+                _weeklyTrendsState.value = TrendingCinemaUiState.Success(result)
+            } catch (e: Exception) {
+                _weeklyTrendsState.value = TrendingCinemaUiState.Error(
+                    e.localizedMessage ?: "Trend listesi alınamadı."
+                )
+            }
+        }
+    }
+
+    fun refreshDailyMovieFeed(forceRefresh: Boolean = true) {
+        MovieRepository.syncDailyMovieUpdates(forceRefresh = forceRefresh)
+        if (forceRefresh) {
+            _feedbackToast.value = "🔥 Yeni çıkanlar güncellendi (${dailyNewReleases.value.size} film)"
+        }
+    }
+
+    fun toggleTheme() {
+        ThemePreferences.toggleTheme()
+    }
+
+    fun navigateTo(screen: Screen) {
+        if (screen != Screen.WHEEL && _isSpinning.value) {
+            _isSpinning.value = false
+            _spinEvent.value = null
+        }
+        _currentScreen.value = screen
+    }
+
+    fun startSoloFlow() {
+        _isSoloMode.value = true
+        _isVetoedOnce.value = false
+        _isDecisionLocked.value = false
+        _currentScreen.value = Screen.FILTERING
+    }
+
+    fun openRoomHub() {
+        _isSoloMode.value = false
+        _isVetoedOnce.value = false
+        _isDecisionLocked.value = false
+        _currentScreen.value = Screen.ROOM_HUB
+    }
+
+    fun createRoom() {
+        _isSoloMode.value = false
+        RoomRepository.createRoom()
+    }
+
+    fun setRoomCodeInput(code: String) {
+        _roomCodeInput.value = code.take(4)
+    }
+
+    fun joinRoom(code: String) {
+        if (code.length == 4) {
+            val success = RoomRepository.joinRoom(code)
+            if (success) {
+                _currentScreen.value = Screen.FILTERING
+            } else {
+                _feedbackToast.value = "Oda bulunamadı, lütfen kodu kontrol edin."
+            }
+        }
+    }
+
+    fun simulatePartnerJoin() {
+        RoomRepository.simulatePartnerJoin()
+        _feedbackToast.value = "Partner odaya bağlandı! 🍿"
+    }
+
+    fun toggleMood(moodId: String, isPartner: Boolean = false) {
+        if (isPartner) {
+            val current = _partnerMoods.value.toMutableSet()
+            if (current.contains(moodId)) {
+                if (current.size > 1) current.remove(moodId)
+            } else {
+                current.add(moodId)
+            }
+            _partnerMoods.value = current
+        } else {
+            val current = _selectedMoods.value.toMutableSet()
+            if (current.contains(moodId)) {
+                if (current.size > 1) current.remove(moodId)
+            } else {
+                current.add(moodId)
+            }
+            _selectedMoods.value = current
+        }
+    }
+
+    fun togglePlatform(platformName: String, isPartner: Boolean = false) {
+        if (isPartner) {
+            val current = _partnerPlatforms.value.toMutableSet()
+            if (current.contains(platformName)) {
+                if (current.size > 1) current.remove(platformName)
+            } else {
+                current.add(platformName)
+            }
+            _partnerPlatforms.value = current
+        } else {
+            val current = _selectedPlatforms.value.toMutableSet()
+            if (current.contains(platformName)) {
+                if (current.size > 1) current.remove(platformName)
+            } else {
+                current.add(platformName)
+            }
+            _selectedPlatforms.value = current
+        }
+    }
+
+    fun toggleGenre(genre: String) {
+        val current = _selectedGenres.value.toMutableSet()
+        if (current.contains(genre)) {
+            current.remove(genre)
+        } else {
+            current.add(genre)
+        }
+        _selectedGenres.value = current
+    }
+
+    fun clearGenres() {
+        _selectedGenres.value = emptySet()
+    }
+
+    fun toggleAudioOption(audioId: String) {
+        val current = _selectedAudioOptions.value.toMutableSet()
+        if (current.contains(audioId)) {
+            current.remove(audioId)
+        } else {
+            current.add(audioId)
+        }
+        _selectedAudioOptions.value = current
+    }
+
+    fun clearAudioOptions() {
+        _selectedAudioOptions.value = emptySet()
+    }
+
+    fun setYearOptionId(optionId: String) {
+        _selectedYearOptionId.value = optionId
+        val preset = com.example.ui.components.YearFilterOptions.find { it.id == optionId }
+        if (preset != null) {
+            _minYear.value = preset.minYear
+            _maxYear.value = preset.maxYear
+        }
+    }
+
+    fun setYearRange(min: Int, max: Int) {
+        val clampedMin = min.coerceIn(1970, 2026)
+        val clampedMax = max.coerceIn(clampedMin, 2026)
+        _minYear.value = clampedMin
+        _maxYear.value = clampedMax
+        val matchingPreset = com.example.ui.components.YearFilterOptions.find {
+            it.minYear == clampedMin && it.maxYear == clampedMax
+        }
+        _selectedYearOptionId.value = matchingPreset?.id ?: "custom"
+    }
+
+    fun setMinRating(rating: Double) {
+        _minRating.value = rating
+    }
+
+    fun setFilterMode(isAdvanced: Boolean) {
+        _isAdvancedFilterMode.value = isAdvanced
+    }
+
+    fun resetAdvancedFilters() {
+        _selectedGenres.value = emptySet()
+        _selectedAudioOptions.value = emptySet()
+        _selectedYearOptionId.value = "all"
+        _minYear.value = 1970
+        _maxYear.value = 2026
+        _minRating.value = 0.0
+    }
+
+    fun updateWheelMinRating(minImdb: Double) {
+        if (_isSpinning.value) return
+        _minRating.value = minImdb
+        val excludedIds = WatchedMovieRepository.excludedWheelMovieIds.value
+        val activeCustom = _activeCustomList.value
+        val filtered = if (activeCustom != null) {
+            val pool = activeCustom.movies.filterNot { excludedIds.contains(it.id) }.ifEmpty { activeCustom.movies }
+            if (minImdb > 0.0) {
+                pool.filter { it.imdb >= minImdb }.ifEmpty { pool }
+            } else {
+                pool
+            }
+        } else {
+            computeFilteredWheelMovies(minRatingOverride = minImdb)
+        }
+        _activeWheelMovies.value = filtered
+
+        if (RoomRepository.currentRoom.value == null || activeCustom != null) {
+            RoomRepository.prepareSoloSpin(
+                _selectedMoods.value,
+                _selectedPlatforms.value,
+                filtered,
+                if (activeCustom != null) emptySet() else excludedIds
+            )
+        } else {
+            RoomRepository.updateRoomMoviePool(filtered.map { it.id }, excludedIds)
+        }
+
+        val currentSelected = _selectedMovie.value
+        if (currentSelected != null && minImdb > 0.0 && currentSelected.imdb < minImdb) {
+            _selectedMovie.value = null
+        }
+
+        _feedbackToast.value = if (minImdb <= 0.0) {
+            "IMDb filtresi kaldırıldı • Havuzda ${filtered.size} film"
+        } else {
+            "★ ${minImdb}+ IMDb filtresi uygulandı • Havuzda ${filtered.size} film"
+        }
+    }
+
+    private fun computeFilteredWheelMovies(minRatingOverride: Double = _minRating.value): List<Movie> {
+        val effectivePlatforms = if (_isSoloMode.value) {
+            _selectedPlatforms.value
+        } else {
+            val inter = _selectedPlatforms.value.intersect(_partnerPlatforms.value)
+            inter.ifEmpty { _selectedPlatforms.value + _partnerPlatforms.value }
+        }
+
+        val effectiveMoods = if (_isAdvancedFilterMode.value) {
+            emptySet()
+        } else if (_isSoloMode.value) {
+            _selectedMoods.value
+        } else {
+            val inter = _selectedMoods.value.intersect(_partnerMoods.value)
+            inter.ifEmpty { _selectedMoods.value + _partnerMoods.value }
+        }
+
+        val excludedIds = WatchedMovieRepository.excludedWheelMovieIds.value
+        val result = MovieRepository.filterMoviesWithCriteria(
+            moods = effectiveMoods,
+            genres = _selectedGenres.value,
+            minYear = _minYear.value,
+            maxYear = _maxYear.value,
+            minRating = minRatingOverride,
+            platforms = effectivePlatforms,
+            excludedMovieIds = excludedIds,
+            audioOptions = _selectedAudioOptions.value
+        ).movies
+
+        val strictlyRated = if (minRatingOverride > 0.0) {
+            result.filter { it.imdb >= minRatingOverride }.ifEmpty {
+                MovieRepository.allMovies
+                    .filter { !excludedIds.contains(it.id) && it.imdb >= minRatingOverride }
+                    .ifEmpty { MovieRepository.allMovies.filter { it.imdb >= minRatingOverride } }
+            }
+        } else {
+            result
+        }
+
+        return strictlyRated.ifEmpty {
+            MovieRepository.allMovies
+                .filterNot { excludedIds.contains(it.id) }
+                .ifEmpty { MovieRepository.allMovies }
+                .take(8)
+        }
+    }
+
+    fun proceedToWheel() {
+        val excludedIds = WatchedMovieRepository.excludedWheelMovieIds.value
+        val filtered = computeFilteredWheelMovies()
+
+        activeSpinModeOverride = null
+        _activeCustomList.value = null
+        _activeWheelMovies.value = filtered
+
+        if (_isSoloMode.value || currentRoom.value == null) {
+            RoomRepository.prepareSoloSpin(
+                _selectedMoods.value,
+                _selectedPlatforms.value,
+                filtered,
+                excludedIds
+            )
+        } else {
+            val room = currentRoom.value
+            if (room != null) {
+                RoomRepository.updateFilters(room.host.id, _selectedMoods.value, _selectedPlatforms.value, excludedIds)
+                if (room.guest != null) {
+                    RoomRepository.updateFilters(room.guest.id, _partnerMoods.value, _partnerPlatforms.value, excludedIds)
+                }
+                RoomRepository.updateRoomMoviePool(filtered.map { it.id }, excludedIds)
+            }
+        }
+        _selectedMovie.value = null
+        _isDecisionLocked.value = false
+        _isSpinning.value = false
+        _spinEvent.value = null
+        _currentScreen.value = Screen.WHEEL
+    }
+
+    fun spinCultOtherCategory() {
+        val excludedIds = WatchedMovieRepository.excludedWheelMovieIds.value
+        val cultMovies = MovieRepository.getCultAndOtherMovies(
+            excludedMovieIds = excludedIds,
+            audioOptions = _selectedAudioOptions.value
+        ).ifEmpty {
+            MovieRepository.getCultAndOtherMovies(
+                excludedMovieIds = emptySet(),
+                audioOptions = _selectedAudioOptions.value
+            )
+        }.ifEmpty {
+            MovieRepository.getCultAndOtherMovies()
+        }
+
+        _isSoloMode.value = true
+        _isVetoedOnce.value = false
+        _isDecisionLocked.value = false
+        _activeCustomList.value = null
+        activeSpinModeOverride = "Diğer (Kült & Çok İzlenenler)"
+        _activeWheelMovies.value = cultMovies
+        RoomRepository.prepareSoloSpin(
+            moods = setOf(Mood.CULT_AWARD.id),
+            platforms = setOf(OTHER_PLATFORM_NAME),
+            customMovies = cultMovies,
+            excludedMovieIds = emptySet()
+        )
+        _selectedMovie.value = null
+        _isSpinning.value = false
+        _spinEvent.value = null
+        _feedbackToast.value = "🏛️ Kült & Çok İzlenenler (${cultMovies.size} film) çarka alındı!"
+        _currentScreen.value = Screen.WHEEL
+    }
+
+    fun openMovieInWheelFromShowcase(movie: Movie) {
+        val excludedIds = WatchedMovieRepository.excludedWheelMovieIds.value
+        val basePool = (listOf(movie) + dailyNewReleases.value + MovieRepository.allMovies)
+            .distinctBy { it.id }
+            .filterNot { it.id != movie.id && excludedIds.contains(it.id) }
+            .take(12)
+
+        _isSoloMode.value = true
+        _isVetoedOnce.value = false
+        _isDecisionLocked.value = false
+        _activeCustomList.value = null
+        activeSpinModeOverride = null
+        _activeWheelMovies.value = basePool
+        RoomRepository.prepareSoloSpin(
+            moods = setOf(movie.moodTag),
+            platforms = movie.platforms.toSet().ifEmpty { setOf(OTHER_PLATFORM_NAME) },
+            customMovies = basePool,
+            excludedMovieIds = excludedIds
+        )
+        _selectedMovie.value = movie
+        _isSpinning.value = false
+        _spinEvent.value = null
+        _currentScreen.value = Screen.WHEEL
+    }
+
+    fun openCustomLists() {
+        _currentScreen.value = Screen.CUSTOM_LISTS
+    }
+
+    fun saveCustomWheelList(
+        editingListId: String?,
+        name: String,
+        emoji: String,
+        description: String,
+        movies: List<Movie>,
+        accentColorHex: Long
+    ): CustomWheelList {
+        val saved = CustomWheelListRepository.saveCustomList(
+            editingListId = editingListId,
+            name = name,
+            emoji = emoji,
+            description = description,
+            movies = movies,
+            accentColorHex = accentColorHex
+        )
+        if (_activeCustomList.value?.id == saved.id) {
+            _activeCustomList.value = saved
+        }
+        _feedbackToast.value = "✅ '${saved.name}' çark listesi kaydedildi!"
+        return saved
+    }
+
+    fun deleteCustomWheelList(listId: String) {
+        val existingName = CustomWheelListRepository.getListById(listId)?.name ?: "Liste"
+        CustomWheelListRepository.deleteList(listId)
+        if (_activeCustomList.value?.id == listId) {
+            _activeCustomList.value = null
+        }
+        _feedbackToast.value = "🗑️ '$existingName' silindi."
+    }
+
+    fun restoreStarterCustomLists() {
+        CustomWheelListRepository.restoreStarterPresets()
+        _feedbackToast.value = "✨ Hazır kategoriler yenilendi!"
+    }
+
+    fun spinCustomWheelList(listId: String) {
+        val list = CustomWheelListRepository.getListById(listId) ?: return
+        if (list.movies.isEmpty()) {
+            _feedbackToast.value = "Bu listede henüz film yok; önce birkaç film ekle!"
+            return
+        }
+        val excludedIds = WatchedMovieRepository.excludedWheelMovieIds.value
+        val unwatched = list.movies.filterNot { excludedIds.contains(it.id) }
+        val pool = unwatched.ifEmpty { list.movies }
+        val effectiveExcluded = if (unwatched.isEmpty()) emptySet() else excludedIds
+
+        _isSoloMode.value = true
+        _isVetoedOnce.value = false
+        _isDecisionLocked.value = false
+        activeSpinModeOverride = null
+        _activeCustomList.value = list
+        _activeWheelMovies.value = pool
+        RoomRepository.prepareSoloSpin(
+            moods = _selectedMoods.value,
+            platforms = _selectedPlatforms.value,
+            customMovies = pool,
+            excludedMovieIds = effectiveExcluded
+        )
+        _selectedMovie.value = null
+        _isSpinning.value = false
+        _spinEvent.value = null
+        _currentScreen.value = Screen.WHEEL
+    }
+
+    fun spinWheel() {
+        if (_isSpinning.value) return
+        val excludedIds = WatchedMovieRepository.excludedWheelMovieIds.value
+
+        val unwatchedActive = _activeWheelMovies.value.filterNot { excludedIds.contains(it.id) }
+        _activeWheelMovies.value = unwatchedActive.ifEmpty {
+            MovieRepository.allMovies
+                .filterNot { excludedIds.contains(it.id) }
+                .ifEmpty { MovieRepository.allMovies }
+                .take(8)
+        }
+        if (RoomRepository.currentRoom.value == null) {
+            RoomRepository.prepareSoloSpin(
+                _selectedMoods.value,
+                _selectedPlatforms.value,
+                _activeWheelMovies.value,
+                excludedIds
+            )
+        }
+
+        val result = RoomRepository.triggerSpin(excludedIds) ?: return
+        val winner = result.first
+        val targetAngle = result.second
+
+        _isSpinning.value = true
+        _selectedMovie.value = null
+        spinCounter += 1L
+        _spinEvent.value = SpinEvent(
+            id = spinCounter,
+            winner = winner,
+            targetAngle = targetAngle
+        )
+    }
+
+    fun completeSpin(eventId: Long) {
+        val currentEvent = _spinEvent.value ?: return
+        if (currentEvent.id != eventId) return
+
+        _selectedMovie.value = currentEvent.winner
+        _isSpinning.value = false
+        _spinEvent.value = null
+        val customMode = _activeCustomList.value?.let { "Özel Çark (${it.name})" } ?: activeSpinModeOverride
+        RoomRepository.finishSpin(modeOverride = customMode)
+        if (_isVetoedOnce.value) {
+            _isDecisionLocked.value = true
+        }
+    }
+
+    fun applyVeto() {
+        if (_isSpinning.value || _isVetoedOnce.value) return
+        val room = currentRoom.value
+        val hostId = room?.host?.id ?: "solo_user"
+        val excludedIds = WatchedMovieRepository.excludedWheelMovieIds.value
+        _isVetoedOnce.value = true
+        RoomRepository.applyVeto(hostId, excludedIds)
+
+        // Remove vetoed movie and watched movies from wheel pool while ensuring pool stays synced & non-empty
+        val vetoedId = _selectedMovie.value?.id
+        val remaining = _activeWheelMovies.value.filter { it.id != vetoedId && !excludedIds.contains(it.id) }
+        _activeWheelMovies.value = if (remaining.isNotEmpty()) {
+            remaining
+        } else {
+            val synced = RoomRepository.currentRoom.value?.eligibleMovieIds
+                ?.mapNotNull { MovieRepository.getMovieById(it) ?: CustomWheelListRepository.findCustomMovieById(it) }
+                ?.filterNot { excludedIds.contains(it.id) }
+                ?.ifEmpty { null }
+            synced ?: MovieRepository.allMovies
+                .filter { it.id != vetoedId && !excludedIds.contains(it.id) }
+                .ifEmpty { MovieRepository.allMovies.filter { it.id != vetoedId } }
+                .take(6)
+        }
+        _selectedMovie.value = null
+
+        _feedbackToast.value = "🚫 VETO KULLANILDI! Çark son kez kaderi kilitliyor..."
+
+        // Trigger immediate final spin
+        spinWheel()
+    }
+
+    fun markMovieAsWatched(movie: Movie) {
+        WatchedMovieRepository.markAsWatched(movie)
+        val excludedIds = WatchedMovieRepository.excludedWheelMovieIds.value
+
+        val remaining = _activeWheelMovies.value.filterNot { it.id == movie.id || excludedIds.contains(it.id) }
+        _activeWheelMovies.value = remaining.ifEmpty {
+            MovieRepository.allMovies
+                .filterNot { excludedIds.contains(it.id) }
+                .ifEmpty { MovieRepository.allMovies }
+                .take(8)
+        }
+        RoomRepository.excludeMovieFromCurrentRoom(movie.id)
+        _feedbackToast.value = "✓ '${movie.title}' izlenenlere eklendi, bir daha çarkta çıkmayacak!"
+    }
+
+    fun updateWatchedMovieNote(movieId: String, note: String) {
+        WatchedMovieRepository.updateNote(movieId, note)
+        _feedbackToast.value = if (note.isBlank()) {
+            "Film notu temizlendi."
+        } else {
+            "📝 Kişisel film notun kaydedildi!"
+        }
+    }
+
+    fun toggleRewatchMovie(movieId: String) {
+        val enabled = WatchedMovieRepository.toggleRewatch(movieId) ?: return
+        _feedbackToast.value = if (enabled) {
+            "🔁 Tekrar izleme işaretlendi! Bu film çarka yeniden girebilir."
+        } else {
+            "✓ Tekrar izleme kapatıldı, film çark dışı bırakıldı."
+        }
+    }
+
+    fun removeWatchedMovie(movieId: String) {
+        WatchedMovieRepository.removeWatched(movieId)
+        _feedbackToast.value = "Film izlenenlerden çıkarıldı, tekrar çarka girebilir."
+    }
+
+    fun toggleFavoriteMovie(movieId: String, title: String? = null) {
+        val added = WatchedMovieRepository.toggleFavorite(movieId)
+        val label = title ?: MovieRepository.getMovieById(movieId)?.title ?: "Film"
+        _feedbackToast.value = if (added) {
+            "❤️ '$label' favorilerine eklendi!"
+        } else {
+            "💔 '$label' favorilerinden çıkarıldı."
+        }
+    }
+
+    fun deleteSavedDecision(decisionId: String) {
+        val targetTitle = _savedDecisionsTitle(decisionId)
+        RoomRepository.deleteSavedDecision(decisionId)
+        _feedbackToast.value = if (targetTitle != null) {
+            "🗑️ '$targetTitle' seçim geçmişinden kaldırıldı."
+        } else {
+            "🗑️ Seçim geçmişinden kaldırıldı."
+        }
+    }
+
+    fun clearSavedHistory() {
+        RoomRepository.clearSavedHistory()
+        _feedbackToast.value = "🧹 Tüm 'Geçmişte Ne Seçtik?' kayıtları temizlendi."
+    }
+
+    private fun _savedDecisionsTitle(decisionId: String): String? {
+        return savedDecisions.value.find { it.id == decisionId }?.movie?.title
+    }
+
+    fun openStoryModal() {
+        _showStoryModal.value = true
+    }
+
+    fun closeStoryModal() {
+        _showStoryModal.value = false
+    }
+
+    fun clearToast() {
+        _feedbackToast.value = null
+    }
+
+    fun chooseAlternativeMovie(movie: Movie) {
+        _selectedMovie.value = movie
+        RoomRepository.selectAlternativeMovie(movie)
+        _feedbackToast.value = "🎬 Alternatif seçildi: ${movie.title}"
+    }
+
+    fun openCompareMode(genreFilter: String? = _compareState.value.selectedGenreFilter) {
+        startCompareSession(genreFilter = genreFilter)
+        _currentScreen.value = Screen.COMPARE
+    }
+
+    fun startCompareSession(genreFilter: String? = _compareState.value.selectedGenreFilter) {
+        val excludedIds = WatchedMovieRepository.excludedWheelMovieIds.value
+        val genreMatchingAll = if (genreFilter.isNullOrBlank()) {
+            MovieRepository.allMovies
+        } else {
+            MovieRepository.allMovies.filter { it.genre.contains(genreFilter, ignoreCase = true) }
+                .ifEmpty { MovieRepository.allMovies }
+        }
+        val unwatched = genreMatchingAll.filterNot { excludedIds.contains(it.id) }
+        val pool = when {
+            unwatched.size >= 2 -> unwatched
+            genreMatchingAll.size >= 2 -> genreMatchingAll
+            else -> MovieRepository.allMovies.filterNot { excludedIds.contains(it.id) }
+                .ifEmpty { MovieRepository.allMovies }
+        }.shuffled().take(6)
+
+        val left = pool.getOrNull(0)
+        val right = pool.getOrNull(1)
+        val queue = if (pool.size > 2) pool.drop(2) else emptyList()
+        val rounds = (pool.size - 1).coerceAtLeast(1)
+
+        _compareState.value = CompareUiState(
+            leftMovie = left,
+            rightMovie = right,
+            queue = queue,
+            roundNumber = 1,
+            totalRounds = rounds,
+            selectedGenreFilter = genreFilter,
+            champion = null,
+            currentStreakMovieId = null,
+            currentStreakCount = 0
+        )
+    }
+
+    fun pickCompareWinner(keepLeft: Boolean) {
+        val state = _compareState.value
+        if (state.champion != null) return
+        val winner = (if (keepLeft) state.leftMovie else state.rightMovie) ?: return
+        val newStreak = if (state.currentStreakMovieId == winner.id) state.currentStreakCount + 1 else 1
+
+        if (state.queue.isEmpty()) {
+            _selectedMovie.value = winner
+            RoomRepository.recordSavedDecision(winner, "Film Karşılaştır (VS)")
+            _compareState.value = state.copy(
+                champion = winner,
+                currentStreakMovieId = winner.id,
+                currentStreakCount = newStreak
+            )
+            _feedbackToast.value = "🏆 Gecenin Şampiyonu: ${winner.title}!"
+            return
+        }
+
+        val nextChallenger = state.queue.first()
+        val remaining = state.queue.drop(1)
+
+        _compareState.value = if (keepLeft) {
+            state.copy(
+                leftMovie = winner,
+                rightMovie = nextChallenger,
+                queue = remaining,
+                roundNumber = state.roundNumber + 1,
+                currentStreakMovieId = winner.id,
+                currentStreakCount = newStreak
+            )
+        } else {
+            state.copy(
+                leftMovie = nextChallenger,
+                rightMovie = winner,
+                queue = remaining,
+                roundNumber = state.roundNumber + 1,
+                currentStreakMovieId = winner.id,
+                currentStreakCount = newStreak
+            )
+        }
+    }
+
+    fun skipComparePair() {
+        val state = _compareState.value
+        if (state.champion != null) return
+        val excludedIds = WatchedMovieRepository.excludedWheelMovieIds.value
+        val currentIds = setOfNotNull(state.leftMovie?.id, state.rightMovie?.id)
+
+        val nextQueue = if (state.queue.size >= 2) {
+            state.queue
+        } else {
+            val fresh = MovieRepository.allMovies
+                .filter { movie ->
+                    val genreOk = state.selectedGenreFilter.isNullOrBlank() ||
+                        movie.genre.contains(state.selectedGenreFilter, ignoreCase = true)
+                    genreOk && !excludedIds.contains(movie.id) && !currentIds.contains(movie.id)
+                }
+                .ifEmpty {
+                    MovieRepository.allMovies.filterNot { currentIds.contains(it.id) }
+                }
+                .shuffled()
+            (state.queue + fresh).distinctBy { it.id }
+        }
+
+        if (nextQueue.size < 2) {
+            _feedbackToast.value = "Bu kategoride başka yeni çift kalmadı, birini seçebilirsin!"
+            return
+        }
+
+        val newLeft = nextQueue[0]
+        val newRight = nextQueue[1]
+        val remaining = nextQueue.drop(2)
+
+        _compareState.value = state.copy(
+            leftMovie = newLeft,
+            rightMovie = newRight,
+            queue = remaining,
+            currentStreakMovieId = null,
+            currentStreakCount = 0
+        )
+    }
+
+    fun lockCompareChampion(movie: Movie) {
+        val state = _compareState.value
+        _selectedMovie.value = movie
+        RoomRepository.recordSavedDecision(movie, "Film Karşılaştır (VS)")
+        _compareState.value = state.copy(
+            champion = movie,
+            currentStreakMovieId = movie.id,
+            currentStreakCount = (state.currentStreakCount + 1).coerceAtLeast(1)
+        )
+        _feedbackToast.value = "🏆 Seçim kilitlendi: ${movie.title}!"
+    }
+
+    fun selectMovieForFlex(movie: Movie) {
+        _selectedMovie.value = movie
+        _currentScreen.value = Screen.FLEX
+    }
+
+    fun openMovieFromWidget(movieId: String) {
+        val movie = MovieRepository.getMovieById(movieId) ?: return
+        val excludedIds = WatchedMovieRepository.excludedWheelMovieIds.value
+        val pool = MovieRepository.allMovies
+            .filterNot { excludedIds.contains(it.id) }
+            .ifEmpty { MovieRepository.allMovies }
+        val ensuredPool = if (pool.any { it.id == movie.id }) pool else listOf(movie) + pool
+
+        _isSoloMode.value = true
+        _activeCustomList.value = null
+        _activeWheelMovies.value = ensuredPool
+        RoomRepository.prepareSoloSpin(
+            moods = _selectedMoods.value,
+            platforms = _selectedPlatforms.value,
+            customMovies = ensuredPool,
+            excludedMovieIds = excludedIds
+        )
+        _selectedMovie.value = movie
+        _isSpinning.value = false
+        _spinEvent.value = null
+        _currentScreen.value = Screen.WHEEL
+    }
+
+    fun resetToHome() {
+        RoomRepository.clearRoom()
+        _activeCustomList.value = null
+        _selectedMovie.value = null
+        _isVetoedOnce.value = false
+        _isDecisionLocked.value = false
+        _isSpinning.value = false
+        _spinEvent.value = null
+        _showStoryModal.value = false
+        _currentScreen.value = Screen.HOME
+    }
+}

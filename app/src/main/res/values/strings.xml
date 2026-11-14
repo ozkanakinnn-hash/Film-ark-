@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Ne İzlesek?</string>
+    <string name="widget_label">Ne İzlesek? Çarkı</string>
+    <string name="widget_description">Uygulamayı açmadan ana ekrandan film çarkını döndür veya günün film önerisini gör.</string>
+    <string name="widget_spin_cd">Ana ekrandan çarkı çevir</string>
+    <string name="widget_daily_cd">Günün film önerisini göster</string>
+</resources>
