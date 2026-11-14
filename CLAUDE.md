@@ -16,9 +16,8 @@ First-time setup on a fresh machine (e.g. a cloud session):
 - Android SDK needs `platforms;android-36.1` and `build-tools;36.1.0`; write `sdk.dir=<path>` to `local.properties` (gitignored).
 - `debug.keystore` is gitignored but required by the `debugConfig` signing config. Generate it once:
   `keytool -genkeypair -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"`
-- Maven Central may answer `429 Too Many Requests` on the first resolve; simply re-run the build (downloaded artifacts stay cached).
-- Maven Central redirects some large jars (e.g. Robolectric `nativeruntime-dist-compat`) to `gcp.mirrors.maven.org`; in a cloud environment with limited network that host must be in the allowed hosts list.
-- On first run Robolectric downloads `android-all-instrumented` (SDK 36) into `~/.m2` at test time and does not retry on 429; if `ExampleRobolectricTest` fails with `MavenArtifactFetcher` / HTTP 429, wait ~1 minute and re-run that test class.
+- Cloud sessions: use the personal `Film-ark-` environment. Its setup script installs the SDK, generates `debug.keystore`, and adds a Gradle init script (`~/.gradle/init.d/central-mirror.gradle`) that puts Google's official Maven Central mirror (`maven-central.storage-download.googleapis.com`) first and points Robolectric's `android-all` download at it.
+- Without that mirror, Maven Central answers `429 Too Many Requests` here. Gradle then caches those artifacts as "Could not find", and later runs fail even after the rate limit ends. Do not use `--refresh-dependencies` to fix this, because it triggers more 429s. Use the mirror, or delete `~/.gradle/caches/modules-2/metadata-*` and run again.
 - Debug APK output: `app/build/outputs/apk/debug/app-debug.apk`.
 
 ```bash
