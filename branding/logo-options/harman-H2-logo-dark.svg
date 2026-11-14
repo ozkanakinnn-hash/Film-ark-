@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 260">
+<g transform="translate(150,0)">
+<text x="10" y="172" font-family="'Inter Display','Inter',sans-serif" font-weight="800" font-size="150" letter-spacing="-5" fill="#F6F2EA">Ne İzlesek</text>
+<g transform="translate(668.4,43.5) scale(0.3016)"><path d="M166.34,188.16 A90,90 0 0 1 196.95,128.08" fill="none" stroke="#E9B949" stroke-width="96"/>
+<path d="M209.65,118.85 A90,90 0 0 1 276.25,108.31" fill="none" stroke="#E9B949" stroke-width="96"/>
+<path d="M291.17,113.15 A90,90 0 0 1 338.85,160.83" fill="none" stroke="#D63447" stroke-width="96"/>
+<path d="M343.69,175.75 A90,90 0 0 1 333.15,242.35" fill="none" stroke="#E9B949" stroke-width="96"/>
+<path d="M323.92,255.05 A90,90 0 0 1 256,286" fill="none" stroke="#E9B949" stroke-width="96" stroke-linecap="round"/>
+<path d="M282.00,196.00 L249.00,215.05 L249.00,176.95 Z" fill="#F6F2EA" stroke="#F6F2EA" stroke-width="8" stroke-linejoin="round"/>
+<path d="M218,366 L294,366 L256,416 Z" fill="#D63447" stroke="#D63447" stroke-width="20" stroke-linejoin="round"/></g>
+</g>
+</svg>
