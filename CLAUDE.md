@@ -10,21 +10,28 @@ This file provides guidance to Claude Code when working with the **Ne İzlesek?*
 - **SDKs:** `compileSdk = 36`, `minSdk = 24`, `targetSdk = 36`, Java 11
 
 ## Build & Test Commands
-Note: This repository does not include a checked-in `gradlew` wrapper script by default; use a local `gradle` installation (or generate a wrapper in Android Studio / `gradle wrapper`).
+Use the checked-in Gradle wrapper (`./gradlew`, Gradle 9.3.1, AGP 9.1.1, JDK 21 works).
+
+First-time setup on a fresh machine (e.g. a cloud session):
+- Android SDK needs `platforms;android-36.1` and `build-tools;36.1.0`; write `sdk.dir=<path>` to `local.properties` (gitignored).
+- `debug.keystore` is gitignored but required by the `debugConfig` signing config. Generate it once:
+  `keytool -genkeypair -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"`
+- Maven Central may answer `429 Too Many Requests` on the first resolve; simply re-run the build (downloaded artifacts stay cached).
+- Debug APK output: `app/build/outputs/apk/debug/app-debug.apk`.
 
 ```bash
 # Build debug APK
-gradle :app:assembleDebug
+./gradlew :app:assembleDebug
 
 # Run all JVM unit & Robolectric UI/DAO tests
-gradle :app:testDebugUnitTest
+./gradlew :app:testDebugUnitTest
 
 # Run a single unit or Robolectric test class
-gradle :app:testDebugUnitTest --tests "com.example.DecisionUnitTest"
-gradle :app:testDebugUnitTest --tests "com.example.ExampleRobolectricTest"
+./gradlew :app:testDebugUnitTest --tests "com.example.DecisionUnitTest"
+./gradlew :app:testDebugUnitTest --tests "com.example.ExampleRobolectricTest"
 
 # Android Lint check
-gradle :app:lintDebug
+./gradlew :app:lintDebug
 ```
 
 ## Architecture & Key Modules
