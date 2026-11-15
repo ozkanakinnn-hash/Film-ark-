@@ -394,7 +394,7 @@ fun MovieFilterComponent(
                     Text(text = "⭐️", fontSize = 16.sp)
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        text = "Minimum IMDb Puanı",
+                        text = "Minimum Puan",
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary

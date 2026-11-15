@@ -38,6 +38,7 @@ object MovieRepository {
             whyWatch = "Rengarenk ada manzaraları, Daniel Craig'in şivesi ve sıfır beyin yorgunluğuyla patlamış mısırın dibini gördüren eğlence.",
             posterPath = "/5nVRMEnjQ4yDOdDdRZehqqBac9p.jpg",
             tmdbId = 661374,
+            trailerKey = "aEdV1RoBU_0",
             colorHex = 0xFF0284C7,
             isNewRelease = false
         ),
@@ -55,6 +56,7 @@ object MovieRepository {
             whyWatch = "Servet Abi'nin tiratları ve absürt diyaloglarla çiftlerin asla sıkılmayacağı garanti Türk komedisi.",
             posterPath = "/pxdmeAKAjeoMIPBrhgULHAZct60.jpg",
             tmdbId = 1137064,
+            trailerKey = "PnQrVt3Vvxc",
             colorHex = 0xFFD97706,
             audioOptions = listOf(AudioLanguageOption.DUBBED.id, AudioLanguageOption.SUBTITLED.id),
             isNewRelease = false
@@ -73,6 +75,7 @@ object MovieRepository {
             whyWatch = "Fizik kurallarını kapıda bırakıp saf adrenalin ve hızla akşamı şenlendirmek isteyenlerin ilacı.",
             posterPath = "/oG4bxAtNP8ikDYkH5PoHdCE0muN.jpg",
             tmdbId = 51497,
+            trailerKey = "BB1HHHr2qkc",
             colorHex = 0xFFDC2626,
             isNewRelease = false
         ),
@@ -92,6 +95,7 @@ object MovieRepository {
             whyWatch = "İlişkinizi sorgulatacak derecede zekice kurgulanmış David Fincher başyapıtı. Nefesinizi tutarak izleyeceksiniz.",
             posterPath = "/ukTOTpF1KK2L4qURnFsGtWpjYO.jpg",
             tmdbId = 210577,
+            trailerKey = "7iJXGWfcYkA",
             colorHex = 0xFF475569,
             isNewRelease = false
         ),
@@ -109,6 +113,7 @@ object MovieRepository {
             whyWatch = "Son sahnesine kadar aklınızı kurcalayacak ve bittiğinde yarım saat tartıştıracak Leonardo DiCaprio efsanesi.",
             posterPath = "/epp8lnSQEWe9cYQACEhBDZTY18L.jpg",
             tmdbId = 11324,
+            trailerKey = "eDIphEz4RbQ",
             colorHex = 0xFF1E293B,
             isCultOrMostWatched = true,
             isNewRelease = false
@@ -127,6 +132,7 @@ object MovieRepository {
             whyWatch = "Film boyunca evde çıt çıkaramayacaksınız; 90 dakikalık saf tansiyon ve harika bir gerilim dozu.",
             posterPath = "/apGuHOq9c4lhP2Kh9i20aKtJwpQ.jpg",
             tmdbId = 447332,
+            trailerKey = "7QFMIPRs2Lc",
             colorHex = 0xFF7F1D1D,
             isNewRelease = false
         ),
@@ -146,6 +152,7 @@ object MovieRepository {
             whyWatch = "Dünyanın en kaotik sabahı; gülmekten karın kaslarınızı ağrıtacak eskimeyen kült komedi.",
             posterPath = "/5E3Ss66DcscchIbW7GCxFuqlKSZ.jpg",
             tmdbId = 18785,
+            trailerKey = "tlize92ffnY",
             colorHex = 0xFFEAB308,
             isCultOrMostWatched = true,
             isNewRelease = false
@@ -182,6 +189,7 @@ object MovieRepository {
             whyWatch = "Wes Anderson'ın pastel renk paleti, enfes simetrisi ve çılgın temposuyla tam bir görsel şölen.",
             posterPath = "/hYdclrAOjWtxTgE7PZy102hTYAf.jpg",
             tmdbId = 120467,
+            trailerKey = "w0e_zqphqH0",
             colorHex = 0xFFBE185D,
             audioOptions = listOf(AudioLanguageOption.SUBTITLED.id),
             isNewRelease = false
@@ -202,12 +210,13 @@ object MovieRepository {
             whyWatch = "Sadece bir aşk filmi değil, hayattaki her saniyenin değerini hissettiren sıcacık bir başyapıt.",
             posterPath = "/l6rn8sMGG71tPnQr6Tq9GshLUi.jpg",
             tmdbId = 122906,
+            trailerKey = "7OIFdWk83no",
             colorHex = 0xFFF43F5E,
             isNewRelease = false
         ),
         Movie(
             id = "m11",
-            title = "La La Land",
+            title = "Aşıklar Şehri",
             originalTitle = "La La Land",
             year = 2016,
             durationMins = 128,
@@ -219,6 +228,7 @@ object MovieRepository {
             whyWatch = "Emma Stone ve Ryan Gosling'in kimyası, büyüleyici müzikleri ve unutulmaz finaliyle kalbinize dokunacak.",
             posterPath = "/xDBZNak6HyOEjKIbrjqDxllWXRn.jpg",
             tmdbId = 313369,
+            trailerKey = "Zfy4rGzZDes",
             colorHex = 0xFF6366F1,
             audioOptions = listOf(AudioLanguageOption.SUBTITLED.id, AudioLanguageOption.DUBBED.id),
             isNewRelease = false
@@ -237,6 +247,7 @@ object MovieRepository {
             whyWatch = "İki insanın konuşmasının bile büyüleyici olabileceğini kanıtlayan sinema tarihinin en samimi aşk filmi.",
             posterPath = "/wxHSvwq08RKqSVHk4iBPC0erUg2.jpg",
             tmdbId = 76,
+            trailerKey = "jGvcbSabADM",
             colorHex = 0xFFEC4899,
             audioOptions = listOf(AudioLanguageOption.SUBTITLED.id),
             isCultOrMostWatched = true,
@@ -258,6 +269,7 @@ object MovieRepository {
             whyWatch = "Hans Zimmer'ın iliklere işleyen müzikleri ve kara delik teorileriyle vizyonunuzu ikiye katlayacak dev yapım.",
             posterPath = "/xbiycuc84TrieEWwkkuH2hoEa9S.jpg",
             tmdbId = 157336,
+            trailerKey = "vVJeYMRam0o",
             colorHex = 0xFF0EA5E9,
             isCultOrMostWatched = true,
             isNewRelease = false
@@ -276,6 +288,7 @@ object MovieRepository {
             whyWatch = "Fırıldak dönmeye devam ediyor mu etmiyor mu tartışmasını yeniden alevlendirecek modern klasik.",
             posterPath = "/xn0Kcg4e6p0mLxVS3nAWhNmW2Ni.jpg",
             tmdbId = 27205,
+            trailerKey = "JE9z-gy4De4",
             colorHex = 0xFF14B8A6,
             isCultOrMostWatched = true,
             isNewRelease = false
@@ -294,6 +307,7 @@ object MovieRepository {
             whyWatch = "Gözünüzü ekrandan bir saniye bile ayıramayacağınız, kusursuz ters köşelerle dolu bir akıl düellosu.",
             posterPath = "/wiSuje8hdVuwM0pvhtSFirCHmJF.jpg",
             tmdbId = 1124,
+            trailerKey = "ijXruSzfGEc",
             colorHex = 0xFF6D28D9,
             isCultOrMostWatched = true,
             isNewRelease = false
@@ -314,6 +328,7 @@ object MovieRepository {
             whyWatch = "Oscar tarihini baştan yazan, her sahnesi dahiyane detaylarla örülü çağımızın en iyi filmlerinden biri.",
             posterPath = "/nx7TmJDMkgyBc09DVo5ze52Wt3F.jpg",
             tmdbId = 496243,
+            trailerKey = "WlRWypBw3kw",
             colorHex = 0xFF047857,
             audioOptions = listOf(AudioLanguageOption.SUBTITLED.id),
             isCultOrMostWatched = true,
@@ -333,6 +348,7 @@ object MovieRepository {
             whyWatch = "Nuri Bilge Ceylan'ın Cannes ödüllü, insan ruhunun derinliklerine ayna tutan sinematik şaheseri.",
             posterPath = "/tWZgd5cQmVhYlvWPV46ljBoWLDT.jpg",
             tmdbId = 74879,
+            trailerKey = "oMxDtfN2U_0",
             colorHex = 0xFF854D0E,
             isCultOrMostWatched = true,
             isNewRelease = false
@@ -351,6 +367,7 @@ object MovieRepository {
             whyWatch = "Son 15 dakikasında yerinizde duramayacağınız, adrenalin pompalayan inanılmaz bir oyunculuk gösterisi.",
             posterPath = "/q3Ev5vIC3fklycV9kfpVIdbRe14.jpg",
             tmdbId = 244786,
+            trailerKey = "WF41WzUa-z0",
             colorHex = 0xFFB91C1C,
             audioOptions = listOf(AudioLanguageOption.SUBTITLED.id, AudioLanguageOption.DUBBED.id),
             isNewRelease = false
@@ -371,6 +388,7 @@ object MovieRepository {
             whyWatch = "Klişe zıplatmalardan uzak, atmosferiyle iliklerinize kadar ürperten modern korku klasiği.",
             posterPath = "/jYDRJq5hvD3L4nlOqVQKFHvclF6.jpg",
             tmdbId = 138843,
+            trailerKey = "5u5A471adxg",
             colorHex = 0xFF450A0A,
             isCultOrMostWatched = true,
             isNewRelease = false
@@ -389,6 +407,7 @@ object MovieRepository {
             whyWatch = "Işıkları açtıktan sonra bile etkisinden çıkamayacağınız, psikolojik dozu tavan bir kabus.",
             posterPath = "/tMIKsS1nbaJSVRfVqt4JN9A3eEI.jpg",
             tmdbId = 493922,
+            trailerKey = "MJNR58zaStE",
             colorHex = 0xFF18181B,
             audioOptions = listOf(AudioLanguageOption.SUBTITLED.id),
             isNewRelease = false
@@ -409,13 +428,14 @@ object MovieRepository {
             whyWatch = "Hayao Miyazaki'nin Oscar ödüllü, izleyen her yetişkini çocukluğuna ve masallar diyarına götüren başyapıtı.",
             posterPath = "/xvOEOMCzfV8qXkd1n1btZ8q4Psd.jpg",
             tmdbId = 129,
+            trailerKey = "GAp2_0JJskk",
             colorHex = 0xFF059669,
             isCultOrMostWatched = true,
             isNewRelease = false
         ),
         Movie(
             id = "m22",
-            title = "Örümcek-Adam: Örümcek Evreninde",
+            title = "Örümcek Adam: Örümcek Evreninde",
             originalTitle = "Spider-Man: Into the Spider-Verse",
             year = 2018,
             durationMins = 117,
@@ -427,6 +447,7 @@ object MovieRepository {
             whyWatch = "Görsel stili, dinamik müzikleri ve temposuyla animasyon sinemasında çığır açan bir enerji patlaması.",
             posterPath = "/ii2MsmBmTL5kQuvBRCtKokUAF8v.jpg",
             tmdbId = 324857,
+            trailerKey = "c8vhYW77GKI",
             colorHex = 0xFFE11D48,
             isNewRelease = false
         ),
@@ -444,6 +465,7 @@ object MovieRepository {
             whyWatch = "Müzikleriyle gözlerinizden yaş getirecek, aile bağlarını sıcacık anlatan Pixar mucizesi.",
             posterPath = "/f9Ro5x36UTDdHFrhnHeXqlhBVRF.jpg",
             tmdbId = 354912,
+            trailerKey = "UVFEmgoLZac",
             colorHex = 0xFFEA580C,
             isNewRelease = false
         ),
@@ -453,7 +475,7 @@ object MovieRepository {
         // =========================================================================
         Movie(
             id = "m24",
-            title = "Günahkarlar",
+            title = "Günahkârlar",
             originalTitle = "Sinners",
             year = 2025,
             durationMins = 137,
@@ -465,6 +487,7 @@ object MovieRepository {
             whyWatch = "Ryan Coogler imzalı, müzik ve doğaüstü korkuyu harmanlayan 2025'in en çok konuşulan yapımı.",
             posterPath = "/tvRgDns7bJuIWkEaF6JJMKr8kNA.jpg",
             tmdbId = 1233413,
+            trailerKey = "k8ZdoeroiD0",
             colorHex = 0xFF991B1B,
             audioOptions = listOf(AudioLanguageOption.DUBBED.id, AudioLanguageOption.SUBTITLED.id),
             isNewRelease = true
@@ -483,6 +506,7 @@ object MovieRepository {
             whyWatch = "Demi Moore'un cesur performansıyla Cannes'dan ödülle dönen çarpıcı modern body-horror şaheseri.",
             posterPath = "/rNrBHeqnDA8aHIz9eYkBskcKhq7.jpg",
             tmdbId = 933260,
+            trailerKey = "5AAwkW3Hmm0",
             colorHex = 0xFFBE123C,
             audioOptions = listOf(AudioLanguageOption.SUBTITLED.id),
             isNewRelease = true
@@ -501,6 +525,7 @@ object MovieRepository {
             whyWatch = "Robert Eggers'ın büyüleyici gotik atmosferi ve karanlık sinematografisiyle tüyler ürperten yeni nesil korku.",
             posterPath = "/oHmwlW121vqSPvD27sRTRco1Vz6.jpg",
             tmdbId = 426063,
+            trailerKey = "8u9edQqXqHk",
             colorHex = 0xFF31102F,
             audioOptions = listOf(AudioLanguageOption.DUBBED.id, AudioLanguageOption.SUBTITLED.id),
             isNewRelease = true
@@ -519,6 +544,7 @@ object MovieRepository {
             whyWatch = "Danny Boyle ve Alex Garland ikilisinin soluksuz gerilim ve hayatta kalma korkusuyla dönüşü.",
             posterPath = "/9r5MhviULOsrmHb3IUwCt6I2Bf.jpg",
             tmdbId = 1100988,
+            trailerKey = "rV0c747saJM",
             colorHex = 0xFF7F1D1D,
             audioOptions = listOf(AudioLanguageOption.DUBBED.id, AudioLanguageOption.SUBTITLED.id),
             isNewRelease = true
@@ -537,13 +563,14 @@ object MovieRepository {
             whyWatch = "Klasik uzay korkusu gerilimini yeni nesil klostrofobik bir tempoyla yeniden canlandırıyor.",
             posterPath = "/2uSWRTtCG336nuBiG8jOTEUKSy8.jpg",
             tmdbId = 945961,
+            trailerKey = "x0XDEhP4MQs",
             colorHex = 0xFF14532D,
             audioOptions = listOf(AudioLanguageOption.DUBBED.id, AudioLanguageOption.SUBTITLED.id),
             isNewRelease = true
         ),
         Movie(
             id = "m29",
-            title = "Longlegs",
+            title = "Cambaz",
             originalTitle = "Longlegs",
             year = 2024,
             durationMins = 101,
@@ -555,6 +582,7 @@ object MovieRepository {
             whyWatch = "Nicolas Cage'in ürkütücü dönüşümüyle her sahnesi tedirginlik yaratan modern dedektif korkusu.",
             posterPath = "/zSaUu3mGJYflbTR3b5G3DsDPklI.jpg",
             tmdbId = 1226578,
+            trailerKey = "FXOtkvx25gI",
             colorHex = 0xFF4C0519,
             audioOptions = listOf(AudioLanguageOption.SUBTITLED.id, AudioLanguageOption.DUBBED.id),
             isNewRelease = true
@@ -573,13 +601,14 @@ object MovieRepository {
             whyWatch = "M. Night Shyamalan'dan konser atmosferinde geçen akıl oyunlu gerilim-korku.",
             posterPath = "/yEYMle2XTbrxPZyHUrEJUU2peyt.jpg",
             tmdbId = 1032823,
+            trailerKey = "gU9fHNxOTcE",
             colorHex = 0xFF701A75,
             audioOptions = listOf(AudioLanguageOption.DUBBED.id, AudioLanguageOption.SUBTITLED.id),
             isNewRelease = true
         ),
         Movie(
             id = "m31",
-            title = "İlk Alamet",
+            title = "Omen: İlk Kehanet",
             originalTitle = "The First Omen",
             year = 2024,
             durationMins = 119,
@@ -591,6 +620,7 @@ object MovieRepository {
             whyWatch = "Klasik doğaüstü korku sevenler için 70'ler sinematografisine saygı duruşu niteliğinde ürpertici bir yapım.",
             posterPath = "/99keBLz0m5kfjSO6K5byZxdHcBi.jpg",
             tmdbId = 437342,
+            trailerKey = "6GMiIRitv5s",
             colorHex = 0xFF881337,
             audioOptions = listOf(AudioLanguageOption.SUBTITLED.id, AudioLanguageOption.DUBBED.id),
             isNewRelease = true
@@ -613,6 +643,7 @@ object MovieRepository {
             whyWatch = "Ryan Gosling başrolünde, zeka ve duygusallığı birleştiren 2026'nın en büyük bilim kurgu olayı.",
             posterPath = "/suFNqtGOi0BsBI3uJPKkDXCwgVI.jpg",
             tmdbId = 687163,
+            trailerKey = "NX7PqJII7oY",
             colorHex = 0xFF0284C7,
             audioOptions = listOf(AudioLanguageOption.DUBBED.id, AudioLanguageOption.SUBTITLED.id),
             isNewRelease = true
@@ -631,13 +662,14 @@ object MovieRepository {
             whyWatch = "Matt Damon ve Ben Affleck'i gerilim dolu bir suç hikayesinde yeniden buluşturan yeni Netflix hiti.",
             posterPath = "/4wsYWH73Hb1B6noGIFaRQSAkuXj.jpg",
             tmdbId = 1306368,
+            trailerKey = "yeR5bcbRPak",
             colorHex = 0xFF334155,
             audioOptions = listOf(AudioLanguageOption.DUBBED.id, AudioLanguageOption.SUBTITLED.id),
             isNewRelease = true
         ),
         Movie(
             id = "m34",
-            title = "Dune: Çöl Gezegeni Bölüm İki",
+            title = "Dune: Çöl Gezegeni - Bölüm İki",
             originalTitle = "Dune: Part Two",
             year = 2024,
             durationMins = 166,
@@ -649,6 +681,7 @@ object MovieRepository {
             whyWatch = "Dev ekran atmosferi, Hans Zimmer müzikleri ve nefes kesen görselliğiyle modern sinema efsanesi.",
             posterPath = "/tihf8Trht9zP3scmUQfvGlAY9FU.jpg",
             tmdbId = 693134,
+            trailerKey = "j0e5Wnxs5BI",
             colorHex = 0xFFD97706,
             audioOptions = listOf(AudioLanguageOption.DUBBED.id, AudioLanguageOption.SUBTITLED.id),
             isCultOrMostWatched = true,
@@ -668,13 +701,14 @@ object MovieRepository {
             whyWatch = "Bong Joon Ho ve Robert Pattinson'dan zeki, eğlenceli ve sistem eleştirisi yüklü bilim kurgu.",
             posterPath = "/edKpE9B5qN3e559OuMCLZdW1iBZ.jpg",
             tmdbId = 696506,
+            trailerKey = "JRPXmWieUOg",
             colorHex = 0xFF0D9488,
             audioOptions = listOf(AudioLanguageOption.DUBBED.id, AudioLanguageOption.SUBTITLED.id),
             isNewRelease = true
         ),
         Movie(
             id = "m36",
-            title = "Deadpool & Wolverine",
+            title = "Deadpool ve Wolverine",
             originalTitle = "Deadpool & Wolverine",
             year = 2024,
             durationMins = 128,
@@ -686,13 +720,14 @@ object MovieRepository {
             whyWatch = "Yüksek tempo, keskin mizah ve kesintisiz aksiyon arayanlar için birebir.",
             posterPath = "/dLXMNyATO9GBfeVxEoa0rh4iHMU.jpg",
             tmdbId = 533535,
+            trailerKey = "MT9sfGaRhwk",
             colorHex = 0xFFDC2626,
             audioOptions = listOf(AudioLanguageOption.DUBBED.id, AudioLanguageOption.SUBTITLED.id),
             isNewRelease = true
         ),
         Movie(
             id = "m37",
-            title = "Hoppers",
+            title = "Hoplayanlar",
             originalTitle = "Hoppers",
             year = 2026,
             durationMins = 104,
@@ -704,6 +739,7 @@ object MovieRepository {
             whyWatch = "Pixar'ın 2026 tarihli hem kahkaha attıran hem duygulandıran yepyeni aile animasyonu.",
             posterPath = "/eYjLQ3ULyr3nWj218Cu7YYU0Z8x.jpg",
             tmdbId = 1327819,
+            trailerKey = "SSE8jaCE6LA",
             colorHex = 0xFF059669,
             audioOptions = listOf(AudioLanguageOption.DUBBED.id, AudioLanguageOption.SUBTITLED.id),
             isNewRelease = true
@@ -722,6 +758,7 @@ object MovieRepository {
             whyWatch = "Her yaştan izleyicinin kendinden bir parça bulduğu rekor kıran Pixar macerası.",
             posterPath = "/xYqeUheNCep7ll9AotOcclGhP0X.jpg",
             tmdbId = 1022789,
+            trailerKey = "EVCcthYHYMc",
             colorHex = 0xFFEA580C,
             audioOptions = listOf(AudioLanguageOption.DUBBED.id, AudioLanguageOption.SUBTITLED.id),
             isNewRelease = true
@@ -740,13 +777,14 @@ object MovieRepository {
             whyWatch = "Görsel olarak nefes kesen, sıcacık hikayesiyle son yılların en sevilen animasyon başyapıtı.",
             posterPath = "/wIPEakWqEBfpqtw7dXaVUQ5Qz8E.jpg",
             tmdbId = 1184918,
+            trailerKey = "bHNPW08aOXY",
             colorHex = 0xFF10B981,
             audioOptions = listOf(AudioLanguageOption.DUBBED.id, AudioLanguageOption.SUBTITLED.id),
             isNewRelease = true
         ),
         Movie(
             id = "m40",
-            title = "Tetikçi",
+            title = "Gizli Görev",
             originalTitle = "Hit Man",
             year = 2024,
             durationMins = 115,
@@ -758,13 +796,14 @@ object MovieRepository {
             whyWatch = "Glen Powell'ın karizması ve zekice yazılmış diyaloglarıyla zahmetsiz keyif sunan suç komedisi.",
             posterPath = "/5AC3hYF7Yd8wBtwxZHNaOD0biDB.jpg",
             tmdbId = 974635,
+            trailerKey = "9kAeleONocI",
             colorHex = 0xFFD97706,
             audioOptions = listOf(AudioLanguageOption.DUBBED.id, AudioLanguageOption.SUBTITLED.id),
             isNewRelease = true
         ),
         Movie(
             id = "m41",
-            title = "Kurtlar",
+            title = "Yalnız Kurtlar",
             originalTitle = "Wolfs",
             year = 2024,
             durationMins = 108,
@@ -776,13 +815,14 @@ object MovieRepository {
             whyWatch = "George Clooney ve Brad Pitt'in atışmalarıyla hafif ama tempolu akşam eğlencesi.",
             posterPath = "/vvD5ecSAUObxxKBnUeaQfPeqIWi.jpg",
             tmdbId = 877817,
+            trailerKey = "gTf4DOAYmko",
             colorHex = 0xFF475569,
             audioOptions = listOf(AudioLanguageOption.DUBBED.id, AudioLanguageOption.SUBTITLED.id),
             isNewRelease = true
         ),
         Movie(
             id = "m42",
-            title = "F1",
+            title = "F1 Filmi",
             originalTitle = "F1",
             year = 2025,
             durationMins = 155,
@@ -794,13 +834,14 @@ object MovieRepository {
             whyWatch = "Brad Pitt ve Top Gun: Maverick yönetmeninden gerçek yarış pistlerinde çekilmiş saf hız şöleni.",
             posterPath = "/825brjnT8bJGLSaP6GEw5mIGjZp.jpg",
             tmdbId = 911430,
+            trailerKey = "EY8HWYEjivs",
             colorHex = 0xFFEF4444,
             audioOptions = listOf(AudioLanguageOption.DUBBED.id, AudioLanguageOption.SUBTITLED.id),
             isNewRelease = true
         ),
         Movie(
             id = "m43",
-            title = "Sonsuzluk",
+            title = "Sonsuza Dek",
             originalTitle = "Eternity",
             year = 2025,
             durationMins = 114,
@@ -812,6 +853,7 @@ object MovieRepository {
             whyWatch = "2026'nın hem kalbe dokunan hem güldüren en taze romantik komedi seçeneklerinden.",
             posterPath = "/t64xhKvMKgfePvTUB8OYXH2jnm.jpg",
             tmdbId = 1259102,
+            trailerKey = "GzkoY6hUvQQ",
             colorHex = 0xFFEC4899,
             audioOptions = listOf(AudioLanguageOption.SUBTITLED.id, AudioLanguageOption.DUBBED.id),
             isNewRelease = true
@@ -830,6 +872,7 @@ object MovieRepository {
             whyWatch = "Oscar En İyi Film ve Altın Palmiye ödüllü, temposu bir an bile düşmeyen modern klasik.",
             posterPath = "/zdJP1EvyL6G58NIQJj0n5T2l7u7.jpg",
             tmdbId = 1064213,
+            trailerKey = "qKDpYQZ3b2Q",
             colorHex = 0xFFE11D48,
             audioOptions = listOf(AudioLanguageOption.SUBTITLED.id),
             isNewRelease = true
@@ -848,6 +891,7 @@ object MovieRepository {
             whyWatch = "Ralph Fiennes'ın muazzam oyunculuğuyla politika ve gizemi ustaca harmanlayan ödüllü gerilim.",
             posterPath = "/u5iu2SRjXRpcu6gDkCXS1itguyk.jpg",
             tmdbId = 974576,
+            trailerKey = "t915aZmyEBg",
             colorHex = 0xFF7C3AED,
             audioOptions = listOf(AudioLanguageOption.DUBBED.id, AudioLanguageOption.SUBTITLED.id),
             isNewRelease = true
@@ -866,13 +910,14 @@ object MovieRepository {
             whyWatch = "Haluk Bilginer ve Feyyaz Yiğit uyumuyla hem güldüren hem iç ısıtan güncel yerli hit.",
             posterPath = "/hykA5yq9tHCKR7WENSgavrNdFeS.jpg",
             tmdbId = 1546963,
+            trailerKey = "yXJhwf3QlV8",
             colorHex = 0xFFF59E0B,
             audioOptions = listOf(AudioLanguageOption.DUBBED.id),
             isNewRelease = true
         ),
         Movie(
             id = "m47",
-            title = "Vadi",
+            title = "Uçurum",
             originalTitle = "The Gorge",
             year = 2025,
             durationMins = 127,
@@ -884,6 +929,7 @@ object MovieRepository {
             whyWatch = "Anya Taylor-Joy ve Miles Teller'la romantizm ve bilim kurgu gerilimini aynı potada eritiyor.",
             posterPath = "/dHas0sO6FBQU4n5m2AjB8BE9mmZ.jpg",
             tmdbId = 950396,
+            trailerKey = "rUSdnuOLebE",
             colorHex = 0xFF0EA5E9,
             audioOptions = listOf(AudioLanguageOption.DUBBED.id, AudioLanguageOption.SUBTITLED.id),
             isNewRelease = true
@@ -906,6 +952,7 @@ object MovieRepository {
             whyWatch = "Sinema tarihinin tartışmasız en büyük başyapıtlarından; her izleyişte yeni bir detay yakalatır.",
             posterPath = "/vseIVRdN4xasYwStQIi6SI7DcEu.jpg",
             tmdbId = 238,
+            trailerKey = "Ew9ngL1GZvs",
             colorHex = 0xFF78350F,
             audioOptions = listOf(AudioLanguageOption.DUBBED.id, AudioLanguageOption.SUBTITLED.id),
             isCultOrMostWatched = true,
@@ -922,9 +969,10 @@ object MovieRepository {
             platforms = listOf(OTHER_PLATFORM_NAME),
             genre = "Dram",
             logline = "İşlemediği bir suçtan ömür boyu hapis cezası alan bankacı Andy Dufresne'in Shawshank'taki umut ve dostluk öyküsü.",
-            whyWatch = "IMDb'de tüm zamanların 1 numarası; umudu ve sabrı en derinden hissettiren kült film.",
+            whyWatch = "Sinemaseverlerin tüm zamanların zirvesine koyduğu; umudu ve sabrı en derinden hissettiren kült film.",
             posterPath = "/bAEV6D3M4tRVGBZca69BMYtxxFv.jpg",
             tmdbId = 278,
+            trailerKey = "PLl99DlL6b4",
             colorHex = 0xFF475569,
             audioOptions = listOf(AudioLanguageOption.DUBBED.id, AudioLanguageOption.SUBTITLED.id),
             isCultOrMostWatched = true,
@@ -944,6 +992,7 @@ object MovieRepository {
             whyWatch = "Heath Ledger'ın efsanevi Joker performansıyla süper kahraman sinemasının zirvesi.",
             posterPath = "/7IPCEr7ifdH5CtU97QG7XgAAtOp.jpg",
             tmdbId = 155,
+            trailerKey = "_PZpmTj1Q8Q",
             colorHex = 0xFF1E293B,
             audioOptions = listOf(AudioLanguageOption.DUBBED.id, AudioLanguageOption.SUBTITLED.id),
             isCultOrMostWatched = true,
@@ -963,6 +1012,7 @@ object MovieRepository {
             whyWatch = "Tarantino'nun diyalog dehası, müzikleri ve kurgusuyla kült sinemanın kitabı.",
             posterPath = "/AgY33Wtg4737MhYopJSFyKWhKsO.jpg",
             tmdbId = 680,
+            trailerKey = "tGpTpVyI_OQ",
             colorHex = 0xFFB91C1C,
             audioOptions = listOf(AudioLanguageOption.SUBTITLED.id),
             isCultOrMostWatched = true,
@@ -982,6 +1032,7 @@ object MovieRepository {
             whyWatch = "Stanley Kubrick ve Jack Nicholson'dan tüm zamanların en ikonik psikolojik korku klasiği.",
             posterPath = "/yA02bdLNrd8Vbots5qiw9zAD2jC.jpg",
             tmdbId = 694,
+            trailerKey = "jAE7dNurHR4",
             colorHex = 0xFF991B1B,
             audioOptions = listOf(AudioLanguageOption.SUBTITLED.id, AudioLanguageOption.DUBBED.id),
             isCultOrMostWatched = true,
@@ -1001,6 +1052,7 @@ object MovieRepository {
             whyWatch = "Kült finallerin atası; modern tüketim toplumuna sert bir yumruk.",
             posterPath = "/yjMuqAyJUoQZGWsZ0vZuYj5inAR.jpg",
             tmdbId = 550,
+            trailerKey = "dfeUzm6KF4g",
             colorHex = 0xFFBE185D,
             audioOptions = listOf(AudioLanguageOption.DUBBED.id, AudioLanguageOption.SUBTITLED.id),
             isCultOrMostWatched = true,
@@ -1011,7 +1063,7 @@ object MovieRepository {
     private val _dailyExtraMovies = MutableStateFlow<List<Movie>>(emptyList())
 
     val allMovies: List<Movie>
-        get() = (_dailyExtraMovies.value + baseMovies).distinctBy { it.id }
+        get() = (_dailyExtraMovies.value + baseMovies + GeneratedMovies.movies).distinctBy { it.id }
 
     private val _dailyFeedLastUpdated = MutableStateFlow(currentDateKey())
     val dailyFeedLastUpdated: StateFlow<String> = _dailyFeedLastUpdated.asStateFlow()
@@ -1294,7 +1346,7 @@ object MovieRepository {
             val reasonLabel = when {
                 shared.isNotEmpty() -> "Ortak tür: ${shared.joinToString(", ")} • ★ ${candidate.imdb}"
                 candidate.moodTag == targetMovie.moodTag -> "Aynı atmosfer • ★ ${candidate.imdb}"
-                else -> "Yakın IMDb puanı • ★ ${candidate.imdb}"
+                else -> "Yakın puan • ★ ${candidate.imdb}"
             }
 
             Triple(

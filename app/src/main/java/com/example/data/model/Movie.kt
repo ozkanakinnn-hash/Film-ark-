@@ -45,6 +45,8 @@ data class Movie(
     val posterPath: String = "",
     /** TMDB film kimliği (tools/tmdb_poster_sync.py tarafından doldurulur). */
     val tmdbId: Int? = null,
+    /** Resmi YouTube fragmanının video kimliği (TMDB'den). Uygulama fragmanı YouTube'da açar, gömmez. */
+    val trailerKey: String? = null,
     val posterUrl: String = TmdbImageConfig.getPosterUrl(posterPath).orEmpty(),
     val colorHex: Long = 0xFF8B5CF6,
     val audioOptions: List<String> = listOf(

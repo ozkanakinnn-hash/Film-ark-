@@ -13,6 +13,7 @@ import com.example.data.model.OTHER_PLATFORM_NAME
 import com.example.data.model.Room
 import com.example.data.repository.CustomWheelListRepository
 import com.example.data.repository.MovieRepository
+import com.example.data.repository.WheelPoolSampler
 import com.example.data.repository.PlaceholderTrendingCinemaRepository
 import com.example.data.repository.RoomRepository
 import com.example.data.repository.SavedDecision
@@ -125,6 +126,18 @@ class DecisionViewModel(
     // Active Movies in Wheel
     private val _activeWheelMovies = MutableStateFlow<List<Movie>>(emptyList())
     val activeWheelMovies: StateFlow<List<Movie>> = _activeWheelMovies.asStateFlow()
+
+    /** Çarkın arkasındaki tam uygun film havuzu (çarkta en fazla 12 tanesi gösterilir). */
+    private var fullWheelPool: List<Movie> = emptyList()
+    private val _wheelPoolTotal = MutableStateFlow(0)
+    val wheelPoolTotal: StateFlow<Int> = _wheelPoolTotal.asStateFlow()
+
+    /** Tam havuzu saklar ve çarkta gösterilecek karışık örneklemi döndürür. */
+    private fun sampleForWheel(pool: List<Movie>, mustInclude: Movie? = null): List<Movie> {
+        fullWheelPool = pool
+        _wheelPoolTotal.value = pool.distinctBy { it.id }.size
+        return WheelPoolSampler.sample(pool, mustInclude)
+    }
 
     // Wheel spin state (animated in Compose UI with MonotonicFrameClock)
     private val _spinEvent = MutableStateFlow<SpinEvent?>(null)
@@ -351,17 +364,24 @@ class DecisionViewModel(
         } else {
             computeFilteredWheelMovies(minRatingOverride = minImdb)
         }
-        _activeWheelMovies.value = filtered
+        val shown = if (activeCustom != null) {
+            fullWheelPool = filtered
+            _wheelPoolTotal.value = filtered.size
+            filtered
+        } else {
+            sampleForWheel(filtered)
+        }
+        _activeWheelMovies.value = shown
 
         if (RoomRepository.currentRoom.value == null || activeCustom != null) {
             RoomRepository.prepareSoloSpin(
                 _selectedMoods.value,
                 _selectedPlatforms.value,
-                filtered,
+                shown,
                 if (activeCustom != null) emptySet() else excludedIds
             )
         } else {
-            RoomRepository.updateRoomMoviePool(filtered.map { it.id }, excludedIds)
+            RoomRepository.updateRoomMoviePool(shown.map { it.id }, excludedIds)
         }
 
         val currentSelected = _selectedMovie.value
@@ -370,9 +390,9 @@ class DecisionViewModel(
         }
 
         _feedbackToast.value = if (minImdb <= 0.0) {
-            "IMDb filtresi kaldırıldı • Havuzda ${filtered.size} film"
+            "Puan filtresi kaldırıldı • Havuzda ${filtered.size} film"
         } else {
-            "★ ${minImdb}+ IMDb filtresi uygulandı • Havuzda ${filtered.size} film"
+            "★ ${minImdb}+ puan filtresi uygulandı • Havuzda ${filtered.size} film"
         }
     }
 
@@ -425,7 +445,7 @@ class DecisionViewModel(
 
     fun proceedToWheel() {
         val excludedIds = WatchedMovieRepository.excludedWheelMovieIds.value
-        val filtered = computeFilteredWheelMovies()
+        val filtered = sampleForWheel(computeFilteredWheelMovies())
 
         activeSpinModeOverride = null
         _activeCustomList.value = null
@@ -474,26 +494,28 @@ class DecisionViewModel(
         _isDecisionLocked.value = false
         _activeCustomList.value = null
         activeSpinModeOverride = "Diğer (Kült & Çok İzlenenler)"
-        _activeWheelMovies.value = cultMovies
+        val cultTotal = cultMovies.size
+        val shownCult = sampleForWheel(cultMovies)
+        _activeWheelMovies.value = shownCult
         RoomRepository.prepareSoloSpin(
             moods = setOf(Mood.CULT_AWARD.id),
             platforms = setOf(OTHER_PLATFORM_NAME),
-            customMovies = cultMovies,
+            customMovies = shownCult,
             excludedMovieIds = emptySet()
         )
         _selectedMovie.value = null
         _isSpinning.value = false
         _spinEvent.value = null
-        _feedbackToast.value = "🏛️ Kült & Çok İzlenenler (${cultMovies.size} film) çarka alındı!"
+        _feedbackToast.value = "🏛️ Kült & Çok İzlenenler (${cultTotal} film) çarka alındı!"
         _currentScreen.value = Screen.WHEEL
     }
 
     fun openMovieInWheelFromShowcase(movie: Movie) {
         val excludedIds = WatchedMovieRepository.excludedWheelMovieIds.value
-        val basePool = (listOf(movie) + dailyNewReleases.value + MovieRepository.allMovies)
+        val candidates = (listOf(movie) + dailyNewReleases.value + MovieRepository.allMovies)
             .distinctBy { it.id }
             .filterNot { it.id != movie.id && excludedIds.contains(it.id) }
-            .take(12)
+        val basePool = sampleForWheel(candidates, mustInclude = movie)
 
         _isSoloMode.value = true
         _isVetoedOnce.value = false
@@ -570,6 +592,8 @@ class DecisionViewModel(
         _isDecisionLocked.value = false
         activeSpinModeOverride = null
         _activeCustomList.value = list
+        fullWheelPool = pool
+        _wheelPoolTotal.value = pool.size
         _activeWheelMovies.value = pool
         RoomRepository.prepareSoloSpin(
             moods = _selectedMoods.value,
@@ -587,6 +611,14 @@ class DecisionViewModel(
         if (_isSpinning.value) return
         val excludedIds = WatchedMovieRepository.excludedWheelMovieIds.value
 
+        // Karar verilmiş bir çark yeniden çevrilirken dilimleri büyük havuzdan tazele
+        val isRespin = _selectedMovie.value != null && !_isVetoedOnce.value && _activeCustomList.value == null
+        if (isRespin && fullWheelPool.size > WheelPoolSampler.MAX_SLICES) {
+            val freshPool = fullWheelPool.filterNot { excludedIds.contains(it.id) }
+            if (freshPool.size > WheelPoolSampler.MAX_SLICES) {
+                _activeWheelMovies.value = WheelPoolSampler.sample(freshPool)
+            }
+        }
         val unwatchedActive = _activeWheelMovies.value.filterNot { excludedIds.contains(it.id) }
         _activeWheelMovies.value = unwatchedActive.ifEmpty {
             MovieRepository.allMovies
@@ -891,7 +923,7 @@ class DecisionViewModel(
         val pool = MovieRepository.allMovies
             .filterNot { excludedIds.contains(it.id) }
             .ifEmpty { MovieRepository.allMovies }
-        val ensuredPool = if (pool.any { it.id == movie.id }) pool else listOf(movie) + pool
+        val ensuredPool = sampleForWheel(pool, mustInclude = movie)
 
         _isSoloMode.value = true
         _activeCustomList.value = null

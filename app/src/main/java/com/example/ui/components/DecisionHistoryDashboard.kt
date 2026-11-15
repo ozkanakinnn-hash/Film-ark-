@@ -219,7 +219,7 @@ fun DecisionHistoryDashboard(
                         modifier = Modifier.weight(1f)
                     )
                     DashboardKpiTile(
-                        label = "Ort. IMDb",
+                        label = "Ort. Puan",
                         value = String.format(Locale.US, "%.1f", dashboard.averageImdb),
                         accent = NeonPink,
                         tag = "dashboard_kpi_avg_imdb",

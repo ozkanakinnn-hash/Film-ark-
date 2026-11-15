@@ -1,5 +1,9 @@
 package com.example.ui.screens
 
+import androidx.compose.ui.semantics.contentDescription
+import com.example.R
+import androidx.compose.ui.res.painterResource
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -121,14 +125,24 @@ fun HomeScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Surface(
-                        color = CinemaTheme.colors.selectedChipFill,
-                        shape = CircleShape,
-                        modifier = Modifier.size(38.dp)
+                    // Uygulama ikonuyla aynı logo karosu (marka tutarlılığı için her iki temada da noir)
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .size(48.dp)
+                            .background(
+                                Brush.radialGradient(listOf(Color(0xFF1B1822), Color(0xFF0B0A0F))),
+                                RoundedCornerShape(13.dp)
+                            )
+                            .border(1.dp, Color(0x40E9B949), RoundedCornerShape(13.dp))
+                            .semantics { contentDescription = "Ne İzlesek? logosu" }
+                            .testTag("home_brand_logo")
                     ) {
-                        Box(contentAlignment = Alignment.Center) {
-                            Text(text = "🍿", fontSize = 18.sp)
-                        }
+                        Image(
+                            painter = painterResource(id = R.drawable.brand_mark),
+                            contentDescription = null,
+                            modifier = Modifier.height(34.dp)
+                        )
                     }
                     Spacer(modifier = Modifier.width(10.dp))
                     Column {

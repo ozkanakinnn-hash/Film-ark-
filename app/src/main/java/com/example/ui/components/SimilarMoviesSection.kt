@@ -131,7 +131,7 @@ fun SimilarMoviesSection(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "'${targetMovie.title}' ile tür (${targetMovie.genre}) ve IMDb puanı (★ ${targetMovie.imdb}) bakımından en yakın öneriler:",
+                text = "'${targetMovie.title}' ile tür (${targetMovie.genre}) ve puanı (★ ${targetMovie.imdb}) bakımından en yakın öneriler:",
                 fontSize = 11.sp,
                 color = TextSecondary,
                 lineHeight = 15.sp

@@ -40,6 +40,18 @@ data class WheelVisualTheme(
     val darkSliceTextColor: Color,
     val lightSliceTextColor: Color
 ) {
+    /**
+     * [count] dilimli bir çarkta i. dilimin rengi. Son dilim ilk dilimle aynı renge denk gelirse
+     * (ör. 5 ya da 9 dilim) bir sonraki renge kaydırılır; böylece yan yana aynı renk oluşmaz.
+     */
+    fun sliceColorFor(index: Int, count: Int): Color {
+        val size = sliceColors.size
+        if (size > 2 && count > 1 && index == count - 1 && (count - 1) % size == 0) {
+            return sliceColorAt(index + 1)
+        }
+        return sliceColorAt(index)
+    }
+
     fun sliceColorAt(index: Int): Color {
         if (sliceColors.isEmpty()) return outerRimColor
         val safeIndex = ((index % sliceColors.size) + sliceColors.size) % sliceColors.size
@@ -91,26 +103,21 @@ object WheelThemeManager {
         val primary = colorScheme?.primary ?: palette.marqueeGold
         val primaryDark = palette.marqueeGoldDark
         val secondary = colorScheme?.secondary ?: palette.velvetCrimson
-        val tertiary = colorScheme?.tertiary ?: palette.filmTeal
-        val rose = palette.rosePremiere
-        val emerald = palette.emeraldTicket
         val surface = colorScheme?.surface ?: palette.surface
-        val surfaceVariant = colorScheme?.surfaceVariant ?: palette.surfaceVariant
-        val background = colorScheme?.background ?: palette.background
+
+        // Logo paleti: altın (#E9B949), kızıl (#D63447), noir (#0B0A0F)
+        val brandGold = primary
+        val brandCrimson = secondary
+        val noirHubGradient = listOf(Color(0xFF2A2530), Color(0xFF15131A), Color(0xFF0B0A0F))
+        val needleCrimson = listOf(lerp(brandCrimson, Color.White, 0.22f), brandCrimson, lerp(brandCrimson, Color.Black, 0.25f))
 
         return if (palette.isDark) {
-            // Koyu Tema ("Noir Sinema"): Derin kadife, şampanya altını ve neon-sinematik teal vurgular
+            // Koyu Tema ("Noir Sinema"): logo gibi noir zemin üstünde altın ve kızıl dilimler
             val slices = listOf(
-                lerp(secondary, Color(0xFF7F1D1D), 0.25f),         // Kadife Perde Kızılı
-                lerp(primary, primaryDark, 0.30f),                  // Marquee Kehribar Altın
-                lerp(tertiary, Color(0xFF0A4F49), 0.32f),           // Hollywood Teal
-                lerp(rose, Color(0xFF5B122C), 0.38f),               // Prömiyer Bordo
-                lerp(emerald, Color(0xFF0E4B26), 0.42f),            // Zümrüt Bilet
-                lerp(surfaceVariant, tertiary, 0.44f),              // Gece IMAX Teal-Slate
-                lerp(primary, secondary, 0.46f),                    // Tungsten Bakır
-                lerp(palette.heroGradientStart, surfaceVariant, 0.35f), // Noir Kadife
-                lerp(primaryDark, Color(0xFF5C3D06), 0.28f),        // Oskar Pirinci
-                lerp(tertiary, secondary, 0.28f)                    // Gece Turkuaz-Erik
+                Color(0xFF1D1A23),                                  // Noir
+                brandGold,                                          // Logo altını
+                Color(0xFF2E2734),                                  // Patlıcan noir
+                lerp(brandCrimson, Color.Black, 0.35f)              // Koyu kadife kızıl
             )
 
             WheelVisualTheme(
@@ -118,46 +125,32 @@ object WheelThemeManager {
                 themeLabel = "Noir Sinema Çarkı",
                 isDark = true,
                 sliceColors = slices,
-                dividerColor = palette.textPrimary.copy(alpha = 0.44f),
-                outerRimColor = primary,
+                dividerColor = brandGold.copy(alpha = 0.35f),
+                outerRimColor = brandGold,
                 outerRimAccentColor = primaryDark,
                 marqueeLitBulbColor = Color(0xFFFFF8E7),
                 marqueeDimBulbColor = primaryDark,
-                innerVignetteColor = Color(0x94000000),
-                hubGradientColors = listOf(
-                    lerp(primary, Color.White, 0.48f),
-                    primary,
-                    primaryDark
-                ),
-                hubBorderColor = Color(0xFFFFF4D6),
-                hubCenterAccentColor = secondary,
-                needleGradientColors = listOf(
-                    lerp(primary, Color.White, 0.52f),
-                    primary,
-                    secondary
-                ),
-                needleBorderColor = Color(0xFFFFF8E7),
+                innerVignetteColor = Color(0x80000000),
+                hubGradientColors = noirHubGradient,
+                hubBorderColor = brandGold,
+                hubCenterAccentColor = brandGold,
+                needleGradientColors = needleCrimson,
+                needleBorderColor = Color(0xFFFFF8E7).copy(alpha = 0.9f),
                 needleShadowColor = Color(0x99000000),
-                needlePinColor = Color(0xFFFFF8E7),
-                haloPrimaryColor = primary,
-                haloSecondaryColor = secondary,
-                projectorRayColor = primary,
+                needlePinColor = Color.Transparent,
+                haloPrimaryColor = brandGold,
+                haloSecondaryColor = brandCrimson,
+                projectorRayColor = brandGold,
                 darkSliceTextColor = Color(0xFF1C1917),
                 lightSliceTextColor = Color(0xFFFFFBF2)
             )
         } else {
-            // Açık Tema ("Matine Fildişi"): Güneşli selüloit kremi, yanık kehribar, matine bordosu & teal
+            // Açık Tema ("Matine Fildişi"): fildişi ve kum zeminde kehribar altın ve kızıl dilimler
             val slices = listOf(
-                lerp(background, primary, 0.24f),                   // Sıcak Şampanya Fildişi
-                lerp(surface, secondary, 0.19f),                    // Afiş Gül Kurusu
-                lerp(surface, tertiary, 0.22f),                     // Matine Deniz Teal
-                lerp(primary, primaryDark, 0.14f),                  // Yanık Kehribar Altın
-                lerp(surfaceVariant, rose, 0.24f),                  // Pastel Kadife Gül
-                lerp(tertiary, Color(0xFF134E4A), 0.18f),           // Derin Hollywood Teal
-                lerp(palette.heroGradientStart, background, 0.22f), // Selüloit Krem
-                lerp(secondary, Color(0xFF881337), 0.14f),          // Prömiyer Bordo
-                lerp(surfaceVariant, emerald, 0.22f),               // Nane Matine Bileti
-                lerp(primary, Color(0xFFFDE68A), 0.42f)             // Parlak Matine Altını
+                Color(0xFFFFF9EE),                                  // Fildişi
+                brandGold,                                          // Kehribar altın
+                Color(0xFFEFE3CF),                                  // Kum
+                brandCrimson                                        // Kızıl
             )
 
             WheelVisualTheme(
@@ -165,30 +158,22 @@ object WheelThemeManager {
                 themeLabel = "Matine Fildişi Çarkı",
                 isDark = false,
                 sliceColors = slices,
-                dividerColor = palette.border.copy(alpha = 0.92f),
-                outerRimColor = primary,
+                dividerColor = primaryDark.copy(alpha = 0.35f),
+                outerRimColor = brandGold,
                 outerRimAccentColor = primaryDark,
                 marqueeLitBulbColor = surface,
-                marqueeDimBulbColor = lerp(primary, surface, 0.45f),
-                innerVignetteColor = primaryDark.copy(alpha = 0.20f),
-                hubGradientColors = listOf(
-                    surface,
-                    palette.heroGradientStart,
-                    primary
-                ),
-                hubBorderColor = primaryDark,
-                hubCenterAccentColor = secondary,
-                needleGradientColors = listOf(
-                    rose,
-                    secondary,
-                    primaryDark
-                ),
+                marqueeDimBulbColor = lerp(brandGold, surface, 0.45f),
+                innerVignetteColor = primaryDark.copy(alpha = 0.14f),
+                hubGradientColors = noirHubGradient,
+                hubBorderColor = brandGold,
+                hubCenterAccentColor = Color(0xFFE9B949),
+                needleGradientColors = needleCrimson,
                 needleBorderColor = surface,
                 needleShadowColor = primaryDark.copy(alpha = 0.36f),
-                needlePinColor = surface,
-                haloPrimaryColor = primary,
-                haloSecondaryColor = tertiary,
-                projectorRayColor = primary,
+                needlePinColor = Color.Transparent,
+                haloPrimaryColor = brandGold,
+                haloSecondaryColor = brandCrimson,
+                projectorRayColor = brandGold,
                 darkSliceTextColor = Color(0xFF1C1917),
                 lightSliceTextColor = Color(0xFFFFFBF2)
             )

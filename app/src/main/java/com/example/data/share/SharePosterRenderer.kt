@@ -388,7 +388,7 @@ object SharePosterRenderer {
         canvas.drawRoundRect(rect, 22f, 22f, posterStroke)
     }
 
-    private fun resolveCachedPosterBitmap(context: Context, movie: Movie): Bitmap? {
+    internal fun resolveCachedPosterBitmap(context: Context, movie: Movie): Bitmap? {
         val url = movie.resolvedPosterUrl()
         if (!url.isNullOrBlank()) {
             val loader = context.imageLoader
@@ -409,7 +409,7 @@ object SharePosterRenderer {
         }.getOrNull()
     }
 
-    private fun saveBitmapAndGetUri(context: Context, bitmap: Bitmap, fileName: String): Uri {
+    internal fun saveBitmapAndGetUri(context: Context, bitmap: Bitmap, fileName: String): Uri {
         val dir = File(context.cacheDir, "shared_posters").apply {
             if (!exists()) mkdirs()
         }

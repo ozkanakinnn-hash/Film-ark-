@@ -888,7 +888,7 @@ fun FilterScreen(
                                         text = if (narrowingSummaryParts.isNotEmpty()) {
                                             narrowingSummaryParts.joinToString(" • ")
                                         } else {
-                                            "Opsiyonel: Havuzu tür, dönem veya IMDb puanıyla daralt"
+                                            "Opsiyonel: Havuzu tür, dönem veya puanla daralt"
                                         },
                                         fontSize = 11.sp,
                                         color = if (narrowingSummaryParts.isNotEmpty()) ElectricCyan else TextSecondary

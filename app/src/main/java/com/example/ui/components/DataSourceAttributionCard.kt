@@ -79,6 +79,13 @@ fun DataSourceAttributionCard(modifier: Modifier = Modifier) {
                 color = TextSecondary,
                 lineHeight = 15.sp
             )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Platform bilgileri JustWatch tarafından sağlanır. Platform, dublaj ve altyazı bilgileri değişebilir.",
+                fontSize = 11.sp,
+                color = TextSecondary,
+                lineHeight = 15.sp
+            )
         }
     }
 }

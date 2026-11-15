@@ -116,6 +116,7 @@ fun DecisionApp(
     val partnerMoods by viewModel.partnerMoods.collectAsState()
     val partnerPlatforms by viewModel.partnerPlatforms.collectAsState()
     val activeWheelMovies by viewModel.activeWheelMovies.collectAsState()
+    val wheelPoolTotal by viewModel.wheelPoolTotal.collectAsState()
     val spinEvent by viewModel.spinEvent.collectAsState()
     val isSpinning by viewModel.isSpinning.collectAsState()
     val selectedMovie by viewModel.selectedMovie.collectAsState()
@@ -282,6 +283,7 @@ fun DecisionApp(
                         watchedMovieIds = watchedMovieIds,
                         excludedWheelMovieIds = excludedWheelMovieIds,
                         favoriteMovieIds = favoriteMovieIds,
+                        poolTotal = wheelPoolTotal,
                         isDarkTheme = isDarkTheme,
                         onToggleTheme = { viewModel.toggleTheme() },
                         onWheelMinRatingChange = { viewModel.updateWheelMinRating(it) },

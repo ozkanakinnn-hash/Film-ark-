@@ -350,6 +350,13 @@ class ExampleRobolectricTest {
     composeTestRule.onNodeWithTag("compare_share_champion_button").performScrollTo().performClick()
     composeTestRule.waitForIdle()
 
+    // "Hikâye Olarak Paylaş" 9:16 kazanan görselini sistem paylaşım menüsüyle paylaşır
+    val shareIntent = org.robolectric.Shadows.shadowOf(composeTestRule.activity).nextStartedActivity
+    assertTrue("Share must open the system chooser", shareIntent?.action == android.content.Intent.ACTION_CHOOSER)
+
+    // Diğer paylaşım seçenekleri hâlâ hikâye kartı ekranını açar
+    composeTestRule.onNodeWithTag("compare_more_share_options").performScrollTo().performClick()
+    composeTestRule.waitForIdle()
     composeTestRule.onNodeWithTag("flex_story_card").assertIsDisplayed()
   }
 

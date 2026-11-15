@@ -67,7 +67,7 @@ class PlaceholderTrendingCinemaRepository : TrendingCinemaRepository {
                 categoryOrGenre = "Bilim Kurgu / Macera",
                 imdbScore = 8.7,
                 trendReason = "IMAX yeniden gösterim haberleriyle sosyal medyada haftanın en çok aranan yapımı.",
-                sourceName = "Örnek Liste • IMDb Popüler",
+                sourceName = "Örnek Liste • Popüler",
                 sourceUrl = null,
                 posterPath = "/xbiycuc84TrieEWwkkuH2hoEa9S.jpg",
                 accentColorHex = 0xFF1D4ED8,

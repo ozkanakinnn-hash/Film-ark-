@@ -20,9 +20,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.height
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.StrokeJoin
+import com.example.R
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.graphicsLayer
@@ -73,10 +75,8 @@ fun WheelCanvas(
     val dimBulbColor by animateColorAsState(wheelTheme.marqueeDimBulbColor, animationSpec = colorAnimSpec, label = "wheel_bulb_dim")
     val innerVignetteColor by animateColorAsState(wheelTheme.innerVignetteColor, animationSpec = colorAnimSpec, label = "wheel_vignette")
     val hubBorderColor by animateColorAsState(wheelTheme.hubBorderColor, animationSpec = colorAnimSpec, label = "wheel_hub_border")
-    val hubCenterAccent by animateColorAsState(wheelTheme.hubCenterAccentColor, animationSpec = colorAnimSpec, label = "wheel_hub_center")
     val needleBorderColor by animateColorAsState(wheelTheme.needleBorderColor, animationSpec = colorAnimSpec, label = "wheel_needle_border")
     val needleShadowColor by animateColorAsState(wheelTheme.needleShadowColor, animationSpec = colorAnimSpec, label = "wheel_needle_shadow")
-    val needlePinColor by animateColorAsState(wheelTheme.needlePinColor, animationSpec = colorAnimSpec, label = "wheel_needle_pin")
     val haloPrimary by animateColorAsState(wheelTheme.haloPrimaryColor, animationSpec = colorAnimSpec, label = "wheel_halo_primary")
     val haloSecondary by animateColorAsState(wheelTheme.haloSecondaryColor, animationSpec = colorAnimSpec, label = "wheel_halo_secondary")
     val projectorRayColor by animateColorAsState(wheelTheme.projectorRayColor, animationSpec = colorAnimSpec, label = "wheel_projector_ray")
@@ -101,7 +101,7 @@ fun WheelCanvas(
     }
 
     val animatedSliceColors = List(sliceCount) { idx ->
-        val target = wheelTheme.sliceColorAt(idx)
+        val target = wheelTheme.sliceColorFor(idx, sliceCount)
         val animated by animateColorAsState(target, animationSpec = colorAnimSpec, label = "slice_color_$idx")
         animated
     }
@@ -486,19 +486,19 @@ fun WheelCanvas(
                     .testTag("wheel_hub_winner_poster")
             )
         } else {
-            Icon(
-                imageVector = Icons.Default.PlayArrow,
+            // Logo işareti (soru işareti + oynat). Tepedeki kızıl ibre logonun "noktası" olur.
+            Image(
+                painter = painterResource(id = R.drawable.brand_mark_hook),
                 contentDescription = if (onWheelClick != null && !isSpinning) "Çarkı çevir" else null,
-                tint = hubCenterAccent,
                 modifier = Modifier
-                    .size(30.dp)
+                    .height(34.dp)
                     .graphicsLayer {
-                        // Dönerken ikon küçülüp kaybolur, hazırken hafifçe "nefes alır"
+                        // Dönerken işaret küçülüp söner, hazırken hafifçe "nefes alır"
                         val idle = if (isSpinning) 0f else 1f
-                        val breathe = 1f + pulsePhase * 0.08f * idle
-                        scaleX = breathe * (0.6f + 0.4f * idle)
-                        scaleY = breathe * (0.6f + 0.4f * idle)
-                        alpha = 0.25f + 0.75f * idle
+                        val breathe = 1f + pulsePhase * 0.06f * idle
+                        scaleX = breathe * (0.7f + 0.3f * idle)
+                        scaleY = breathe * (0.7f + 0.3f * idle)
+                        alpha = 0.35f + 0.65f * idle
                     }
             )
         }
@@ -507,17 +507,18 @@ fun WheelCanvas(
         Canvas(
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .size(width = 36.dp, height = 44.dp)
+                .size(width = 42.dp, height = 36.dp)
         ) {
             val width = size.width
             val height = size.height
             if (width <= 0f || height <= 0f) return@Canvas
 
             rotate(degrees = needleDeflectionProvider(), pivot = Offset(width / 2f, 0f)) {
+                val inset = 3.dp.toPx()
                 needlePath.reset()
-                needlePath.moveTo(width / 2f, height)
-                needlePath.lineTo(0f, 0f)
-                needlePath.lineTo(width, 0f)
+                needlePath.moveTo(width / 2f, height - inset)
+                needlePath.lineTo(inset, inset)
+                needlePath.lineTo(width - inset, inset)
                 needlePath.close()
 
                 needleShadowPath.reset()
@@ -528,20 +529,24 @@ fun WheelCanvas(
 
                 drawPath(needleShadowPath, color = needleShadowColor)
 
+                // Logodaki ibre: yuvarlak köşeli kızıl üçgen (köşeler aynı renkte kalın, yuvarlak birleşimli
+                // bir kontur ile yumuşatılır), ince fildişi kenar ve üstte hafif parlama.
+                val needleBrush = Brush.verticalGradient(colors = animatedNeedleGradient)
+                drawPath(path = needlePath, brush = needleBrush)
                 drawPath(
                     path = needlePath,
-                    brush = Brush.verticalGradient(colors = animatedNeedleGradient)
+                    brush = needleBrush,
+                    style = Stroke(width = 6.dp.toPx(), join = StrokeJoin.Round)
                 )
                 drawPath(
                     path = needlePath,
-                    color = needleBorderColor,
-                    style = Stroke(width = 2.dp.toPx())
+                    color = needleBorderColor.copy(alpha = 0.55f),
+                    style = Stroke(width = 1.2.dp.toPx(), join = StrokeJoin.Round)
                 )
-
                 drawCircle(
-                    color = needlePinColor,
-                    radius = 4.dp.toPx(),
-                    center = Offset(width / 2f, 10.dp.toPx())
+                    color = Color.White.copy(alpha = 0.22f),
+                    radius = 5.dp.toPx(),
+                    center = Offset(width / 2f, height * 0.28f)
                 )
             }
         }

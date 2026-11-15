@@ -108,7 +108,7 @@ fun buildMovieShareText(
         appendLine()
         appendLine("🎥 ${movie.title} (${movie.year})")
         appendLine("🎭 Tür: ${movie.genre}")
-        appendLine("⭐️ IMDb: ${movie.imdb} • ⏱ ${movie.durationMins} dk")
+        appendLine("⭐️ Puan: ${movie.imdb} • ⏱ ${movie.durationMins} dk")
         if (platformLine.isNotEmpty()) appendLine(platformLine)
         appendLine()
         append("${roomLine}Sen de film çarkını çevir: https://neizlesek.app")
@@ -335,7 +335,7 @@ fun SocialShareDialog(
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = "${movie.imdb} IMDb • ${movie.durationMins} dk",
+                                text = "★ ${movie.imdb} • ${movie.durationMins} dk",
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = PopcornGold

@@ -143,6 +143,7 @@ fun WheelScreen(
     watchedMovieIds: Set<String> = emptySet(),
     excludedWheelMovieIds: Set<String> = watchedMovieIds,
     favoriteMovieIds: Set<String> = emptySet(),
+    poolTotal: Int = movies.size,
     isDarkTheme: Boolean = true,
     onToggleTheme: () -> Unit = {},
     onWheelMinRatingChange: (Double) -> Unit = {},
@@ -540,6 +541,7 @@ fun WheelScreen(
                 WheelMinImdbFilterBar(
                     currentMinRating = minRating,
                     poolCount = movies.size,
+                    poolTotal = poolTotal,
                     isSpinning = isSpinning,
                     onSelectMinRating = onWheelMinRatingChange
                 )
@@ -1198,6 +1200,7 @@ private val WheelImdbPresets = listOf(
 private fun WheelMinImdbFilterBar(
     currentMinRating: Double,
     poolCount: Int,
+    poolTotal: Int = poolCount,
     isSpinning: Boolean,
     onSelectMinRating: (Double) -> Unit
 ) {
@@ -1228,7 +1231,7 @@ private fun WheelMinImdbFilterBar(
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        text = "Minimum IMDb Puanı",
+                        text = "Minimum Puan",
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary
@@ -1240,7 +1243,7 @@ private fun WheelMinImdbFilterBar(
                     shape = RoundedCornerShape(8.dp)
                 ) {
                     Text(
-                        text = "$poolCount Film",
+                        text = if (poolTotal > poolCount) "$poolCount/$poolTotal Film" else "$poolCount Film",
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         color = EmeraldGreen,

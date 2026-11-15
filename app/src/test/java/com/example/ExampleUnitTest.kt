@@ -18,6 +18,7 @@ import com.example.data.model.computeSpunAndLikedGenreStatsFromMovies
 import com.example.data.model.resolveLikedMovies
 import com.example.data.repository.CustomWheelListRepository
 import com.example.data.repository.MovieRepository
+import com.example.data.repository.WheelPoolSampler
 import com.example.data.repository.PlaceholderTrendingCinemaRepository
 import com.example.data.repository.RoomRepository
 import com.example.data.repository.SavedDecision
@@ -410,29 +411,31 @@ class DecisionUnitTest {
         val vm = DecisionViewModel()
         vm.setFilterMode(true)
         vm.proceedToWheel()
-        val initialSize = vm.activeWheelMovies.value.size
-        assertTrue(initialSize > 10)
+        // Çark en fazla 12 dilim gösterir; filtre davranışı arkadaki tam havuz üzerinden doğrulanır.
+        val initialTotal = vm.wheelPoolTotal.value
+        assertTrue(initialTotal > 10)
+        assertTrue(vm.activeWheelMovies.value.size <= WheelPoolSampler.MAX_SLICES)
 
         vm.updateWheelMinRating(8.0)
         val filteredPool = vm.activeWheelMovies.value
         assertTrue("Filtered pool should not be empty", filteredPool.isNotEmpty())
         assertTrue(
             "Filtering >= 8.0 should strictly narrow the full pool",
-            filteredPool.size < initialSize
+            vm.wheelPoolTotal.value < initialTotal
         )
         assertTrue(
-            "Every movie in wheel pool must meet >= 8.0 IMDb filter",
+            "Every movie in wheel pool must meet >= 8.0 rating filter",
             filteredPool.all { it.imdb >= 8.0 }
         )
 
         vm.updateWheelMinRating(0.0)
-        val restoredPool = vm.activeWheelMovies.value
         assertEquals(
-            "Resetting min IMDb filter should restore full pool count",
-            initialSize,
-            restoredPool.size
+            "Resetting min rating filter should restore full pool count",
+            initialTotal,
+            vm.wheelPoolTotal.value
         )
     }
+
 
     @Test
     fun testFavoritesAndShareText_togglesAndBuildsFormattedShareCopy() {
@@ -445,7 +448,7 @@ class DecisionUnitTest {
 
         val shareCopy = buildMovieShareText(movie = movie, roomCode = "4821")
         assertTrue(shareCopy.contains(movie.title))
-        assertTrue(shareCopy.contains("IMDb: ${movie.imdb}"))
+        assertTrue(shareCopy.contains("Puan: ${movie.imdb}"))
         assertTrue(shareCopy.contains("4821"))
 
         vm.toggleFavoriteMovie(movie.id, movie.title)

@@ -166,7 +166,7 @@ fun FlexScreen(
 
 🎬 Film: ${movie.title} (${movie.year})
 ⏱ Süre: ${movie.durationMins} dakika
-⭐️ IMDb: ${movie.imdb}
+⭐️ Puan: ${movie.imdb}
 📺 Platform: ${movie.platforms.joinToString(", ")}
 
 ${if (roomCode != null) "Ortak Oda Kodu: $roomCode • " else ""}Seçim krizine son ver, odaya katıl: https://neizlesek.app${if (roomCode != null) "/room/$roomCode" else ""}
@@ -434,7 +434,7 @@ ${if (roomCode != null) "Ortak Oda Kodu: $roomCode • " else ""}Seçim krizine 
                                     )
                                     Spacer(modifier = Modifier.width(4.dp))
                                     Text(
-                                        text = "${movie.imdb} IMDb",
+                                        text = "★ ${movie.imdb}",
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = PopcornGold

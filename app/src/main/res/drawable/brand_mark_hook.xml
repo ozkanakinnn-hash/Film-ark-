@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ne İzlesek? logo işareti (H1). Kaynak: branding/logo-options/harman-H1-*.svg -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="23dp"
+    android:height="25.4dp"
+    android:viewportWidth="228"
+    android:viewportHeight="254">
+    <group
+        android:translateX="-142"
+        android:translateY="-82">
+        <path
+            android:pathData="M166,196 A90,90 0 1,1 256,286 L256,306"
+            android:strokeColor="#FFE9B949"
+            android:strokeWidth="48"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+        <path
+            android:pathData="M296,196 L245,225.44 L245,166.56 Z"
+            android:fillColor="#FFE9B949"
+            android:strokeColor="#FFE9B949"
+            android:strokeWidth="12"
+            android:strokeLineJoin="round" />
+    </group>
+</vector>
