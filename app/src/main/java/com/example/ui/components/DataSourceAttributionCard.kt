@@ -81,7 +81,9 @@ fun DataSourceAttributionCard(modifier: Modifier = Modifier) {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Platform bilgileri JustWatch tarafından sağlanır. Platform, dublaj ve altyazı bilgileri değişebilir.",
+                text = "Platform bilgileri JustWatch tarafından sağlanır. Platform, dublaj ve altyazı bilgileri değişebilir.\n" +
+                    "Netflix, Prime Video, Disney+, HBO Max, Mubi, Gain, TOD ve Apple TV+ ilgili sahiplerinin ticari " +
+                    "markalarıdır; Ne İzlesek? bu hizmetlerle bağlantılı değildir ve onlar tarafından onaylanmamıştır.",
                 fontSize = 11.sp,
                 color = TextSecondary,
                 lineHeight = 15.sp

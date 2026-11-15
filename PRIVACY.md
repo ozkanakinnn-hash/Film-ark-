@@ -43,6 +43,11 @@ Film bilgileri ve afişleri [TMDB](https://www.themoviedb.org/)'den alınır. Bu
 ancak TMDB tarafından onaylanmamış veya sertifikalandırılmamıştır. Platform bilgileri JustWatch
 tarafından sağlanır.
 
+## Ticari markalar
+Uygulamada anılan Netflix, Prime Video, Disney+, HBO Max, Mubi, Gain, TOD ve Apple TV+ ilgili sahiplerinin
+ticari markalarıdır. Bu adlar yalnızca bir filmin hangi platformda olduğunu belirtmek için yazıyla kullanılır;
+logoları kullanılmaz. Ne İzlesek? bu hizmetlerle bağlantılı değildir ve onlar tarafından onaylanmamıştır.
+
 ## Değişiklikler
 Uygulamaya reklam ya da yeni bir özellik eklenirse bu politika güncellenir ve güncelleme tarihi değişir.
 

@@ -60,6 +60,10 @@ Gizlilik politikası / Privacy policy: [PRIVACY.md](PRIVACY.md)
 <a href="https://www.themoviedb.org/"><img src="https://www.themoviedb.org/assets/v4/logos/v2/blue_short-8e7b30f73a4020692ccca9c88bafe5dcb6f8a62a4c6bc55cd9ba82bb2cd95f6c.svg" alt="TMDB" height="16"></a>
 
 This product uses the TMDB API but is not endorsed or certified by TMDB.
+
+Netflix, Prime Video, Disney+, HBO Max, Mubi, Gain, TOD and Apple TV+ are trademarks of their respective owners.
+They are referenced by name only to describe where a film is available; Ne İzlesek? is not affiliated with or
+endorsed by them.
 Uygulama içinde de Profil ekranındaki "Veri Kaynağı" bölümünde aynı atıf gösterilir.
 
 ---

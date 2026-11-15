@@ -111,14 +111,20 @@ fun normalizePlatformName(name: String): String = when (name.trim()) {
     else -> name.trim()
 }
 
+/**
+ * Platformlar yalnızca ADLARIYLA gösterilir. Marka logoları, logo karakterleri (ör. Apple simgesi) ve
+ * marka renkleri bilerek kullanılmaz; kısaltmalar uygulamanın kendi nötr temasında çizilir.
+ */
+private const val NEUTRAL_BADGE = 0xFF2E2A35
+
 val AvailablePlatforms = listOf(
-    StreamingPlatform("netflix", "Netflix", "N", 0xFFE50914),
-    StreamingPlatform("prime", "Prime Video", "P", 0xFF00A8E1),
-    StreamingPlatform("disney", "Disney+", "D+", 0xFF113CCF),
-    StreamingPlatform("hbomax", "HBO Max", "HBO", 0xFF4F46E5),
-    StreamingPlatform("mubi", "Mubi", "M", 0xFF192A45),
-    StreamingPlatform("gain", "Gain", "G", 0xFF00E676),
-    StreamingPlatform("tod", "TOD", "TOD", 0xFF7C3AED),
-    StreamingPlatform("apple", "Apple TV+", "", 0xFF475569),
-    StreamingPlatform("other", OTHER_PLATFORM_NAME, "+", 0xFF64748B)
+    StreamingPlatform("netflix", "Netflix", "N", NEUTRAL_BADGE),
+    StreamingPlatform("prime", "Prime Video", "P", NEUTRAL_BADGE),
+    StreamingPlatform("disney", "Disney+", "D+", NEUTRAL_BADGE),
+    StreamingPlatform("hbomax", "HBO Max", "HBO", NEUTRAL_BADGE),
+    StreamingPlatform("mubi", "Mubi", "M", NEUTRAL_BADGE),
+    StreamingPlatform("gain", "Gain", "G", NEUTRAL_BADGE),
+    StreamingPlatform("tod", "TOD", "TOD", NEUTRAL_BADGE),
+    StreamingPlatform("apple", "Apple TV+", "TV+", NEUTRAL_BADGE),
+    StreamingPlatform("other", OTHER_PLATFORM_NAME, "+", NEUTRAL_BADGE)
 )

@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -554,17 +555,20 @@ fun FilterScreen(
                             .testTag("platform_chip_${platform.id}")
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
+                            // Nötr kısaltma karosu (marka logosu/rengi kullanılmaz)
                             Surface(
-                                color = Color(platform.badgeColorHex),
+                                color = CinemaTheme.colors.background,
                                 shape = RoundedCornerShape(6.dp),
-                                modifier = Modifier.size(24.dp)
+                                border = BorderStroke(1.dp, if (isSelected) PopcornGold.copy(alpha = 0.6f) else CinemaBorder),
+                                modifier = Modifier.size(width = 30.dp, height = 24.dp)
                             ) {
                                 Box(contentAlignment = Alignment.Center) {
                                     Text(
                                         text = platform.iconName,
-                                        fontSize = 10.sp,
+                                        fontSize = 9.sp,
                                         fontWeight = FontWeight.Black,
-                                        color = Color.White
+                                        color = if (isSelected) PopcornGold else TextSecondary,
+                                        maxLines = 1
                                     )
                                 }
                             }

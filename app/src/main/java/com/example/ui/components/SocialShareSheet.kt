@@ -692,7 +692,8 @@ private fun PlatformShareGrid(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 rowPlatforms.forEach { platform ->
-                    val accent = Color(platform.badgeColorHex)
+                    // Marka rengi yerine tema rengi (marka görünümü taklit edilmez)
+                    val accent = PopcornGold
                     Surface(
                         color = accent.copy(alpha = 0.14f),
                         shape = RoundedCornerShape(14.dp),
