@@ -2,8 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.intent.permission.INTERNET" />
-    <uses-permission android:name="android.intent.permission.VIBRATE" />
+    <!-- Doğru izin adları "android.permission.*" (eskiden yanlışlıkla "android.intent.permission.*" yazıyordu) -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-feature
         android:name="android.hardware.sensor.accelerometer"
         android:required="false" />
@@ -29,6 +31,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Çökme raporu: ayrı süreçte, Compose kullanmayan basit ekran -->
+        <activity
+            android:name=".crash.CrashReportActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:process=":crash_report"
+            android:taskAffinity="${applicationId}.crash"
+            android:theme="@android:style/Theme.Material.NoActionBar" />
 
         <receiver
             android:name=".widget.MovieWheelAppWidgetProvider"

@@ -1537,4 +1537,33 @@ class ExampleRobolectricTest {
       .performScrollToNode(hasTestTag("profile_watch_later_section"))
     composeTestRule.onNodeWithTag("watch_later_item_${movie.id}").assertIsDisplayed()
   }
+
+  @Test
+  fun `manifest requests real internet, network state and vibrate permissions`() {
+    val app = ApplicationProvider.getApplicationContext<Application>()
+    val info = app.packageManager.getPackageInfo(app.packageName, android.content.pm.PackageManager.GET_PERMISSIONS)
+    val requested = info.requestedPermissions?.toSet().orEmpty()
+    // Yanlış "android.intent.permission.*" adları Android tarafından yok sayılır ve uygulama internetsiz kalır
+    assertTrue(requested.contains(android.Manifest.permission.INTERNET))
+    assertTrue(requested.contains(android.Manifest.permission.ACCESS_NETWORK_STATE))
+    assertTrue(requested.contains(android.Manifest.permission.VIBRATE))
+    assertTrue(requested.none { it.startsWith("android.intent.permission.") })
+  }
+
+  @Test
+  fun `crash report screen shows the saved report`() {
+    val app = ApplicationProvider.getApplicationContext<Application>()
+    com.example.crash.CrashReporter.write(app, Thread.currentThread(), IllegalStateException("Açılış hatası"))
+    val controller = org.robolectric.Robolectric.buildActivity(com.example.crash.CrashReportActivity::class.java).setup()
+    val root = controller.get().window.decorView
+    fun texts(v: android.view.View): List<String> = when (v) {
+      is android.widget.TextView -> listOf(v.text.toString())
+      is android.view.ViewGroup -> (0 until v.childCount).flatMap { texts(v.getChildAt(it)) }
+      else -> emptyList()
+    }
+    val all = texts(root).joinToString("\n")
+    assertTrue(all.contains("Açılış hatası"))
+    assertTrue(all.contains("Raporu Paylaş"))
+    com.example.crash.CrashReporter.clear(app)
+  }
 }

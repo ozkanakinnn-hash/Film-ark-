@@ -30,10 +30,40 @@ object CrashReporter {
         installed = true
         val appContext = context.applicationContext
         val previous = Thread.getDefaultUncaughtExceptionHandler()
+        // Rapor ekranının kendi sürecinde çökme olursa döngüye girmemek için yalnızca sistem işleyicisi
+        if (currentProcessName(appContext).endsWith(CRASH_PROCESS_SUFFIX)) return
+        // Robolectric testlerinde test sürecini öldürmemek için kurma
+        if (Build.FINGERPRINT == "robolectric") return
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
-            runCatching { write(appContext, thread, throwable) }
-            previous?.uncaughtException(thread, throwable)
+            val written = runCatching { write(appContext, thread, throwable) }.isSuccess
+            val shown = written && runCatching { showReportScreen(appContext) }.isSuccess
+            if (shown) {
+                // Rapor ekranı ayrı süreçte açıldı; bozuk süreci sessizce sonlandır
+                android.os.Process.killProcess(android.os.Process.myPid())
+                kotlin.system.exitProcess(10)
+            } else {
+                previous?.uncaughtException(thread, throwable)
+            }
         }
+    }
+
+    private const val CRASH_PROCESS_SUFFIX = ":crash_report"
+
+    private fun showReportScreen(context: Context) {
+        val report = pendingReport(context)
+        context.startActivity(
+            Intent(context, CrashReportActivity::class.java)
+                .putExtra(CrashReportActivity.EXTRA_REPORT, report)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        )
+    }
+
+    private fun currentProcessName(context: Context): String {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            android.app.Application.getProcessName()?.let { return it }
+        }
+        return runCatching { File("/proc/self/cmdline").readText().trim(Char(0), ' ') }
+            .getOrDefault(context.packageName)
     }
 
     private fun file(context: Context) = File(context.filesDir, FILE_NAME)
