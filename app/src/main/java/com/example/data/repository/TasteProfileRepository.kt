@@ -110,7 +110,11 @@ fun buildWhyThisMovie(
     if (movie.imdb >= 8.0) reasons += "Yüksek puanlı ★ ${movie.imdb}"
     movie.platforms.firstOrNull { it in selectedPlatforms }?.let { reasons += "İzlenebilir: $it" }
     if (movie.isNewRelease) reasons += "Yeni yapım (${movie.year})"
-    if (movie.durationMins in 1..100) reasons += "Kısa: ${movie.durationMins} dk"
-    if (reasons.isEmpty()) reasons += "Filtrelerine uyan ${movie.genre.substringBefore('/').trim()} filmi"
+    if (movie.isSeries) {
+        movie.seasonCount?.takeIf { it <= 2 }?.let { reasons += "Kısa dizi: $it sezon" }
+    } else if (movie.durationMins in 1..100) {
+        reasons += "Kısa: ${movie.durationMins} dk"
+    }
+    if (reasons.isEmpty()) reasons += "Filtrelerine uyan ${movie.genre.substringBefore('/').trim()} ${if (movie.isSeries) "dizisi" else "filmi"}"
     return reasons.take(3).joinToString(" • ")
 }

@@ -1172,7 +1172,7 @@ class ExampleRobolectricTest {
 
     val recorded = RoomRepository.savedDecisions.value.first()
 
-    // 2. Navigate back to Home -> open 'Geçmişte Ne Seçtik?' via history_icon_button
+    // 2. Navigate back to Home -> open 'Geçmişte Ne Seçtik?' via home_open_history_button
     composeTestRule.onNodeWithTag("wheel_screen_list")
       .performScrollToNode(hasTestTag("wheel_back_button"))
     composeTestRule.onNodeWithTag("wheel_back_button").performClick()
@@ -1184,8 +1184,8 @@ class ExampleRobolectricTest {
     composeTestRule.waitForIdle()
 
     composeTestRule.onNodeWithTag("home_screen_list")
-      .performScrollToNode(hasTestTag("history_icon_button"))
-    composeTestRule.onNodeWithTag("history_icon_button").performClick()
+      .performScrollToNode(hasTestTag("home_open_history_button"))
+    composeTestRule.onNodeWithTag("home_open_history_button").performClick()
     composeTestRule.waitForIdle()
 
     composeTestRule.onNodeWithTag("history_screen_title")
@@ -1432,7 +1432,9 @@ class ExampleRobolectricTest {
     RoomRepository.recordSavedDecision(topMovie, "Film Karşılaştır (VS)", minutesSaved = 45)
 
     // Open History -> jump straight to DB Dashboard via history_open_dashboard_button
-    composeTestRule.onNodeWithTag("history_icon_button").performClick()
+    composeTestRule.onNodeWithTag("home_screen_list")
+      .performScrollToNode(hasTestTag("home_open_history_button"))
+    composeTestRule.onNodeWithTag("home_open_history_button").performClick()
     composeTestRule.waitForIdle()
 
     composeTestRule.onNodeWithTag("history_open_dashboard_button")

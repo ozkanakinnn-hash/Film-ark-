@@ -146,7 +146,10 @@ fun HomeScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f).padding(end = 6.dp)
+                ) {
                     // Uygulama ikonuyla aynı logo karosu (marka tutarlılığı için her iki temada da noir)
                     Box(
                         contentAlignment = Alignment.Center,
@@ -178,20 +181,22 @@ fun HomeScreen(
                         Text(
                             text = "Karar Çarkı • Sıfır Suçlama",
                             style = MaterialTheme.typography.bodySmall,
-                            color = TextSecondary
+                            color = TextSecondary,
+                            maxLines = 1,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                         )
                     }
                 }
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     IconButton(
                         onClick = { showSearch = true },
                         modifier = Modifier
                             .minimumInteractiveComponentSize()
-                            .size(48.dp)
+                            .size(40.dp)
                             .background(CinemaSurface, CircleShape)
                             .testTag("home_search_button")
                     ) {
@@ -206,7 +211,7 @@ fun HomeScreen(
                         onClick = onToggleTheme,
                         modifier = Modifier
                             .minimumInteractiveComponentSize()
-                            .size(48.dp)
+                            .size(40.dp)
                             .background(CinemaSurface, CircleShape)
                             .testTag("theme_toggle_button")
                     ) {
@@ -221,7 +226,7 @@ fun HomeScreen(
                         onClick = onProfileClick,
                         modifier = Modifier
                             .minimumInteractiveComponentSize()
-                            .size(48.dp)
+                            .size(40.dp)
                             .background(CinemaSurface, CircleShape)
                             .testTag("profile_icon_button")
                     ) {
@@ -249,20 +254,6 @@ fun HomeScreen(
                         }
                     }
 
-                    IconButton(
-                        onClick = onHistoryClick,
-                        modifier = Modifier
-                            .minimumInteractiveComponentSize()
-                            .size(48.dp)
-                            .background(CinemaSurface, CircleShape)
-                            .testTag("history_icon_button")
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.History,
-                            contentDescription = "Geçmişte Ne Seçtik?",
-                            tint = PopcornGold
-                        )
-                    }
                 }
             }
 
