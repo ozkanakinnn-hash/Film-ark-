@@ -1,5 +1,9 @@
 package com.example.ui.screens
 
+import com.example.ui.components.filmIcon
+
+import com.example.ui.components.FilmIconView
+
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -483,7 +487,7 @@ fun FilterScreen(
                             .padding(14.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = mood.emoji, fontSize = 24.sp)
+                        FilmIconView(icon = mood.filmIcon(), size = 40.dp)
                         Spacer(modifier = Modifier.width(12.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Text(

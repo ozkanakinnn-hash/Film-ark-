@@ -1,5 +1,9 @@
 package com.example.ui.components
 
+import com.example.ui.components.filmIconForGenre
+
+import com.example.ui.components.FilmIconView
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -263,7 +267,7 @@ fun MovieFilterComponent(
                             .testTag("genre_chip_${genre.name.lowercase(Locale.ROOT)}")
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(text = genre.emoji, fontSize = 13.sp)
+                            FilmIconView(icon = filmIconForGenre(genre.name), size = 18.dp, tile = false)
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
                                 text = genre.name,
