@@ -1490,7 +1490,21 @@ class ExampleRobolectricTest {
       .performScrollTo()
       .assertIsDisplayed()
   }
+
+  @Test
+  fun `crash reporter saves the stack trace and shows a share dialog on next launch`() {
+    val app = ApplicationProvider.getApplicationContext<Application>()
+    com.example.crash.CrashReporter.clear(app)
+    com.example.crash.CrashReporter.write(app, Thread.currentThread(), IllegalStateException("Deneme çökmesi"))
+    val report = com.example.crash.CrashReporter.pendingReport(app)
+    assertTrue(report != null && report.contains("IllegalStateException") && report.contains("Deneme çökmesi"))
+    assertTrue("Report must include device info", report!!.contains("Android"))
+
+    composeTestRule.activityRule.scenario.recreate()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("crash_report_dialog").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("crash_report_share_button").performClick()
+    composeTestRule.waitForIdle()
+    assertNull("Report is cleared after sharing", com.example.crash.CrashReporter.pendingReport(app))
+  }
 }
-
-
-

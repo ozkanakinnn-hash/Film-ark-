@@ -24,6 +24,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.testTag
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -62,6 +67,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        com.example.crash.CrashReporter.install(applicationContext)
         WatchedMovieRepository.init(applicationContext)
         CustomWheelListRepository.init(applicationContext)
         RoomRepository.init(applicationContext)
@@ -143,6 +149,41 @@ fun DecisionApp(
     val historyDashboardStats by viewModel.historyDashboardStats.collectAsState()
 
     val snackbarHostState = remember { SnackbarHostState() }
+
+    // Önceki oturum çöktüyse hata raporunu göster (adb olmadan hata ayıklama)
+    var pendingCrashReport by remember { mutableStateOf(com.example.crash.CrashReporter.pendingReport(context)) }
+    pendingCrashReport?.let { report ->
+        AlertDialog(
+            onDismissRequest = {
+                com.example.crash.CrashReporter.clear(context)
+                pendingCrashReport = null
+            },
+            title = { Text("Uygulama beklenmedik şekilde kapandı") },
+            text = {
+                Text(
+                    "Hatayı düzeltebilmemiz için raporu paylaşabilirsin. Rapor kişisel bilgi içermez; " +
+                        "yalnızca hata ayrıntısı, uygulama sürümü ve telefon modeli vardır."
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        com.example.crash.CrashReporter.share(context, report)
+                        com.example.crash.CrashReporter.clear(context)
+                        pendingCrashReport = null
+                    },
+                    modifier = Modifier.testTag("crash_report_share_button")
+                ) { Text("Raporu Paylaş") }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    com.example.crash.CrashReporter.clear(context)
+                    pendingCrashReport = null
+                }) { Text("Kapat") }
+            },
+            modifier = Modifier.testTag("crash_report_dialog")
+        )
+    }
 
     LaunchedEffect(feedbackToast) {
         feedbackToast?.let {

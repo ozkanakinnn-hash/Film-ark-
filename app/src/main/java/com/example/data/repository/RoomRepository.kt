@@ -449,8 +449,9 @@ object RoomRepository {
         val starters = buildDefaultSavedDecisions()
         updateSavedDecisionsState(starters)
         prefs?.edit()?.clear()?.apply()
+        // Yalnızca testlerden çağrılır: sıfırlama bitmeden dönme ki testlerle yarış durumu oluşmasın
         dao?.let { localDao ->
-            ioScope.launch {
+            kotlinx.coroutines.runBlocking(kotlinx.coroutines.Dispatchers.IO) {
                 localDao.clearAll()
                 localDao.upsertDecisions(starters.map { it.toEntity() })
             }

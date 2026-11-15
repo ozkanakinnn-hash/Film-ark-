@@ -83,7 +83,9 @@ fun GenrePosterCard(
     val genreStyle = remember(genre) { resolveGenreRevealStyle(genre) }
     val isDark = CinemaTheme.colors.isDark
     BoxWithConstraints(modifier = modifier) {
-        val w = maxWidth.value
+        // Genişlik sınırsız ya da sıfırsa (ör. ölçüsüz bir kapsayıcı) makul bir değere düş; aksi halde
+        // boyutlar sonsuz/NaN olur ve Compose çöker.
+        val w = maxWidth.value.takeIf { it.isFinite() && it > 0f } ?: 160f
         val compact = w < 90f
         when (style) {
             PosterCardStyle.NEON_BILET -> NeonTicketCard(title, genre, year, genreStyle, w, compact, isDark)

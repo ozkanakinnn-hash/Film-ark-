@@ -25,6 +25,11 @@ sildiğinizde silinir:
   veya tarayıcıda açılır. Bu durumda YouTube'un kendi gizlilik politikası geçerlidir.
 - **Paylaşım** yalnızca siz "Paylaş" düğmesine dokunduğunuzda, seçtiğiniz uygulama üzerinden yapılır.
 
+## Çökme raporları
+Uygulama beklenmedik şekilde kapanırsa hata ayrıntısı (hata izi, uygulama sürümü, telefon modeli ve Android
+sürümü) yalnızca telefonunuzda saklanır. Bir sonraki açılışta size gösterilir; **siz "Raporu Paylaş"
+demedikçe hiçbir yere gönderilmez**. "Kapat" derseniz silinir. Rapor kişisel bilgi içermez.
+
 ## İzinler
 - **İnternet:** afişleri yüklemek için.
 - **Titreşim:** çark dönerken dokunsal geri bildirim için.
@@ -55,6 +60,8 @@ Uygulamaya reklam ya da yeni bir özellik eklenirse bu politika güncellenir ve 
 - Movie posters are loaded from TMDB's image server (`image.tmdb.org`), which can see your IP address like
   any web request. Trailers open in YouTube only when you tap the trailer button (YouTube's privacy policy
   applies). Sharing happens only when you tap "Share", through the app you choose.
+- Crash reports (stack trace, app version, phone model, Android version) are stored only on your device and
+  are sent nowhere unless you tap "Share report"; they contain no personal data.
 - Permissions: Internet (posters), Vibrate (haptic feedback).
 
 This product uses the TMDB API but is not endorsed or certified by TMDB. Streaming availability data is
