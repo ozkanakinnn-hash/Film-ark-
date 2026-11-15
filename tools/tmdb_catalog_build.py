@@ -42,8 +42,8 @@ PLATFORM_MAP = {
     "TOD TV": "TOD",
     "Apple TV Plus": "Apple TV+",
     "Apple TV+": "Apple TV+",
-    "HBO Max": "BluTV",  # BluTV, Türkiye'de HBO Max olarak yeniden markalandı
-    "BluTV": "BluTV",
+    "HBO Max": "HBO Max",
+    "BluTV": "HBO Max",  # BluTV, Türkiye'de HBO Max olarak yeniden markalandı
     "Gain": "Gain",
 }
 GENRE_COLORS = {

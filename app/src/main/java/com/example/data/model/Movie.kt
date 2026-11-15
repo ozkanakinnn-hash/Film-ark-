@@ -102,11 +102,20 @@ data class StreamingPlatform(
 
 const val OTHER_PLATFORM_NAME = "Diğer"
 
+/**
+ * Eski platform adlarını güncel adlarına çevirir (ör. BluTV, Türkiye'de HBO Max olarak yeniden markalandı).
+ * Cihazda kayıtlı eski geçmiş kayıtları okunurken kullanılır.
+ */
+fun normalizePlatformName(name: String): String = when (name.trim()) {
+    "BluTV" -> "HBO Max"
+    else -> name.trim()
+}
+
 val AvailablePlatforms = listOf(
     StreamingPlatform("netflix", "Netflix", "N", 0xFFE50914),
     StreamingPlatform("prime", "Prime Video", "P", 0xFF00A8E1),
     StreamingPlatform("disney", "Disney+", "D+", 0xFF113CCF),
-    StreamingPlatform("blutv", "BluTV", "Blu", 0xFF00A4D6),
+    StreamingPlatform("hbomax", "HBO Max", "HBO", 0xFF4F46E5),
     StreamingPlatform("mubi", "Mubi", "M", 0xFF192A45),
     StreamingPlatform("gain", "Gain", "G", 0xFF00E676),
     StreamingPlatform("tod", "TOD", "TOD", 0xFF7C3AED),

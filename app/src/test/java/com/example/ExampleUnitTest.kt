@@ -818,7 +818,7 @@ class DecisionUnitTest {
     fun testHorrorCatalog_hasMultipleNewMoviesAcrossPlatformsAndNewReleasesSortFirst() {
         val horrorResult = MovieRepository.filterMoviesWithCriteria(
             moods = setOf(Mood.HORROR.id),
-            platforms = setOf("Netflix", "Prime Video", "Disney+", "BluTV", "Mubi", "Gain", "TOD", "Apple TV+")
+            platforms = setOf("Netflix", "Prime Video", "Disney+", "HBO Max", "Mubi", "Gain", "TOD", "Apple TV+")
         )
         assertTrue(horrorResult.isExactMatch)
         assertTrue("Horror pool must contain many movies across platforms", horrorResult.movies.size >= 8)
@@ -963,5 +963,27 @@ class DecisionUnitTest {
             second.count { s -> first.any { it.id == s.id } } <= 2)
         val small = pool.take(5)
         assertEquals("Small pools are kept as-is", small.map { it.id }, WheelPoolSampler.sample(small).map { it.id })
+    }
+
+    @Test
+    fun testBluTvRebrandedAsHboMax_inCatalogAndLegacyHistory() {
+        assertTrue(com.example.data.model.AvailablePlatforms.any { it.name == "HBO Max" })
+        assertTrue(com.example.data.model.AvailablePlatforms.none { it.name == "BluTV" })
+        assertTrue(MovieRepository.allMovies.none { it.platforms.contains("BluTV") })
+        assertTrue(MovieRepository.allMovies.any { it.platforms.contains("HBO Max") })
+        // Cihazda kayıtlı eski geçmiş kayıtları yeni adla okunur
+        val legacy = com.example.data.local.SavedDecisionEntity(
+            id = "legacy",
+            movieId = "m15",
+            movieTitle = "Prestij",
+            movieYear = 2006,
+            movieDurationMins = 130,
+            movieImdb = 8.5,
+            moviePlatformsCsv = "BluTV,Netflix",
+            movieGenre = "Gizem / Dram",
+            dateText = "01.01.2026",
+            mode = "Tek Başına"
+        ).toDomain()
+        assertEquals(listOf("HBO Max", "Netflix"), legacy.movie.platforms)
     }
 }

@@ -69,6 +69,7 @@ First-time setup on a fresh machine (e.g. a cloud session):
 - Poster plan B: `components/GenrePosterCard.kt` (default style `neonbilet` = neon genre icon + real cut-out ticket shape, theme-aware dark/light; also `afis` | `bilet` | `neon`). `gradle.properties` → `neizlesek.posterMode=tmdb|cards`, `neizlesek.posterCardStyle=...`; one-off: `./gradlew assembleDebug -Pneizlesek.posterMode=cards`. Cards also replace failed/missing TMDB posters when `MoviePosterImage` gets `genre`/`year`.
 - VS screen: picking a genre switches `CompareScreen` to full-screen swipe duel; the champion is a 9:16 logo story card and "Hikâye Olarak Paylaş" shares a 1080×1920 PNG from `data/share/ChampionStoryRenderer.kt` (falls back to text share if the image can't be written).
 - Brand assets: `res/drawable/brand_mark.xml` (full logo mark) and `brand_mark_hook.xml` (no needle, used in the wheel hub). Home header, VS cards, story card and widget use them.
+- Platforms: BluTV was rebranded as "HBO Max" in Turkey; the app uses "HBO Max" everywhere and `normalizePlatformName()` maps legacy "BluTV" in stored history. Streaming services are shown by name only (text badges) — do not add their logos (trademark risk).
 - Privacy: `PRIVACY.md` (no accounts, no analytics/ads SDKs, data stays on device). Firebase deps are commented out in `app/build.gradle.kts` because nothing uses them; update PRIVACY.md if you re-enable them or add AdMob.
 - `widget/` — `MovieWheelAppWidgetProvider.kt` & `WidgetMovieStateStore.kt` for home-screen widget spins and daily recommendation.
 

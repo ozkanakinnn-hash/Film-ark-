@@ -3,6 +3,7 @@ package com.example.data.local
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.data.model.Movie
+import com.example.data.model.normalizePlatformName
 import com.example.data.model.TmdbImageConfig
 import com.example.data.repository.SavedDecision
 
@@ -31,8 +32,9 @@ data class SavedDecisionEntity(
     fun toDomain(): SavedDecision {
         val parsedPlatforms = moviePlatformsCsv
             .split(",")
-            .map { it.trim() }
+            .map { normalizePlatformName(it) }
             .filter { it.isNotEmpty() }
+            .distinct()
             .ifEmpty { listOf("Özel Liste") }
         val resolvedUrl = moviePosterUrl.ifBlank {
             TmdbImageConfig.getPosterUrl(moviePosterPath).orEmpty()
