@@ -26,7 +26,7 @@ android {
     //   cards = lisans gerektirmeyen, uygulamanın kendi ürettiği tür kartları
     // Tek seferlik: ./gradlew assembleDebug -Pneizlesek.posterMode=cards
     val posterMode = (project.findProperty("neizlesek.posterMode") as String?) ?: "tmdb"
-    val posterCardStyle = (project.findProperty("neizlesek.posterCardStyle") as String?) ?: "afis"
+    val posterCardStyle = (project.findProperty("neizlesek.posterCardStyle") as String?) ?: "neonbilet"
     buildConfigField("boolean", "TMDB_POSTERS_ENABLED", (posterMode != "cards").toString())
     buildConfigField("String", "POSTER_CARD_STYLE", "\"$posterCardStyle\"")
   }

@@ -87,7 +87,7 @@ class PlaceholderTrendingCinemaRepository : TrendingCinemaRepository {
             ),
             TrendingCinemaItem(
                 rank = 3,
-                title = "Örümcek-Adam: Örümcek Evreninde",
+                title = "Örümcek Adam: Örümcek Evreninde",
                 categoryOrGenre = "Animasyon / Aksiyon",
                 imdbScore = 8.4,
                 trendReason = "Aile ve animasyon kategorisinde haftanın en çok önerilen filmi.",
@@ -99,7 +99,7 @@ class PlaceholderTrendingCinemaRepository : TrendingCinemaRepository {
             ),
             TrendingCinemaItem(
                 rank = 4,
-                title = "Bıçaklar Çekildi: Gizemli Bir Hikaye",
+                title = "Bıçaklar Çekildi: Gizemli Bir Serüven",
                 categoryOrGenre = "Gizem / Komedi",
                 imdbScore = 7.1,
                 trendReason = "Hafta sonu arkadaş grubu izlemelerinde en popüler polisiye komedi.",
