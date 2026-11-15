@@ -533,6 +533,8 @@ fun ProfileScreen(
                                     posterPath = favMovie.posterPath,
                                     posterUrl = favMovie.posterUrl,
                                     accentColorHex = favMovie.colorHex,
+                                    genre = favMovie.genre,
+                                    year = favMovie.year,
                                     cornerRadius = 10.dp,
                                     showFallbackTitleBadge = false,
                                     modifier = Modifier

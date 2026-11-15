@@ -1,52 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Ne İzlesek? ana ekran widget'ı: sade noir zemin, logo, film bilgisi ve iki eylem. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/widget_cinema_bg"
     android:orientation="vertical"
-    android:padding="12dp">
+    android:padding="14dp">
 
-    <!-- Top Header: App Title + Mode Pill + IMDb Rating -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/widget_mode_badge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/widget_badge_bg"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:paddingStart="8dp"
-            android:paddingTop="3dp"
-            android:paddingEnd="8dp"
-            android:paddingBottom="3dp"
-            android:text="🎬 GÜNÜN ÖNERİSİ"
-            android:textColor="#06B6D4"
-            android:textSize="10sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/widget_spacer"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/widget_imdb_badge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="★ 8.7"
-            android:textColor="#F59E0B"
-            android:textSize="12sp"
-            android:textStyle="bold" />
-    </LinearLayout>
-
-    <!-- Tappable Movie Recommendation Area (Opens Movie inside App) -->
+    <!-- Logo + film bilgisi (dokununca film uygulamada açılır) -->
     <LinearLayout
         android:id="@+id/widget_movie_card"
         android:layout_width="match_parent"
@@ -55,74 +17,119 @@
         android:clickable="true"
         android:focusable="true"
         android:gravity="center_vertical"
-        android:orientation="vertical"
-        android:paddingTop="6dp"
-        android:paddingBottom="6dp">
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/widget_logo_tile_bg">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/brand_mark" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/widget_mode_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:letterSpacing="0.12"
+                android:maxLines="1"
+                android:text="GÜNÜN ÖNERİSİ"
+                android:textColor="#E9B949"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/widget_movie_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Yıldızlararası"
+                android:textColor="#F6F2EA"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/widget_movie_meta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="2014 • Bilim Kurgu / Macera • 169 dk"
+                android:textColor="#9A948B"
+                android:textSize="11sp" />
+
+            <!-- Sade tasarımda gizli; sağlayıcı geriye dönük uyumluluk için metni yine yazar -->
+            <TextView
+                android:id="@+id/widget_movie_hook"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/widget_movie_title"
-            android:layout_width="match_parent"
+            android:id="@+id/widget_imdb_badge"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="Yıldızlararası"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
+            android:layout_gravity="top"
+            android:layout_marginStart="8dp"
+            android:text="★ 8.7"
+            android:textColor="#E9B949"
+            android:textSize="12sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/widget_movie_meta"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="2014 • Bilim Kurgu / Macera • 169 dk"
-            android:textColor="#B8B3CC"
-            android:textSize="11sp" />
-
-        <TextView
-            android:id="@+id/widget_movie_hook"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="Ne İzlesek? çarkını ana ekrandan hemen çevir!"
-            android:textColor="#94A3B8"
-            android:textSize="11sp" />
+            android:id="@+id/widget_spacer"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone" />
     </LinearLayout>
 
-    <!-- Action Bar: Spin Wheel directly OR Switch to Today's Pick -->
+    <!-- Eylemler -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <TextView
             android:id="@+id/widget_spin_button"
             android:layout_width="0dp"
-            android:layout_height="48dp"
+            android:layout_height="44dp"
             android:layout_marginEnd="8dp"
-            android:layout_weight="1.3"
+            android:layout_weight="1.4"
             android:background="@drawable/widget_spin_btn_bg"
             android:clickable="true"
             android:contentDescription="@string/widget_spin_cd"
             android:focusable="true"
             android:gravity="center"
             android:maxLines="1"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:text="🎡 Çarkı Çevir"
-            android:textColor="#090712"
-            android:textSize="12sp"
+            android:text="Çarkı Çevir"
+            android:textColor="#0B0A0F"
+            android:textSize="13sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/widget_daily_button"
             android:layout_width="0dp"
-            android:layout_height="48dp"
+            android:layout_height="44dp"
             android:layout_weight="1"
             android:background="@drawable/widget_daily_btn_bg"
             android:clickable="true"
@@ -130,11 +137,9 @@
             android:focusable="true"
             android:gravity="center"
             android:maxLines="1"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:text="✨ Günün Filmi"
-            android:textColor="#06B6D4"
-            android:textSize="11sp"
+            android:text="Günün Filmi"
+            android:textColor="#F6F2EA"
+            android:textSize="12sp"
             android:textStyle="bold" />
     </LinearLayout>
 </LinearLayout>

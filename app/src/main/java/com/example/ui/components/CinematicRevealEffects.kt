@@ -171,8 +171,11 @@ enum class GenreRevealStyle(
 fun Movie.isHorrorMovie(): Boolean =
     moodTag == Mood.HORROR.id || genre.contains("Korku", ignoreCase = true)
 
-fun Movie.resolveGenreRevealStyle(): GenreRevealStyle {
-    if (isHorrorMovie()) return GenreRevealStyle.HORROR
+fun Movie.resolveGenreRevealStyle(): GenreRevealStyle = resolveGenreRevealStyle(genre, moodTag)
+
+/** Tür metnine (ve varsa ruh hali etiketine) göre görsel stil; film nesnesi olmadan da kullanılabilir. */
+fun resolveGenreRevealStyle(genre: String, moodTag: String = ""): GenreRevealStyle {
+    if (moodTag == Mood.HORROR.id || genre.contains("Korku", ignoreCase = true)) return GenreRevealStyle.HORROR
 
     val tokens = genre
         .split("/", ",", "•", "-")

@@ -61,8 +61,8 @@ class MovieWheelAppWidgetProvider : AppWidgetProvider() {
             val views = RemoteViews(context.packageName, R.layout.widget_movie_wheel)
 
             val modeLabel = when (state.mode) {
-                WidgetDisplayMode.DAILY -> "🎬 GÜNÜN ÖNERİSİ"
-                WidgetDisplayMode.SPIN -> "🎡 ÇARK SEÇİMİ • #${state.spinCount.coerceAtLeast(1)}"
+                WidgetDisplayMode.DAILY -> "GÜNÜN ÖNERİSİ"
+                WidgetDisplayMode.SPIN -> "ÇARK SEÇİMİ • #${state.spinCount.coerceAtLeast(1)}"
             }
             views.setTextViewText(R.id.widget_mode_badge, modeLabel)
             views.setTextViewText(R.id.widget_imdb_badge, "★ ${movie.imdb}")

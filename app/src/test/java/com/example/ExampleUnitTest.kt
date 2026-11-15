@@ -930,7 +930,38 @@ class DecisionUnitTest {
         assertEquals(2, RoomRepository.historyDashboardStats.value.totalSelections)
         assertEquals(2, RoomRepository.historyDashboardStats.value.dominantMovie?.selectionCount)
     }
+
+    @Test
+    fun testExpandedCatalog_hasUniqueIdsValidTrailersAndFranchiseVariety() {
+        val all = MovieRepository.allMovies
+        assertTrue("Catalog should be expanded well beyond the original 53 titles", all.size >= 200)
+        assertEquals("Movie ids must be unique", all.size, all.map { it.id }.toSet().size)
+        val tmdbIds = all.mapNotNull { it.tmdbId }
+        assertEquals("TMDB ids must not repeat", tmdbIds.size, tmdbIds.toSet().size)
+        val keyPattern = Regex("^[A-Za-z0-9_-]{11}$")
+        assertTrue("YouTube trailer keys must be 11-char video ids",
+            all.mapNotNull { it.trailerKey }.all { keyPattern.matches(it) })
+        assertEquals(
+            "Trailer launcher must open the official YouTube watch URL",
+            "https://www.youtube.com/watch?v=abcdefghijk",
+            com.example.ui.components.TrailerLauncher.youtubeUrl("abcdefghijk")
+        )
+        val harryPotter = all.count { it.title.startsWith("Harry Potter") }
+        assertTrue("At most one film per franchise", harryPotter <= 1)
+    }
+
+    @Test
+    fun testWheelPoolSampler_capsSlicesKeepsRequiredMovieAndRotates() {
+        WheelPoolSampler.resetForTests()
+        val pool = MovieRepository.allMovies
+        val target = pool.last()
+        val first = WheelPoolSampler.sample(pool, mustInclude = target)
+        assertEquals(WheelPoolSampler.MAX_SLICES, first.size)
+        assertTrue(first.any { it.id == target.id })
+        val second = WheelPoolSampler.sample(pool)
+        assertTrue("Consecutive samples should show mostly fresh movies",
+            second.count { s -> first.any { it.id == s.id } } <= 2)
+        val small = pool.take(5)
+        assertEquals("Small pools are kept as-is", small.map { it.id }, WheelPoolSampler.sample(small).map { it.id })
+    }
 }
-
-
-

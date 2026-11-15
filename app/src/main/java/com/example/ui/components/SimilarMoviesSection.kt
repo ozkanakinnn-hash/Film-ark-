@@ -180,6 +180,8 @@ private fun SimilarMovieItemCard(
                 posterPath = movie.posterPath,
                 posterUrl = movie.posterUrl,
                 accentColorHex = movie.colorHex,
+                genre = movie.genre,
+                year = movie.year,
                 cornerRadius = 10.dp,
                 showFallbackTitleBadge = false,
                 testTag = "similar_movie_poster_${movie.id}",

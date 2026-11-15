@@ -534,6 +534,8 @@ fun HistoryScreen(
                                 posterPath = decision.movie.posterPath,
                                 posterUrl = decision.movie.posterUrl,
                                 accentColorHex = decision.movie.colorHex,
+                                genre = decision.movie.genre,
+                                year = decision.movie.year,
                                 cornerRadius = 12.dp,
                                 showFallbackTitleBadge = false,
                                 modifier = Modifier

@@ -606,6 +606,8 @@ private fun TopMovieLeaderboardRow(
             posterPath = stat.movie.posterPath,
             posterUrl = stat.movie.posterUrl,
             accentColorHex = stat.movie.colorHex,
+            genre = stat.movie.genre,
+            year = stat.movie.year,
             cornerRadius = 8.dp,
             showFallbackTitleBadge = false,
             modifier = Modifier

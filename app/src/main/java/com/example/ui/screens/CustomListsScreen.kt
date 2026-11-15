@@ -478,6 +478,8 @@ private fun CustomWheelCategoryCard(
                                 posterPath = movie.posterPath,
                                 posterUrl = movie.posterUrl,
                                 accentColorHex = movie.colorHex,
+                                genre = movie.genre,
+                                year = movie.year,
                                 cornerRadius = 6.dp,
                                 showFallbackTitleBadge = false,
                                 modifier = Modifier

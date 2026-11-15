@@ -223,6 +223,8 @@ fun StoryShareDialog(
                                     posterPath = movie.posterPath,
                                     posterUrl = movie.posterUrl,
                                     accentColorHex = movie.colorHex,
+                                    genre = movie.genre,
+                                    year = movie.year,
                                     cornerRadius = 10.dp,
                                     showFallbackTitleBadge = false,
                                     testTag = "story_movie_poster",

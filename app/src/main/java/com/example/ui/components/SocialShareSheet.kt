@@ -305,6 +305,8 @@ fun SocialShareDialog(
                         posterPath = movie.posterPath,
                         posterUrl = movie.posterUrl,
                         accentColorHex = movie.colorHex,
+                        genre = movie.genre,
+                        year = movie.year,
                         cornerRadius = 10.dp,
                         showFallbackTitleBadge = false,
                         modifier = Modifier
@@ -554,6 +556,8 @@ fun FavoritesSocialShareDialog(
                                     posterPath = fav.posterPath,
                                     posterUrl = fav.posterUrl,
                                     accentColorHex = fav.colorHex,
+                                    genre = fav.genre,
+                                    year = fav.year,
                                     cornerRadius = 8.dp,
                                     showFallbackTitleBadge = false,
                                     modifier = Modifier

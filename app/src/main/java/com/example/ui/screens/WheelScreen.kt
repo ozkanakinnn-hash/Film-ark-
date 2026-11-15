@@ -100,6 +100,7 @@ import com.example.ui.components.WheelRevealAnimationBanner
 import com.example.ui.components.isHorrorMovie
 import com.example.ui.components.resolveGenreRevealStyle
 import com.example.ui.components.GenreRevealOverlay
+import com.example.ui.components.TrailerButton
 import com.example.ui.theme.pressScale
 import com.example.ui.theme.rememberPressSource
 import com.example.ui.theme.CinemaBackground
@@ -761,6 +762,8 @@ fun WheelScreen(
                                             posterPath = selectedMovie.posterPath,
                                             posterUrl = selectedMovie.posterUrl,
                                             accentColorHex = selectedMovie.colorHex,
+                                            genre = selectedMovie.genre,
+                                            year = selectedMovie.year,
                                             cornerRadius = 14.dp,
                                             testTag = "wheel_movie_poster",
                                             modifier = Modifier
@@ -1067,6 +1070,12 @@ fun WheelScreen(
                             }
 
                             Spacer(modifier = Modifier.height(10.dp))
+
+                            // RESMİ FRAGMAN (YouTube'da açılır)
+                            if (selectedMovie.trailerKey != null) {
+                                TrailerButton(movie = selectedMovie)
+                                Spacer(modifier = Modifier.height(10.dp))
+                            }
 
                             // SOCIAL FLEX / INSTAGRAM 9:16 STORY CARD BUTTON
                             OutlinedButton(

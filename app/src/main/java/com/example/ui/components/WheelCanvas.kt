@@ -470,6 +470,8 @@ fun WheelCanvas(
                 posterPath = winnerMovie.posterPath,
                 posterUrl = winnerMovie.posterUrl,
                 accentColorHex = winnerMovie.colorHex,
+                genre = winnerMovie.genre,
+                year = winnerMovie.year,
                 cornerRadius = 28.dp,
                 showFallbackTitleBadge = false,
                 modifier = Modifier

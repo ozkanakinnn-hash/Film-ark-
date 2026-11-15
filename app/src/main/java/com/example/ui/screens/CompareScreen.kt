@@ -103,6 +103,7 @@ import com.example.data.model.Movie
 import com.example.data.repository.MovieRepository
 import com.example.data.share.ChampionStoryRenderer
 import com.example.ui.components.MoviePosterImage
+import com.example.ui.components.TrailerButton
 import com.example.ui.theme.CinemaBorder
 import com.example.ui.theme.CinemaMotion
 import com.example.ui.theme.CinemaSurface
@@ -592,6 +593,8 @@ private fun DuelPosterCard(
             posterPath = movie.posterPath,
             posterUrl = movie.posterUrl,
             accentColorHex = movie.colorHex,
+            genre = movie.genre,
+            year = movie.year,
             cornerRadius = 0.dp,
             modifier = Modifier.fillMaxSize()
         )
@@ -796,6 +799,11 @@ private fun ChampionStorySection(
 
         Spacer(modifier = Modifier.height(10.dp))
 
+        if (champion.trailerKey != null) {
+            TrailerButton(movie = champion)
+            Spacer(modifier = Modifier.height(10.dp))
+        }
+
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp), modifier = Modifier.fillMaxWidth()) {
             if (isWatched) {
                 Surface(
@@ -886,6 +894,8 @@ private fun ChampionStoryCard(champion: Movie, roundsWon: Int, modifier: Modifie
             posterPath = champion.posterPath,
             posterUrl = champion.posterUrl,
             accentColorHex = champion.colorHex,
+            genre = champion.genre,
+            year = champion.year,
             cornerRadius = 0.dp,
             testTag = "compare_champion_poster",
             modifier = Modifier.fillMaxSize()

@@ -47,6 +47,9 @@ fun MoviePosterImage(
     cornerRadius: Dp = 12.dp,
     showFallbackTitleBadge: Boolean = true,
     testTag: String? = null,
+    /** Verilirse poster yokken/yüklenemezken türe özel afiş kartı çizilir. */
+    genre: String? = null,
+    year: Int? = null,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -86,6 +89,9 @@ fun MoviePosterImage(
                 onError = { loadFailed = true },
                 modifier = Modifier.fillMaxSize()
             )
+        } else if (genre != null) {
+            // B planı: lisans gerektirmeyen, türe özel afiş kartı
+            GenrePosterCard(title = title, genre = genre, year = year, modifier = Modifier.fillMaxSize())
         } else {
             Image(
                 painter = painterResource(id = R.drawable.img_default_poster_placeholder),
@@ -98,14 +104,7 @@ fun MoviePosterImage(
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter)
-                        .background(
-                            Brush.verticalGradient(
-                                listOf(
-                                    Color.Transparent,
-                                    Color(0xD9090614)
-                                )
-                            )
-                        )
+                        .background(Brush.verticalGradient(listOf(Color.Transparent, Color(0xD9090614))))
                         .padding(horizontal = 6.dp, vertical = 6.dp),
                     contentAlignment = Alignment.Center
                 ) {

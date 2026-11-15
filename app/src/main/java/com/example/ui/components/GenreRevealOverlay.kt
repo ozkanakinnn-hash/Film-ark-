@@ -181,6 +181,8 @@ fun GenreRevealOverlay(
                 posterPath = movie.posterPath,
                 posterUrl = movie.posterUrl,
                 accentColorHex = movie.colorHex,
+                genre = movie.genre,
+                year = movie.year,
                 cornerRadius = 18.dp,
                 testTag = "genre_reveal_overlay_poster",
                 modifier = Modifier

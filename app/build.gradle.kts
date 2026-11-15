@@ -21,9 +21,14 @@ android {
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-    // TMDB posterleri. Ticari kullanım (reklam, ücretli sürüm) TMDB ile yazılı lisans gerektirir;
-    // lisans olmadan gelir elde edilecekse "false" yapın: uygulama kendi yer tutucu görsellerini gösterir.
-    buildConfigField("boolean", "TMDB_POSTERS_ENABLED", "true")
+    // Poster kaynağı (B planı tek ayarla): gradle.properties → neizlesek.posterMode
+    //   tmdb  = gerçek TMDB afişleri (ticari kullanım TMDB lisansı gerektirir)
+    //   cards = lisans gerektirmeyen, uygulamanın kendi ürettiği tür kartları
+    // Tek seferlik: ./gradlew assembleDebug -Pneizlesek.posterMode=cards
+    val posterMode = (project.findProperty("neizlesek.posterMode") as String?) ?: "tmdb"
+    val posterCardStyle = (project.findProperty("neizlesek.posterCardStyle") as String?) ?: "afis"
+    buildConfigField("boolean", "TMDB_POSTERS_ENABLED", (posterMode != "cards").toString())
+    buildConfigField("String", "POSTER_CARD_STYLE", "\"$posterCardStyle\"")
   }
 
   // Do not remove or modify these signingConfigs. They are necessary for building, installing,
@@ -88,7 +93,8 @@ googleServices { missingGoogleServicesStrategy = MissingGoogleServicesStrategy.W
 // This makes it easy to add them back in the future if needed.
 dependencies {
   implementation(platform(libs.androidx.compose.bom))
-  implementation(platform(libs.firebase.bom))
+  // Firebase şu an kullanılmıyor (google-services.json yok); gizlilik ve APK boyutu için kapalı.
+  // implementation(platform(libs.firebase.bom))
   // implementation(libs.accompanist.permissions)
   implementation(libs.androidx.activity.compose)
   // implementation(libs.androidx.camera.camera2)
@@ -111,7 +117,7 @@ dependencies {
   implementation(libs.androidx.room.runtime)
   implementation(libs.coil.compose)
   implementation(libs.converter.moshi)
-  implementation(libs.firebase.ai)
+  // implementation(libs.firebase.ai)
   // Uncomment to use Firestore:
   // implementation(libs.firebase.firestore)
 
@@ -121,8 +127,8 @@ dependencies {
   // implementation(libs.androidx.credentials)
   // implementation(libs.androidx.credentials.play.services)
   // implementation(libs.googleid)
-  implementation(libs.firebase.appcheck.recaptcha)
-  implementation(libs.firebase.appcheck.debug)
+  // implementation(libs.firebase.appcheck.recaptcha)
+  // implementation(libs.firebase.appcheck.debug)
   implementation(libs.kotlinx.coroutines.android)
   implementation(libs.kotlinx.coroutines.core)
   implementation(libs.logging.interceptor)

@@ -51,6 +51,8 @@ This app is **completely free** and **non-commercial**:
 Movie posters and metadata are retrieved from the [TMDB](https://www.themoviedb.org/) API under
 TMDB's non-commercial terms, with attribution shown inside the app.
 
+Gizlilik politikası / Privacy policy: [PRIVACY.md](PRIVACY.md)
+
 ---
 
 ## TMDB attribution
