@@ -258,43 +258,12 @@ def patch_curated():
     return changed_titles
 
 
-def sync_trend_titles():
-    """Haftalık trend örnek listesindeki adları eşleştikleri katalog filminin adıyla aynı yapar."""
-    from tmdb_poster_sync import TRENDS
-    catalog = open(CATALOG, encoding="utf-8").read()
-    titles = {}
-    for m in re.finditer(r"\n\s*Movie\(\n(.*?)\n\s*\)", catalog, re.S):
-        mid = re.search(r'\bid\s*=\s*"([^"]+)"', m.group(1))
-        t = re.search(r'\btitle\s*=\s*("(?:[^"\\]|\\.)*")', m.group(1))
-        if mid and t:
-            titles[mid.group(1)] = t.group(1)
-    src = open(TRENDS, encoding="utf-8").read()
-    changed = []
-
-    def patch(m):
-        block = m.group(0)
-        cid = re.search(r'matchedCatalogMovieId\s*=\s*"([^"]+)"', block)
-        new = titles.get(cid.group(1)) if cid else None
-        if new:
-            old = re.search(r'\btitle\s*=\s*("(?:[^"\\]|\\.)*")', block).group(1)
-            if old != new:
-                changed.append((old, new))
-                block = block.replace(f"title = {old}", f"title = {new}", 1)
-        return block
-
-    src = re.sub(r"TrendingCinemaItem\((.*?)\n\s*\)", patch, src, flags=re.S)
-    open(TRENDS, "w", encoding="utf-8").write(src)
-    return changed
-
-
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--limit", type=int, default=200)
     args = ap.parse_args()
 
     titles = patch_curated()
-    for old, new in sync_trend_titles():
-        print(f"  Trend listesi: {old} -> {new}")
     print(f"Elle seçilen katalog: {len(titles)} film resmi Türkçe adına güncellendi")
     for old, new in titles:
         print(f"  {old}  ->  {new}")

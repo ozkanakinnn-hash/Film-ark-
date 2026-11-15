@@ -10,15 +10,11 @@ import com.example.data.model.HistoryDashboardSummary
 import com.example.data.model.Mood
 import com.example.data.model.Movie
 import com.example.data.model.OTHER_PLATFORM_NAME
-import com.example.data.model.Room
 import com.example.data.repository.CustomWheelListRepository
 import com.example.data.repository.MovieRepository
 import com.example.data.repository.WheelPoolSampler
-import com.example.data.repository.PlaceholderTrendingCinemaRepository
 import com.example.data.repository.RoomRepository
 import com.example.data.repository.SavedDecision
-import com.example.data.repository.TrendingCinemaRepository
-import com.example.data.repository.TrendingCinemaUiState
 import com.example.data.repository.WatchedMovieRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,7 +23,6 @@ import kotlinx.coroutines.launch
 
 enum class Screen {
     HOME,
-    ROOM_HUB,
     FILTERING,
     CUSTOM_LISTS,
     WHEEL,
@@ -57,13 +52,11 @@ data class CompareUiState(
 )
 
 class DecisionViewModel(
-    private val trendingRepository: TrendingCinemaRepository = PlaceholderTrendingCinemaRepository()
 ) : ViewModel() {
 
     private val _currentScreen = MutableStateFlow(Screen.HOME)
     val currentScreen: StateFlow<Screen> = _currentScreen.asStateFlow()
 
-    val currentRoom: StateFlow<Room?> = RoomRepository.currentRoom
     val savedDecisions: StateFlow<List<SavedDecision>> = RoomRepository.savedDecisions
     val historyDashboardStats: StateFlow<HistoryDashboardSummary> = RoomRepository.historyDashboardStats
     val watchedMovies: StateFlow<List<WatchedMovieEntity>> = WatchedMovieRepository.watchedMovies
@@ -79,11 +72,7 @@ class DecisionViewModel(
     val dailyNewReleases: StateFlow<List<Movie>> = MovieRepository.dailyUpdatedMovies
     val dailyFeedDateLabel: StateFlow<String> = MovieRepository.dailyFeedLastUpdated
 
-    private val _weeklyTrendsState = MutableStateFlow<TrendingCinemaUiState>(TrendingCinemaUiState.Loading)
-    val weeklyTrendsState: StateFlow<TrendingCinemaUiState> = _weeklyTrendsState.asStateFlow()
 
-    private val _isSoloMode = MutableStateFlow(true)
-    val isSoloMode: StateFlow<Boolean> = _isSoloMode.asStateFlow()
 
     // Host / User Filters
     private val _selectedMoods = MutableStateFlow<Set<String>>(setOf(Mood.EASY_WATCH.id))
@@ -91,13 +80,6 @@ class DecisionViewModel(
 
     private val _selectedPlatforms = MutableStateFlow<Set<String>>(setOf("Netflix", "Prime Video"))
     val selectedPlatforms: StateFlow<Set<String>> = _selectedPlatforms.asStateFlow()
-
-    // Partner / Guest Filters (Simulated or Real-time)
-    private val _partnerMoods = MutableStateFlow<Set<String>>(setOf(Mood.COMEDY.id))
-    val partnerMoods: StateFlow<Set<String>> = _partnerMoods.asStateFlow()
-
-    private val _partnerPlatforms = MutableStateFlow<Set<String>>(setOf("Netflix", "Disney+"))
-    val partnerPlatforms: StateFlow<Set<String>> = _partnerPlatforms.asStateFlow()
 
     // Advanced Filter Criteria (Tür, Yıl, Puan)
     private val _isAdvancedFilterMode = MutableStateFlow(false)
@@ -168,8 +150,6 @@ class DecisionViewModel(
     private val _showStoryModal = MutableStateFlow(false)
     val showStoryModal: StateFlow<Boolean> = _showStoryModal.asStateFlow()
 
-    private val _roomCodeInput = MutableStateFlow("")
-    val roomCodeInput: StateFlow<String> = _roomCodeInput.asStateFlow()
 
     private val _feedbackToast = MutableStateFlow<String?>(null)
     val feedbackToast: StateFlow<String?> = _feedbackToast.asStateFlow()
@@ -177,28 +157,10 @@ class DecisionViewModel(
     private val _compareState = MutableStateFlow(CompareUiState())
     val compareState: StateFlow<CompareUiState> = _compareState.asStateFlow()
 
-    init {
-        refreshWeeklyTrends(forceRefresh = false)
-    }
-
-    fun refreshWeeklyTrends(forceRefresh: Boolean = true) {
-        viewModelScope.launch {
-            _weeklyTrendsState.value = TrendingCinemaUiState.Loading
-            try {
-                val result = trendingRepository.fetchWeeklyTrends(forceRefresh = forceRefresh)
-                _weeklyTrendsState.value = TrendingCinemaUiState.Success(result)
-            } catch (e: Exception) {
-                _weeklyTrendsState.value = TrendingCinemaUiState.Error(
-                    e.localizedMessage ?: "Trend listesi alınamadı."
-                )
-            }
-        }
-    }
-
     fun refreshDailyMovieFeed(forceRefresh: Boolean = true) {
         MovieRepository.syncDailyMovieUpdates(forceRefresh = forceRefresh)
         if (forceRefresh) {
-            _feedbackToast.value = "🔥 Yeni çıkanlar güncellendi (${dailyNewReleases.value.size} film)"
+            _feedbackToast.value = "🔥 Öne çıkanlar güncellendi (${dailyNewReleases.value.size} film)"
         }
     }
 
@@ -215,82 +177,29 @@ class DecisionViewModel(
     }
 
     fun startSoloFlow() {
-        _isSoloMode.value = true
         _isVetoedOnce.value = false
         _isDecisionLocked.value = false
         _currentScreen.value = Screen.FILTERING
     }
 
-    fun openRoomHub() {
-        _isSoloMode.value = false
-        _isVetoedOnce.value = false
-        _isDecisionLocked.value = false
-        _currentScreen.value = Screen.ROOM_HUB
-    }
-
-    fun createRoom() {
-        _isSoloMode.value = false
-        RoomRepository.createRoom()
-    }
-
-    fun setRoomCodeInput(code: String) {
-        _roomCodeInput.value = code.take(4)
-    }
-
-    fun joinRoom(code: String) {
-        if (code.length == 4) {
-            val success = RoomRepository.joinRoom(code)
-            if (success) {
-                _currentScreen.value = Screen.FILTERING
-            } else {
-                _feedbackToast.value = "Oda bulunamadı, lütfen kodu kontrol edin."
-            }
-        }
-    }
-
-    fun simulatePartnerJoin() {
-        RoomRepository.simulatePartnerJoin()
-        _feedbackToast.value = "Partner odaya bağlandı! 🍿"
-    }
-
-    fun toggleMood(moodId: String, isPartner: Boolean = false) {
-        if (isPartner) {
-            val current = _partnerMoods.value.toMutableSet()
-            if (current.contains(moodId)) {
-                if (current.size > 1) current.remove(moodId)
-            } else {
-                current.add(moodId)
-            }
-            _partnerMoods.value = current
+    fun toggleMood(moodId: String) {
+        val current = _selectedMoods.value.toMutableSet()
+        if (current.contains(moodId)) {
+            if (current.size > 1) current.remove(moodId)
         } else {
-            val current = _selectedMoods.value.toMutableSet()
-            if (current.contains(moodId)) {
-                if (current.size > 1) current.remove(moodId)
-            } else {
-                current.add(moodId)
-            }
-            _selectedMoods.value = current
+            current.add(moodId)
         }
+        _selectedMoods.value = current
     }
 
-    fun togglePlatform(platformName: String, isPartner: Boolean = false) {
-        if (isPartner) {
-            val current = _partnerPlatforms.value.toMutableSet()
-            if (current.contains(platformName)) {
-                if (current.size > 1) current.remove(platformName)
-            } else {
-                current.add(platformName)
-            }
-            _partnerPlatforms.value = current
+    fun togglePlatform(platformName: String) {
+        val current = _selectedPlatforms.value.toMutableSet()
+        if (current.contains(platformName)) {
+            if (current.size > 1) current.remove(platformName)
         } else {
-            val current = _selectedPlatforms.value.toMutableSet()
-            if (current.contains(platformName)) {
-                if (current.size > 1) current.remove(platformName)
-            } else {
-                current.add(platformName)
-            }
-            _selectedPlatforms.value = current
+            current.add(platformName)
         }
+        _selectedPlatforms.value = current
     }
 
     fun toggleGenre(genre: String) {
@@ -382,16 +291,12 @@ class DecisionViewModel(
         }
         _activeWheelMovies.value = shown
 
-        if (RoomRepository.currentRoom.value == null || activeCustom != null) {
-            RoomRepository.prepareSoloSpin(
-                _selectedMoods.value,
-                _selectedPlatforms.value,
-                shown,
-                if (activeCustom != null) emptySet() else excludedIds
-            )
-        } else {
-            RoomRepository.updateRoomMoviePool(shown.map { it.id }, excludedIds)
-        }
+        RoomRepository.prepareSoloSpin(
+            _selectedMoods.value,
+            _selectedPlatforms.value,
+            shown,
+            if (activeCustom != null) emptySet() else excludedIds
+        )
 
         val currentSelected = _selectedMovie.value
         if (currentSelected != null && minImdb > 0.0 && currentSelected.imdb < minImdb) {
@@ -406,21 +311,8 @@ class DecisionViewModel(
     }
 
     private fun computeFilteredWheelMovies(minRatingOverride: Double = _minRating.value): List<Movie> {
-        val effectivePlatforms = if (_isSoloMode.value) {
-            _selectedPlatforms.value
-        } else {
-            val inter = _selectedPlatforms.value.intersect(_partnerPlatforms.value)
-            inter.ifEmpty { _selectedPlatforms.value + _partnerPlatforms.value }
-        }
-
-        val effectiveMoods = if (_isAdvancedFilterMode.value) {
-            emptySet()
-        } else if (_isSoloMode.value) {
-            _selectedMoods.value
-        } else {
-            val inter = _selectedMoods.value.intersect(_partnerMoods.value)
-            inter.ifEmpty { _selectedMoods.value + _partnerMoods.value }
-        }
+        val effectivePlatforms = _selectedPlatforms.value
+        val effectiveMoods = if (_isAdvancedFilterMode.value) emptySet() else _selectedMoods.value
 
         val excludedIds = WatchedMovieRepository.excludedWheelMovieIds.value
         val result = MovieRepository.filterMoviesWithCriteria(
@@ -460,23 +352,12 @@ class DecisionViewModel(
         _activeCustomList.value = null
         _activeWheelMovies.value = filtered
 
-        if (_isSoloMode.value || currentRoom.value == null) {
-            RoomRepository.prepareSoloSpin(
-                _selectedMoods.value,
-                _selectedPlatforms.value,
-                filtered,
-                excludedIds
-            )
-        } else {
-            val room = currentRoom.value
-            if (room != null) {
-                RoomRepository.updateFilters(room.host.id, _selectedMoods.value, _selectedPlatforms.value, excludedIds)
-                if (room.guest != null) {
-                    RoomRepository.updateFilters(room.guest.id, _partnerMoods.value, _partnerPlatforms.value, excludedIds)
-                }
-                RoomRepository.updateRoomMoviePool(filtered.map { it.id }, excludedIds)
-            }
-        }
+        RoomRepository.prepareSoloSpin(
+            _selectedMoods.value,
+            _selectedPlatforms.value,
+            filtered,
+            excludedIds
+        )
         _selectedMovie.value = null
         _isDecisionLocked.value = false
         _isSpinning.value = false
@@ -497,8 +378,6 @@ class DecisionViewModel(
         }.ifEmpty {
             MovieRepository.getCultAndOtherMovies()
         }
-
-        _isSoloMode.value = true
         _isVetoedOnce.value = false
         _isDecisionLocked.value = false
         _activeCustomList.value = null
@@ -525,8 +404,6 @@ class DecisionViewModel(
             .distinctBy { it.id }
             .filterNot { it.id != movie.id && excludedIds.contains(it.id) }
         val basePool = sampleForWheel(candidates, mustInclude = movie)
-
-        _isSoloMode.value = true
         _isVetoedOnce.value = false
         _isDecisionLocked.value = false
         _activeCustomList.value = null
@@ -595,8 +472,6 @@ class DecisionViewModel(
         val unwatched = list.movies.filterNot { excludedIds.contains(it.id) }
         val pool = unwatched.ifEmpty { list.movies }
         val effectiveExcluded = if (unwatched.isEmpty()) emptySet() else excludedIds
-
-        _isSoloMode.value = true
         _isVetoedOnce.value = false
         _isDecisionLocked.value = false
         activeSpinModeOverride = null
@@ -674,8 +549,7 @@ class DecisionViewModel(
 
     fun applyVeto() {
         if (_isSpinning.value || _isVetoedOnce.value) return
-        val room = currentRoom.value
-        val hostId = room?.host?.id ?: "solo_user"
+        val hostId = RoomRepository.currentRoom.value?.host?.id ?: "solo_user"
         val excludedIds = WatchedMovieRepository.excludedWheelMovieIds.value
         _isVetoedOnce.value = true
         RoomRepository.applyVeto(hostId, excludedIds)
@@ -933,8 +807,6 @@ class DecisionViewModel(
             .filterNot { excludedIds.contains(it.id) }
             .ifEmpty { MovieRepository.allMovies }
         val ensuredPool = sampleForWheel(pool, mustInclude = movie)
-
-        _isSoloMode.value = true
         _activeCustomList.value = null
         _activeWheelMovies.value = ensuredPool
         RoomRepository.prepareSoloSpin(

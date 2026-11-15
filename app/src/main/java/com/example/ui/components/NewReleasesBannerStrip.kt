@@ -149,7 +149,7 @@ fun NewReleasesBannerStrip(
                 ) {
                     Icon(
                         imageVector = Icons.Default.LocalFireDepartment,
-                        contentDescription = "Yeni çıkan filmler",
+                        contentDescription = "Öne çıkan filmler",
                         tint = Color.White,
                         modifier = Modifier.size(18.dp)
                     )
@@ -157,7 +157,7 @@ fun NewReleasesBannerStrip(
                 Spacer(modifier = Modifier.width(10.dp))
                 Column {
                     Text(
-                        text = "🔥 Yeni Çıkanlar • Günlük Güncel",
+                        text = "🔥 Öne Çıkanlar • Haftalık Güncel",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.ExtraBold,
                         color = PopcornGold,

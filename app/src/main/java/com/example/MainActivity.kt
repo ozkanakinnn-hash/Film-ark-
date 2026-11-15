@@ -52,7 +52,6 @@ import com.example.ui.screens.FlexScreen
 import com.example.ui.screens.HistoryScreen
 import com.example.ui.screens.HomeScreen
 import com.example.ui.screens.ProfileScreen
-import com.example.ui.screens.RoomScreen
 import com.example.ui.screens.StatsScreen
 import com.example.ui.screens.WheelScreen
 import com.example.ui.components.CinematicBackdrop
@@ -105,7 +104,6 @@ fun DecisionApp(
 ) {
     val context = LocalContext.current
     val currentScreen by viewModel.currentScreen.collectAsState()
-    val room by viewModel.currentRoom.collectAsState()
 
     LaunchedEffect(initialWidgetMovieId) {
         if (!initialWidgetMovieId.isNullOrBlank()) {
@@ -117,11 +115,8 @@ fun DecisionApp(
     val watchedMovies by viewModel.watchedMovies.collectAsState()
     val watchedMovieIds by viewModel.watchedMovieIds.collectAsState()
     val excludedWheelMovieIds by viewModel.excludedWheelMovieIds.collectAsState()
-    val isSoloMode by viewModel.isSoloMode.collectAsState()
     val selectedMoods by viewModel.selectedMoods.collectAsState()
     val selectedPlatforms by viewModel.selectedPlatforms.collectAsState()
-    val partnerMoods by viewModel.partnerMoods.collectAsState()
-    val partnerPlatforms by viewModel.partnerPlatforms.collectAsState()
     val activeWheelMovies by viewModel.activeWheelMovies.collectAsState()
     val wheelPoolTotal by viewModel.wheelPoolTotal.collectAsState()
     val watchLaterIds by viewModel.watchLaterIds.collectAsState()
@@ -131,7 +126,6 @@ fun DecisionApp(
     val isVetoedOnce by viewModel.isVetoedOnce.collectAsState()
     val isDecisionLocked by viewModel.isDecisionLocked.collectAsState()
     val showStoryModal by viewModel.showStoryModal.collectAsState()
-    val roomCodeInput by viewModel.roomCodeInput.collectAsState()
     val isAdvancedFilterMode by viewModel.isAdvancedFilterMode.collectAsState()
     val selectedGenres by viewModel.selectedGenres.collectAsState()
     val selectedAudioOptions by viewModel.selectedAudioOptions.collectAsState()
@@ -147,7 +141,6 @@ fun DecisionApp(
     val activeCustomList by viewModel.activeCustomList.collectAsState()
     val dailyNewReleases by viewModel.dailyNewReleases.collectAsState()
     val dailyFeedDateLabel by viewModel.dailyFeedDateLabel.collectAsState()
-    val weeklyTrendsState by viewModel.weeklyTrendsState.collectAsState()
     val historyDashboardStats by viewModel.historyDashboardStats.collectAsState()
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -230,11 +223,8 @@ fun DecisionApp(
                         onNewReleaseMovieClick = { movie -> viewModel.openMovieInWheelFromShowcase(movie) },
                         watchLaterIds = watchLaterIds,
                         onToggleWatchLater = { movie -> viewModel.toggleWatchLater(movie) },
-                        weeklyTrendsState = weeklyTrendsState,
-                        onRefreshTrends = { viewModel.refreshWeeklyTrends(forceRefresh = true) },
                         onToggleTheme = { viewModel.toggleTheme() },
                         onSoloClick = { viewModel.startSoloFlow() },
-                        onRoomClick = { viewModel.openRoomHub() },
                         onCompareClick = { viewModel.openCompareMode() },
                         onCustomListsClick = { viewModel.openCustomLists() },
                         onHistoryClick = { viewModel.navigateTo(Screen.HISTORY) },
@@ -244,26 +234,10 @@ fun DecisionApp(
                     )
                 }
 
-                Screen.ROOM_HUB -> {
-                    RoomScreen(
-                        room = room,
-                        roomCodeInput = roomCodeInput,
-                        onCodeInputChange = { viewModel.setRoomCodeInput(it) },
-                        onCreateRoom = { viewModel.createRoom() },
-                        onJoinRoom = { viewModel.joinRoom(it) },
-                        onSimulatePartner = { viewModel.simulatePartnerJoin() },
-                        onProceedToFilters = { viewModel.navigateTo(Screen.FILTERING) },
-                        onBack = { viewModel.resetToHome() }
-                    )
-                }
-
                 Screen.FILTERING -> {
                     FilterScreen(
-                        isSoloMode = isSoloMode,
                         selectedMoods = selectedMoods,
                         selectedPlatforms = selectedPlatforms,
-                        partnerMoods = partnerMoods,
-                        partnerPlatforms = partnerPlatforms,
                         isAdvancedFilterMode = isAdvancedFilterMode,
                         selectedGenres = selectedGenres,
                         selectedAudioOptions = selectedAudioOptions,
@@ -276,8 +250,8 @@ fun DecisionApp(
                         onSpinCustomList = { listId -> viewModel.spinCustomWheelList(listId) },
                         onOpenCustomLists = { viewModel.openCustomLists() },
                         onToggleFilterMode = { viewModel.setFilterMode(it) },
-                        onToggleMood = { mood, isPartner -> viewModel.toggleMood(mood, isPartner) },
-                        onTogglePlatform = { platform, isPartner -> viewModel.togglePlatform(platform, isPartner) },
+                        onToggleMood = { viewModel.toggleMood(it) },
+                        onTogglePlatform = { viewModel.togglePlatform(it) },
                         onGenreToggle = { viewModel.toggleGenre(it) },
                         onClearGenres = { viewModel.clearGenres() },
                         onToggleAudioOption = { viewModel.toggleAudioOption(it) },
@@ -289,10 +263,7 @@ fun DecisionApp(
                         onRatingChange = { viewModel.setMinRating(it) },
                         onResetAdvancedFilters = { viewModel.resetAdvancedFilters() },
                         onProceedToWheel = { viewModel.proceedToWheel() },
-                        onBack = {
-                            if (isSoloMode) viewModel.navigateTo(Screen.HOME)
-                            else viewModel.navigateTo(Screen.ROOM_HUB)
-                        }
+                        onBack = { viewModel.navigateTo(Screen.HOME) }
                     )
                 }
 
@@ -318,7 +289,6 @@ fun DecisionApp(
                         isVetoedOnce = isVetoedOnce,
                         isDecisionLocked = isDecisionLocked,
                         showStoryModal = showStoryModal,
-                        room = room,
                         activeCustomList = activeCustomList,
                         selectedGenres = selectedGenres,
                         selectedAudioOptions = selectedAudioOptions,
@@ -368,7 +338,6 @@ fun DecisionApp(
                         FlexScreen(
                             movie = movie,
                             isVetoedOnce = isVetoedOnce,
-                            roomCode = room?.roomCode,
                             onBack = { viewModel.navigateTo(Screen.WHEEL) }
                         )
                     }
@@ -431,7 +400,7 @@ fun DecisionApp(
 private val Screen.depth: Int
     get() = when (this) {
         Screen.HOME -> 0
-        Screen.ROOM_HUB, Screen.CUSTOM_LISTS, Screen.COMPARE, Screen.HISTORY, Screen.PROFILE -> 1
+        Screen.CUSTOM_LISTS, Screen.COMPARE, Screen.HISTORY, Screen.PROFILE -> 1
         Screen.FILTERING, Screen.STATS -> 2
         Screen.WHEEL -> 3
         Screen.FLEX -> 4

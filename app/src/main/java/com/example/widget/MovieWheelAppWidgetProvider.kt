@@ -24,24 +24,7 @@ class MovieWheelAppWidgetProvider : AppWidgetProvider() {
         }
     }
 
-    override fun onReceive(context: Context, intent: Intent) {
-        super.onReceive(context, intent)
-        when (intent.action) {
-            ACTION_WIDGET_SPIN -> {
-                val nextState = WidgetMovieStateStore.spinNextMovie(context)
-                updateAllWidgets(context, nextState)
-            }
-
-            ACTION_WIDGET_DAILY -> {
-                val dailyState = WidgetMovieStateStore.showDailyRecommendation(context)
-                updateAllWidgets(context, dailyState)
-            }
-        }
-    }
-
     companion object {
-        const val ACTION_WIDGET_SPIN = "com.example.widget.ACTION_WIDGET_SPIN"
-        const val ACTION_WIDGET_DAILY = "com.example.widget.ACTION_WIDGET_DAILY"
         const val EXTRA_WIDGET_MOVIE_ID = "extra_widget_movie_id"
 
         fun updateAllWidgets(context: Context, state: WidgetDisplayState) {
@@ -77,8 +60,8 @@ class MovieWheelAppWidgetProvider : AppWidgetProvider() {
             )
 
             // Direct Spin Broadcast (No App Launch Required)
-            val spinIntent = Intent(context, MovieWheelAppWidgetProvider::class.java).apply {
-                action = ACTION_WIDGET_SPIN
+            val spinIntent = Intent(context, WidgetActionReceiver::class.java).apply {
+                action = WidgetActionReceiver.ACTION_WIDGET_SPIN
             }
             val spinPendingIntent = PendingIntent.getBroadcast(
                 context,
@@ -89,8 +72,8 @@ class MovieWheelAppWidgetProvider : AppWidgetProvider() {
             views.setOnClickPendingIntent(R.id.widget_spin_button, spinPendingIntent)
 
             // Switch Back to Today's Daily Pick Broadcast (No App Launch Required)
-            val dailyIntent = Intent(context, MovieWheelAppWidgetProvider::class.java).apply {
-                action = ACTION_WIDGET_DAILY
+            val dailyIntent = Intent(context, WidgetActionReceiver::class.java).apply {
+                action = WidgetActionReceiver.ACTION_WIDGET_DAILY
             }
             val dailyPendingIntent = PendingIntent.getBroadcast(
                 context,

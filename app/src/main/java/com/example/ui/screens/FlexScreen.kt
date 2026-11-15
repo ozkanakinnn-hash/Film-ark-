@@ -130,7 +130,6 @@ private fun rememberFlexThemes(): List<FlexThemeOption> {
 fun FlexScreen(
     movie: Movie,
     isVetoedOnce: Boolean = false,
-    roomCode: String? = null,
     onBack: () -> Unit
 ) {
     BackHandler { onBack() }
@@ -169,7 +168,7 @@ fun FlexScreen(
 ⭐️ Puan: ${movie.imdb}
 📺 Platform: ${movie.platforms.joinToString(", ")}
 
-${if (roomCode != null) "Ortak Oda Kodu: $roomCode • " else ""}Seçim krizine son ver, odaya katıl: https://neizlesek.app${if (roomCode != null) "/room/$roomCode" else ""}
+Seçim krizine son ver: Ne İzlesek? ile çarkı sen de çevir!
     """.trimIndent()
 
     // Intent dispatchers
@@ -638,7 +637,6 @@ ${if (roomCode != null) "Ortak Oda Kodu: $roomCode • " else ""}Seçim krizine 
                             context = context,
                             movie = movie,
                             platform = SocialPlatform.TELEGRAM,
-                            roomCode = roomCode
                         )
                     },
                     modifier = Modifier
@@ -656,7 +654,6 @@ ${if (roomCode != null) "Ortak Oda Kodu: $roomCode • " else ""}Seçim krizine 
                             context = context,
                             movie = movie,
                             platform = SocialPlatform.FACEBOOK,
-                            roomCode = roomCode
                         )
                     },
                     modifier = Modifier

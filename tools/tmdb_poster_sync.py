@@ -27,7 +27,6 @@ import urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CATALOG = os.path.join(ROOT, "app/src/main/java/com/example/data/repository/MovieRepository.kt")
-TRENDS = os.path.join(ROOT, "app/src/main/java/com/example/data/repository/TrendingCinemaRepository.kt")
 REPORT = os.path.join(ROOT, "tools/tmdb_poster_report.json")
 API = "https://api.themoviedb.org/3"
 
@@ -157,17 +156,6 @@ def apply():
     src = re.sub(r"\n(\s*)Movie\(\n(.*?)\n\1\)", patch, src, flags=re.S)
     open(CATALOG, "w", encoding="utf-8").write(src)
 
-    # Haftalık trend örnek listesi: eşleştiği katalog filminin posterini kullanır
-    trends = open(TRENDS, encoding="utf-8").read()
-    def patch_trend(m):
-        block = m.group(0)
-        cid = re.search(r'matchedCatalogMovieId\s*=\s*"([^"]+)"', block)
-        row = rows.get(cid.group(1)) if cid else None
-        if row:
-            block = re.sub(r'posterPath\s*=\s*"[^"]*"', f'posterPath = "{row["posterPath"]}"', block)
-        return block
-    trends = re.sub(r"TrendingCinemaItem\((.*?)\n\s*\)", patch_trend, trends, flags=re.S)
-    open(TRENDS, "w", encoding="utf-8").write(trends)
     print(f"{len(rows)} film güncellendi.")
 
 

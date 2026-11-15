@@ -12,6 +12,9 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -64,6 +67,13 @@ class ExampleRobolectricTest {
 
   @get:Rule
   val composeTestRule = createAndroidComposeRule<MainActivity>()
+
+  /** Yeni kurulumda geçmiş boştur; geçmiş gerektiren testler kendi kararlarını ekler. */
+  private fun seedSampleDecisions() {
+    RoomRepository.recordSavedDecision(MovieRepository.allMovies[12], "Karar Çarkı")
+    RoomRepository.recordSavedDecision(MovieRepository.allMovies[0], "Karar Çarkı")
+    composeTestRule.waitForIdle()
+  }
 
   @Before
   fun setUp() {
@@ -264,34 +274,10 @@ class ExampleRobolectricTest {
   }
 
   @Test
-  fun `room flow opens wheel and spins without crashing`() {
-    composeTestRule.onNodeWithTag("room_mode_button").performScrollTo().performClick()
-    composeTestRule.waitForIdle()
-
-    composeTestRule.onNodeWithTag("create_room_action_button").performScrollTo().performClick()
-    composeTestRule.waitForIdle()
-
-    composeTestRule.onNodeWithTag("simulate_partner_button").performScrollTo().performClick()
-    composeTestRule.waitForIdle()
-
-    composeTestRule.onNodeWithTag("proceed_to_filters_button").performScrollTo().performClick()
-    composeTestRule.waitForIdle()
-
-    composeTestRule.onNodeWithTag("filter_screen_list")
-      .performScrollToNode(hasTestTag("launch_wheel_button"))
-    composeTestRule.onNodeWithTag("launch_wheel_button").performClick()
-    composeTestRule.waitForIdle()
-
-    composeTestRule.onNodeWithTag("spin_wheel_button").performScrollTo().performClick()
-    composeTestRule.mainClock.advanceTimeBy(5000L)
-    composeTestRule.waitForIdle()
-
-    composeTestRule.onNodeWithTag("wheel_screen_list")
-      .performScrollToNode(hasTestTag("open_story_modal_button"))
-    composeTestRule.onNodeWithTag("open_story_modal_button").performClick()
-    composeTestRule.waitForIdle()
-
-    composeTestRule.onNodeWithTag("flex_story_card").assertIsDisplayed()
+  fun `home screen has no shared room entry and shows wheel entry title`() {
+    composeTestRule.onAllNodesWithTag("room_mode_button").assertCountEquals(0)
+    composeTestRule.onAllNodesWithTag("weekly_trends_section").assertCountEquals(0)
+    composeTestRule.onNodeWithText("Karar Çarkını Çevir").assertExists()
   }
 
   @Test
@@ -435,31 +421,6 @@ class ExampleRobolectricTest {
   }
 
   @Test
-  fun `home screen renders weekly trends section with firebase notice and share dialog`() {
-    composeTestRule.onNodeWithTag("home_screen_list")
-      .performScrollToNode(hasTestTag("weekly_trends_section"))
-    composeTestRule.onNodeWithTag("weekly_trends_section").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("trends_firebase_notice").assertIsDisplayed()
-
-    composeTestRule.onNodeWithTag("weekly_trends_row")
-      .performScrollToNode(hasTestTag("trend_item_1"))
-    composeTestRule.onNodeWithTag("trend_item_1").assertIsDisplayed()
-
-    composeTestRule.onNodeWithTag("trend_share_button_1").performScrollTo().performClick()
-    composeTestRule.waitForIdle()
-
-    composeTestRule.onNodeWithTag("social_share_dialog").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("share_platform_whatsapp").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("share_platform_instagram").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("share_platform_x_twitter").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("share_platform_telegram").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("share_platform_facebook").assertIsDisplayed()
-
-    composeTestRule.onNodeWithTag("social_share_close_button").performClick()
-    composeTestRule.waitForIdle()
-  }
-
-  @Test
   fun `wheel screen supports inline minimum imdb filter, favorite toggle, and social share sheet`() {
     composeTestRule.onNodeWithTag("solo_mode_button").performScrollTo().performClick()
     composeTestRule.waitForIdle()
@@ -563,7 +524,7 @@ class ExampleRobolectricTest {
     // Toggle off and back on to verify interactive sensor switch
     composeTestRule.onNodeWithTag("shake_sensor_toggle").performClick()
     composeTestRule.waitForIdle()
-    composeTestRule.onNodeWithTag("shake_sensor_status_text")
+    composeTestRule.onNodeWithTag("shake_sensor_status_text", useUnmergedTree = true)
       .assertTextContains("Kapalı", substring = true)
 
     composeTestRule.onNodeWithTag("shake_sensor_toggle").performClick()
@@ -764,6 +725,7 @@ class ExampleRobolectricTest {
 
   @Test
   fun `stats panel opens from home card and renders donut, column, and breakdown charts with tabs`() {
+    seedSampleDecisions()
     val favMovie = MovieRepository.getMovieById("m13")!!
     val watchedRewatch = MovieRepository.getMovieById("m14")!!
     WatchedMovieRepository.toggleFavorite(favMovie.id)
@@ -846,10 +808,11 @@ class ExampleRobolectricTest {
     shadowApp.clearNextStartedActivities()
 
     // Trigger spin directly via widget broadcast action (without opening app)
-    val spinIntent = Intent(app, MovieWheelAppWidgetProvider::class.java).apply {
-      action = MovieWheelAppWidgetProvider.ACTION_WIDGET_SPIN
+    val actionReceiver = com.example.widget.WidgetActionReceiver()
+    val spinIntent = Intent(app, com.example.widget.WidgetActionReceiver::class.java).apply {
+      action = com.example.widget.WidgetActionReceiver.ACTION_WIDGET_SPIN
     }
-    provider.onReceive(app, spinIntent)
+    actionReceiver.onReceive(app, spinIntent)
 
     assertNull(
       "Spinning from home-screen widget must update widget in-place without launching MainActivity",
@@ -867,10 +830,17 @@ class ExampleRobolectricTest {
     assertTrue("Spinning widget must pick a different movie", spunTitle != dailyTitle)
 
     // Switch back to today's recommendation via widget broadcast action
-    val dailyIntent = Intent(app, MovieWheelAppWidgetProvider::class.java).apply {
-      action = MovieWheelAppWidgetProvider.ACTION_WIDGET_DAILY
+    val dailyIntent = Intent(app, com.example.widget.WidgetActionReceiver::class.java).apply {
+      action = com.example.widget.WidgetActionReceiver.ACTION_WIDGET_DAILY
     }
-    provider.onReceive(app, dailyIntent)
+    actionReceiver.onReceive(app, dailyIntent)
+
+    // Dışa açık sağlayıcı özel eylemleri artık işlememeli (başka uygulamalar tetikleyemesin)
+    val stateBefore = WidgetMovieStateStore.getOrInitState(app)
+    provider.onReceive(app, Intent(app, MovieWheelAppWidgetProvider::class.java).apply {
+      action = com.example.widget.WidgetActionReceiver.ACTION_WIDGET_SPIN
+    })
+    assertEquals(stateBefore.spinCount, WidgetMovieStateStore.getOrInitState(app).spinCount)
 
     val restoredView = shadowAppWidgetManager.getViewFor(widgetId)
     val restoredBadge = restoredView.findViewById<TextView>(R.id.widget_mode_badge).text.toString()
@@ -969,6 +939,7 @@ class ExampleRobolectricTest {
 
   @Test
   fun `profile favorites list share and home saved decision share open poster dialogs`() {
+    seedSampleDecisions()
     val favA = MovieRepository.getMovieById("m13")!!
     val favB = MovieRepository.getMovieById("m14")!!
     WatchedMovieRepository.toggleFavorite(favA.id)
@@ -1242,6 +1213,7 @@ class ExampleRobolectricTest {
 
   @Test
   fun `home open history button navigates to Geçmişte Ne Seçtik and clear all empties list`() {
+    seedSampleDecisions()
     composeTestRule.onNodeWithTag("home_screen_list")
       .performScrollToNode(hasTestTag("home_open_history_button"))
     composeTestRule.onNodeWithTag("home_open_history_button").performClick()
@@ -1548,6 +1520,18 @@ class ExampleRobolectricTest {
     assertTrue(requested.contains(android.Manifest.permission.ACCESS_NETWORK_STATE))
     assertTrue(requested.contains(android.Manifest.permission.VIBRATE))
     assertTrue(requested.none { it.startsWith("android.intent.permission.") })
+  }
+
+  @Test
+  fun `manifest disables backup and keeps widget action receiver private`() {
+    val app = ApplicationProvider.getApplicationContext<Application>()
+    val pm = app.packageManager
+    val appInfo = pm.getApplicationInfo(app.packageName, 0)
+    assertEquals(0, appInfo.flags and android.content.pm.ApplicationInfo.FLAG_ALLOW_BACKUP)
+    val actionReceiver = pm.getReceiverInfo(
+      ComponentName(app, com.example.widget.WidgetActionReceiver::class.java), 0
+    )
+    assertFalse("Widget eylem alıcısı dışa açık olmamalı", actionReceiver.exported)
   }
 
   @Test

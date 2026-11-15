@@ -97,11 +97,8 @@ import java.util.Locale
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun FilterScreen(
-    isSoloMode: Boolean,
     selectedMoods: Set<String>,
     selectedPlatforms: Set<String>,
-    partnerMoods: Set<String>,
-    partnerPlatforms: Set<String>,
     isAdvancedFilterMode: Boolean,
     selectedGenres: Set<String>,
     selectedAudioOptions: Set<String> = emptySet(),
@@ -114,8 +111,8 @@ fun FilterScreen(
     onSpinCustomList: (String) -> Unit = {},
     onOpenCustomLists: () -> Unit = {},
     onToggleFilterMode: (Boolean) -> Unit,
-    onToggleMood: (String, Boolean) -> Unit,
-    onTogglePlatform: (String, Boolean) -> Unit,
+    onToggleMood: (String) -> Unit,
+    onTogglePlatform: (String) -> Unit,
     onGenreToggle: (String) -> Unit,
     onClearGenres: () -> Unit,
     onToggleAudioOption: (String) -> Unit = {},
@@ -131,22 +128,12 @@ fun FilterScreen(
 ) {
     BackHandler { onBack() }
 
-    var editingPartner by remember { mutableStateOf(false) }
     var showQuickNarrowFilters by remember { mutableStateOf(false) }
 
-    val activeMoods = if (isSoloMode || !editingPartner) selectedMoods else partnerMoods
-    val activePlatforms = if (isSoloMode || !editingPartner) selectedPlatforms else partnerPlatforms
-
-    // Calculate common intersection preview for fast mood mode
-    val commonMoods = if (!isSoloMode && selectedMoods.isNotEmpty() && partnerMoods.isNotEmpty()) {
-        val inter = selectedMoods.intersect(partnerMoods)
-        if (inter.isNotEmpty()) inter else selectedMoods + partnerMoods
-    } else selectedMoods
-
-    val commonPlatforms = if (!isSoloMode && selectedPlatforms.isNotEmpty() && partnerPlatforms.isNotEmpty()) {
-        val inter = selectedPlatforms.intersect(partnerPlatforms)
-        if (inter.isNotEmpty()) inter else selectedPlatforms + partnerPlatforms
-    } else selectedPlatforms
+    val activeMoods = selectedMoods
+    val activePlatforms = selectedPlatforms
+    val commonMoods = selectedMoods
+    val commonPlatforms = selectedPlatforms
 
     val effectiveMoods = if (isAdvancedFilterMode) emptySet() else commonMoods
     val filterResult = MovieRepository.filterMoviesWithCriteria(
@@ -237,7 +224,7 @@ fun FilterScreen(
                     }
                     Text(
                         text = if (isAdvancedFilterMode) "Kriterleri belirle, çark sadece en sevdiklerinle dönsün"
-                        else if (isSoloMode) "Modunu ve platformunu seç, istersen tür/yıl/puanla daralt" else "İki taraf da seçer, sistem kesişimini alır",
+                        else "Modunu ve platformunu seç, istersen tür/yıl/puanla daralt",
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary
                     )
@@ -380,50 +367,6 @@ fun FilterScreen(
 
             Spacer(modifier = Modifier.height(18.dp))
 
-            // Partner Toggle Switch if in Room Mode
-            if (!isSoloMode && !isAdvancedFilterMode) {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = CinemaSurface)
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 12.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column {
-                            Text(
-                                text = if (editingPartner) "Partnerin Tercihlerini Düzenliyorsun 🍿" else "Kendi Tercihlerini Düzenliyorsun 👑",
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = if (editingPartner) NeonPink else PopcornGold
-                            )
-                            Text(
-                                text = "İki cihaz senkron kesişim hesabı",
-                                fontSize = 11.sp,
-                                color = TextSecondary
-                            )
-                        }
-
-                        Switch(
-                            checked = editingPartner,
-                            onCheckedChange = { editingPartner = it },
-                            colors = SwitchDefaults.colors(
-                                checkedThumbColor = NeonPink,
-                                checkedTrackColor = NeonPink.copy(alpha = 0.25f),
-                                uncheckedThumbColor = PopcornGold,
-                                uncheckedTrackColor = PopcornGold.copy(alpha = 0.25f)
-                            ),
-                            modifier = Modifier.testTag("toggle_partner_editing_switch")
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-            }
         }
 
         if (isAdvancedFilterMode) {
@@ -470,7 +413,7 @@ fun FilterScreen(
                         .fillMaxWidth()
                         .padding(vertical = 5.dp)
                         .clip(RoundedCornerShape(16.dp))
-                        .clickable { onToggleMood(mood.id, !isSoloMode && editingPartner) }
+                        .clickable { onToggleMood(mood.id) }
                         .border(
                             1.5.dp,
                             if (isSelected) PopcornGold else CinemaBorder,
@@ -548,7 +491,7 @@ fun FilterScreen(
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(14.dp))
-                            .clickable { onTogglePlatform(platform.name, !isSoloMode && editingPartner) }
+                            .clickable { onTogglePlatform(platform.name) }
                             .background(if (isSelected) CinemaSurfaceVariant else CinemaSurface)
                             .border(
                                 1.5.dp,
@@ -983,7 +926,7 @@ fun FilterScreen(
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
                                 text = if (isAdvancedFilterMode) "FİLTRELENEN HAVUZ"
-                                else if (isSoloMode) "HAZIR HAVUZ" else "ORTAK KESİŞİM KÜMESİ",
+                                else "HAZIR HAVUZ",
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = ElectricCyan,

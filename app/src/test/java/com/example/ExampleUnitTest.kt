@@ -19,7 +19,6 @@ import com.example.data.model.resolveLikedMovies
 import com.example.data.repository.CustomWheelListRepository
 import com.example.data.repository.MovieRepository
 import com.example.data.repository.WheelPoolSampler
-import com.example.data.repository.PlaceholderTrendingCinemaRepository
 import com.example.data.repository.RoomRepository
 import com.example.data.repository.SavedDecision
 import com.example.data.repository.WatchedMovieRepository
@@ -64,33 +63,6 @@ class DecisionUnitTest {
         val comedyMovies = MovieRepository.filterMovies(setOf(Mood.COMEDY.id), emptySet())
         assertTrue("Should return comedy movies", comedyMovies.isNotEmpty())
         assertTrue(comedyMovies.all { it.moodTag == Mood.COMEDY.id })
-    }
-
-    @Test
-    fun testRoomCreation_generatesFourDigitCode() {
-        val room = RoomRepository.createRoom("HostUser")
-        assertEquals(4, room.roomCode.length)
-        assertTrue(room.roomCode.all { it.isDigit() })
-        assertEquals("HostUser", room.host.name)
-        assertTrue(room.host.isHost)
-    }
-
-    @Test
-    fun testRoomSync_joinAndFilterIntersection() {
-        val room = RoomRepository.createRoom("HostUser")
-        val joined = RoomRepository.joinRoom(room.roomCode, "PartnerUser")
-        assertTrue(joined)
-
-        // Host selects Easy Watch and Netflix
-        RoomRepository.updateFilters(
-            participantId = room.host.id,
-            moods = setOf(Mood.EASY_WATCH.id),
-            platforms = setOf("Netflix")
-        )
-
-        val updated = RoomRepository.currentRoom.value
-        assertNotNull(updated)
-        assertTrue(updated!!.eligibleMovieIds.isNotEmpty())
     }
 
     @Test
@@ -446,24 +418,13 @@ class DecisionUnitTest {
         vm.toggleFavoriteMovie(movie.id, movie.title)
         assertTrue(vm.favoriteMovieIds.value.contains(movie.id))
 
-        val shareCopy = buildMovieShareText(movie = movie, roomCode = "4821")
+        val shareCopy = buildMovieShareText(movie = movie)
         assertTrue(shareCopy.contains(movie.title))
         assertTrue(shareCopy.contains("Puan: ${movie.imdb}"))
-        assertTrue(shareCopy.contains("4821"))
+        assertFalse(shareCopy.contains("Ortak Oda"))
 
         vm.toggleFavoriteMovie(movie.id, movie.title)
         assertFalse(vm.favoriteMovieIds.value.contains(movie.id))
-    }
-
-    @Test
-    fun testPlaceholderTrendingCinemaRepository_returnsLabeledSampleTrends() = runBlocking {
-        val repo = PlaceholderTrendingCinemaRepository()
-        val result = repo.fetchWeeklyTrends(forceRefresh = false)
-
-        assertTrue("Sample trends list should be populated", result.items.isNotEmpty())
-        assertTrue("Sample fallback must explicitly flag placeholder data", result.isPlaceholderData)
-        assertTrue("Notice must mention Firebase", result.noticeMessage.contains("Firebase"))
-        assertEquals(1, result.items.first().rank)
     }
 
     @Test
@@ -595,6 +556,8 @@ class DecisionUnitTest {
         // Verify resolveLikedMovies deduplicates favorite + rewatch entries
         WatchedMovieRepository.markAsWatched(interstellar)
         WatchedMovieRepository.toggleRewatch(interstellar.id)
+        RoomRepository.recordSavedDecision(interstellar, "Karar Çarkı")
+        RoomRepository.recordSavedDecision(inception, "Karar Çarkı")
         val combinedStats = computeSpunAndLikedGenreStats(
             savedDecisions = RoomRepository.savedDecisions.value,
             favoriteMovieIds = setOf(interstellar.id, inception.id),
@@ -918,8 +881,9 @@ class DecisionUnitTest {
         assertEquals(3, summary.dominantMovie?.selectionCount)
         assertEquals(1, summary.topMovies[1].selectionCount)
         assertTrue(summary.topGenres.any { it.genre == "Bilim Kurgu" && it.selectionCount == 3 })
-        assertTrue(summary.modeBreakdown.any { it.modeCategory == "Tek Başına" && it.selectionCount == 1 })
-        assertTrue(summary.modeBreakdown.any { it.modeCategory == "Ortak Oda" && it.selectionCount == 1 })
+        // "Tek Başına" ve eski "Ortak Oda" kayıtları "Karar Çarkı" kategorisinde birleşir
+        assertTrue(summary.modeBreakdown.any { it.modeCategory == "Karar Çarkı" && it.selectionCount == 2 })
+        assertTrue(summary.modeBreakdown.none { it.modeCategory == "Ortak Oda" })
         assertTrue(summary.insightText.contains(sciFiHit.title))
 
         // Verify RoomRepository keeps historyDashboardStats reactive on record/delete/clear

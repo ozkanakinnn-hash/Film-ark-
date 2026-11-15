@@ -1,5 +1,7 @@
 package com.example.ui.screens
 
+import com.example.data.model.normalizeSelectionModeCategory
+
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -88,8 +90,7 @@ import com.example.ui.theme.TextSecondary
 
 private enum class HistoryModeFilter(val id: String, val label: String, val tag: String) {
     ALL("all", "Tümü", "history_filter_all"),
-    SOLO("solo", "Tek Başına", "history_filter_solo"),
-    ROOM("room", "Ortak Oda", "history_filter_room"),
+    SOLO("solo", "Karar Çarkı", "history_filter_solo"),
     CUSTOM("custom", "Özel Çark", "history_filter_custom"),
     COMPARE("compare", "VS Düello", "history_filter_compare")
 }
@@ -130,8 +131,7 @@ fun HistoryScreen(
         savedDecisions.filter { decision ->
             val modeMatches = when (selectedFilter) {
                 HistoryModeFilter.ALL -> true
-                HistoryModeFilter.SOLO -> decision.mode.contains("Tek Başına", ignoreCase = true)
-                HistoryModeFilter.ROOM -> decision.mode.contains("Ortak Oda", ignoreCase = true)
+                HistoryModeFilter.SOLO -> normalizeSelectionModeCategory(decision.mode) == "Karar Çarkı"
                 HistoryModeFilter.CUSTOM -> decision.mode.contains("Özel Çark", ignoreCase = true)
                 HistoryModeFilter.COMPARE -> decision.mode.contains("Karşılaştır", ignoreCase = true) ||
                     decision.mode.contains("VS", ignoreCase = true)

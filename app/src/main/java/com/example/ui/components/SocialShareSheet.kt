@@ -93,7 +93,6 @@ enum class SocialPlatform(
 
 fun buildMovieShareText(
     movie: Movie,
-    roomCode: String? = null,
     customHeader: String = "🎬 Bu Akşamın Film Seçimi!"
 ): String {
     val platformLine = if (movie.platforms.isNotEmpty()) {
@@ -101,7 +100,6 @@ fun buildMovieShareText(
     } else {
         ""
     }
-    val roomLine = if (!roomCode.isNullOrBlank()) "Ortak Oda Kodu: $roomCode • " else ""
     return buildString {
         appendLine("🍿 NE İZLESEK? KARAR ÇARKI 🎡")
         appendLine(customHeader)
@@ -111,7 +109,7 @@ fun buildMovieShareText(
         appendLine("⭐️ Puan: ${movie.imdb} • ⏱ ${movie.durationMins} dk")
         if (platformLine.isNotEmpty()) appendLine(platformLine)
         appendLine()
-        append("${roomLine}Sen de film çarkını çevir: https://neizlesek.app")
+        append("Sen de film çarkını çevir: Ne İzlesek?")
     }.trim()
 }
 
@@ -171,10 +169,9 @@ fun shareMovieToPlatform(
     context: Context,
     movie: Movie,
     platform: SocialPlatform,
-    roomCode: String? = null,
     onCopyClipboard: ((String) -> Unit)? = null
 ) {
-    val shareText = buildMovieShareText(movie = movie, roomCode = roomCode)
+    val shareText = buildMovieShareText(movie = movie)
     val posterUri = SharePosterRenderer.createMoviePosterShareUri(context, movie)
     val baseIntent = buildShareIntentWithOptionalPoster(
         context = context,
@@ -220,14 +217,13 @@ fun shareFavoritesListToPlatform(
 @Composable
 fun SocialShareDialog(
     movie: Movie,
-    roomCode: String? = null,
     onOpenStoryCard: (() -> Unit)? = null,
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
     var copied by remember(movie.id) { mutableStateOf(false) }
-    val shareText = remember(movie.id, roomCode) { buildMovieShareText(movie, roomCode) }
+    val shareText = remember(movie.id) { buildMovieShareText(movie) }
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -367,7 +363,6 @@ fun SocialShareDialog(
                             context = context,
                             movie = movie,
                             platform = platform,
-                            roomCode = roomCode,
                             onCopyClipboard = { txt ->
                                 clipboardManager.setText(AnnotatedString(txt))
                                 copied = true

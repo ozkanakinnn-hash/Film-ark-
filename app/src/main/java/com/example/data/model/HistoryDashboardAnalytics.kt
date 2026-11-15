@@ -64,13 +64,13 @@ private class ModeAccumulator {
 
 fun normalizeSelectionModeCategory(rawMode: String): String {
     return when {
-        rawMode.contains("Ortak Oda", ignoreCase = true) -> "Ortak Oda"
         rawMode.contains("Özel Çark", ignoreCase = true) -> "Özel Çark"
         rawMode.contains("Karşılaştır", ignoreCase = true) ||
             rawMode.contains("VS", ignoreCase = true) -> "VS Düello"
         rawMode.contains("Kült", ignoreCase = true) ||
             rawMode.contains("Diğer", ignoreCase = true) -> "Kült & Diğer"
-        else -> "Tek Başına"
+        // "Tek Başına" ve eski "Ortak Oda" kayıtları da çark kararıdır
+        else -> "Karar Çarkı"
     }
 }
 

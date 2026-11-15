@@ -18,6 +18,11 @@ sildiğinizde silinir:
 - Oluşturduğunuz özel çark listeleri,
 - Tema tercihi ve günlük öneri durumu.
 
+**Yedekleme:** Uygulama verileri Google Drive'a otomatik yedeklenmez ve yeni telefona otomatik aktarılmaz
+(Android otomatik yedeklemesi kapalıdır). Verilerinizi taşımak isterseniz Profil ekranındaki "Yedekle"
+düğmesiyle **kendi seçtiğiniz** bir dosyaya kaydedip yeni telefonda "Geri Yükle" ile açabilirsiniz.
+Bu dosya bizim sunucularımıza gönderilmez.
+
 ## İnternet bağlantısı
 - **Film afişleri** TMDB'nin görsel sunucusundan (`image.tmdb.org`) yüklenir. Her internet isteğinde
   olduğu gibi IP adresiniz bu sunucu tarafından görülebilir. Uygulama TMDB'ye kişisel bilgi göndermez.
@@ -61,7 +66,8 @@ Uygulamaya reklam ya da yeni bir özellik eklenirse bu politika güncellenir ve 
 - We do **not** collect personal data, send it to servers, or share it with anyone.
 - The app contains **no** advertising, analytics or tracking SDKs.
 - Watched/favorite movies, decision history, custom lists and settings are stored **only on your device**
-  and are deleted when you uninstall the app.
+  and are deleted when you uninstall the app. Android auto-backup is disabled; you can export a backup file
+  yourself from the Profile screen.
 - Movie posters are loaded from TMDB's image server (`image.tmdb.org`), which can see your IP address like
   any web request. Trailers open in YouTube only when you tap the trailer button (YouTube's privacy policy
   applies). Sharing happens only when you tap "Share", through the app you choose.

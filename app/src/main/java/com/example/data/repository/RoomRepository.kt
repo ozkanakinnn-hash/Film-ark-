@@ -33,14 +33,13 @@ data class SavedDecision(
     val movie: Movie,
     val dateText: String,
     val minutesSaved: Int = 45,
-    val mode: String, // "Tek Başına", "Ortak Oda (...)", "Özel Çark (...)", "Film Karşılaştır (VS)"
+    val mode: String, // "Karar Çarkı" (eski: "Tek Başına"), "Özel Çark (...)", "Film Karşılaştır (VS)"
     val selectedAtMillis: Long = System.currentTimeMillis()
 )
 
 object RoomRepository {
 
     private const val PREF_NAME = "ne_izlesek_saved_decisions_prefs"
-    private const val KEY_DECISIONS_SEEDED = "saved_decisions_seeded_v1"
 
     private val ioScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
@@ -53,7 +52,7 @@ object RoomRepository {
     private val _currentRoom = MutableStateFlow<Room?>(null)
     val currentRoom: StateFlow<Room?> = _currentRoom.asStateFlow()
 
-    private val _savedDecisions = MutableStateFlow<List<SavedDecision>>(buildDefaultSavedDecisions())
+    private val _savedDecisions = MutableStateFlow<List<SavedDecision>>(emptyList())
     val savedDecisions: StateFlow<List<SavedDecision>> = _savedDecisions.asStateFlow()
 
     private val _historyDashboardStats = MutableStateFlow(analyzeDecisionHistory(_savedDecisions.value))
@@ -87,167 +86,26 @@ object RoomRepository {
         dao = localDao
 
         ioScope.launch {
-            val persisted = localDao.getAllDecisionsOnce()
-            val alreadySeeded = prefs?.getBoolean(KEY_DECISIONS_SEEDED, false) == true
-            if (persisted.isNotEmpty()) {
-                val decoded = persisted.map { it.toDomain() }
-                val inMemoryPending = _savedDecisions.value.filter { mem ->
-                    mem.id != "s1" && mem.id != "s2" && decoded.none { it.id == mem.id }
-                }
-                val merged = (inMemoryPending + decoded)
-                    .distinctBy { it.id }
-                    .sortedByDescending { it.selectedAtMillis }
-                updateSavedDecisionsState(merged)
-                if (inMemoryPending.isNotEmpty()) {
-                    localDao.upsertDecisions(inMemoryPending.map { it.toEntity() })
-                }
-                prefs?.edit()?.putBoolean(KEY_DECISIONS_SEEDED, true)?.apply()
-            } else if (!alreadySeeded) {
-                val starters = buildDefaultSavedDecisions()
-                updateSavedDecisionsState(starters)
-                localDao.upsertDecisions(starters.map { it.toEntity() })
-                prefs?.edit()?.putBoolean(KEY_DECISIONS_SEEDED, true)?.apply()
-            } else {
-                val inMemoryPending = _savedDecisions.value.filter { it.id != "s1" && it.id != "s2" }
-                updateSavedDecisionsState(inMemoryPending)
+            // Eski sürümler ilk açılışta örnek (gerçek olmayan) iki karar ekliyordu; onları temizle
+            val persisted = localDao.getAllDecisionsOnce().filter { it.id !in LEGACY_SAMPLE_IDS }
+            LEGACY_SAMPLE_IDS.forEach { runCatching { localDao.deleteDecisionById(it) } }
+            val decoded = persisted.map { it.toDomain() }
+            val inMemoryPending = _savedDecisions.value.filter { mem -> decoded.none { it.id == mem.id } }
+            val merged = (inMemoryPending + decoded)
+                .distinctBy { it.id }
+                .sortedByDescending { it.selectedAtMillis }
+            updateSavedDecisionsState(merged)
+            if (inMemoryPending.isNotEmpty()) {
+                localDao.upsertDecisions(inMemoryPending.map { it.toEntity() })
             }
         }
     }
 
-    private fun buildDefaultSavedDecisions(): List<SavedDecision> {
-        val now = 1_700_000_000_000L
-        return listOf(
-            SavedDecision(
-                id = "s1",
-                movie = MovieRepository.allMovies[0],
-                dateText = "Dün Akşam",
-                minutesSaved = 45,
-                mode = "Ortak Oda (4829)",
-                selectedAtMillis = now + 2_000L
-            ),
-            SavedDecision(
-                id = "s2",
-                movie = MovieRepository.allMovies[12],
-                dateText = "3 Gün Önce",
-                minutesSaved = 50,
-                mode = "Tek Başına",
-                selectedAtMillis = now + 1_000L
-            )
-        )
-    }
+    private val LEGACY_SAMPLE_IDS = listOf("s1", "s2")
 
-    fun createRoom(hostName: String = "Sen"): Room {
-        val code = String.format("%04d", Random.nextInt(1000, 9999))
-        val host = Participant(
-            id = "host_${System.currentTimeMillis()}",
-            name = hostName,
-            isHost = true
-        )
-        val room = Room(
-            id = "room_$code",
-            roomCode = code,
-            hostId = host.id,
-            status = RoomStatus.WAITING_FOR_PARTNER,
-            host = host,
-            guest = null
-        )
-        _currentRoom.value = room
-        return room
-    }
 
-    fun joinRoom(code: String, guestName: String = "Partner"): Boolean {
-        val active = _currentRoom.value
-        if (active != null && active.roomCode == code) {
-            val guest = Participant(
-                id = "guest_${System.currentTimeMillis()}",
-                name = guestName,
-                isHost = false
-            )
-            _currentRoom.value = active.copy(
-                status = RoomStatus.FILTERING,
-                guest = guest
-            )
-            return true
-        } else {
-            // If joining a fresh simulated room by code:
-            val host = Participant(id = "host_1", name = "Oda Sahibi", isHost = true)
-            val guest = Participant(id = "guest_1", name = guestName, isHost = false)
-            _currentRoom.value = Room(
-                id = "room_$code",
-                roomCode = code,
-                hostId = host.id,
-                status = RoomStatus.FILTERING,
-                host = host,
-                guest = guest
-            )
-            return true
-        }
-    }
 
-    fun simulatePartnerJoin() {
-        val room = _currentRoom.value ?: return
-        val partner = Participant(
-            id = "guest_sim",
-            name = "Eşin / Partnerin 🍿",
-            isHost = false,
-            selectedMoods = setOf("easy_watch", "comedy"),
-            selectedPlatforms = setOf("Netflix", "Prime Video"),
-            isReady = true
-        )
-        _currentRoom.value = room.copy(
-            status = RoomStatus.FILTERING,
-            guest = partner
-        )
-    }
 
-    fun updateFilters(
-        participantId: String,
-        moods: Set<String>,
-        platforms: Set<String>,
-        excludedMovieIds: Set<String> = WatchedMovieRepository.excludedWheelMovieIds.value
-    ) {
-        val room = _currentRoom.value ?: return
-        val updatedHost = if (room.host.id == participantId) {
-            room.host.copy(selectedMoods = moods, selectedPlatforms = platforms, isReady = true)
-        } else room.host
-
-        val updatedGuest = if (room.guest?.id == participantId) {
-            room.guest.copy(selectedMoods = moods, selectedPlatforms = platforms, isReady = true)
-        } else room.guest
-
-        // Determine common pool
-        val hostMoods = updatedHost.selectedMoods
-        val guestMoods = updatedGuest?.selectedMoods ?: hostMoods
-
-        val commonMoods = if (updatedGuest != null && hostMoods.isNotEmpty() && guestMoods.isNotEmpty()) {
-            val intersect = hostMoods.intersect(guestMoods)
-            if (intersect.isNotEmpty()) intersect else hostMoods + guestMoods
-        } else hostMoods
-
-        val hostPlatforms = updatedHost.selectedPlatforms
-        val guestPlatforms = updatedGuest?.selectedPlatforms ?: hostPlatforms
-
-        val commonPlatforms = if (updatedGuest != null && hostPlatforms.isNotEmpty() && guestPlatforms.isNotEmpty()) {
-            val intersect = hostPlatforms.intersect(guestPlatforms)
-            if (intersect.isNotEmpty()) intersect else hostPlatforms + guestPlatforms
-        } else hostPlatforms
-
-        val excluded = excludedMovieIds + room.vetoHistory
-        val eligible = MovieRepository.filterMovies(commonMoods, commonPlatforms, excluded)
-            .filterNot { excluded.contains(it.id) }
-            .map { it.id }
-
-        _currentRoom.value = room.copy(
-            host = updatedHost,
-            guest = updatedGuest,
-            status = if (updatedHost.isReady && (updatedGuest == null || updatedGuest.isReady)) {
-                RoomStatus.READY_TO_SPIN
-            } else {
-                RoomStatus.FILTERING
-            },
-            eligibleMovieIds = eligible
-        )
-    }
 
     fun prepareSoloSpin(
         moods: Set<String>,
@@ -279,25 +137,6 @@ object RoomRepository {
         return room
     }
 
-    fun updateRoomMoviePool(
-        movieIds: List<String>,
-        excludedMovieIds: Set<String> = WatchedMovieRepository.excludedWheelMovieIds.value
-    ) {
-        val room = _currentRoom.value ?: return
-        val excluded = room.vetoHistory + excludedMovieIds
-        val filtered = movieIds.filterNot { excluded.contains(it) }
-            .ifEmpty {
-                MovieRepository.allMovies
-                    .filterNot { excluded.contains(it.id) }
-                    .ifEmpty { MovieRepository.allMovies }
-                    .take(8)
-                    .map { it.id }
-            }
-        _currentRoom.value = room.copy(
-            status = RoomStatus.READY_TO_SPIN,
-            eligibleMovieIds = filtered
-        )
-    }
 
     fun excludeMovieFromCurrentRoom(movieId: String) {
         val room = _currentRoom.value ?: return
@@ -361,7 +200,7 @@ object RoomRepository {
         )
 
         val resolvedMode = modeOverride?.takeIf { it.isNotBlank() }
-            ?: if (room.guest != null) "Ortak Oda (${room.roomCode})" else "Tek Başına"
+            ?: "Karar Çarkı"
         recordSavedDecision(movie = winner, mode = resolvedMode)
     }
 
@@ -417,7 +256,6 @@ object RoomRepository {
             selectedAtMillis = now
         )
         updateSavedDecisionsState(listOf(newSaved) + _savedDecisions.value)
-        prefs?.edit()?.putBoolean(KEY_DECISIONS_SEEDED, true)?.apply()
         dao?.let { localDao ->
             ioScope.launch {
                 localDao.upsertDecision(newSaved.toEntity())
@@ -427,7 +265,6 @@ object RoomRepository {
 
     fun deleteSavedDecision(decisionId: String) {
         updateSavedDecisionsState(_savedDecisions.value.filterNot { it.id == decisionId })
-        prefs?.edit()?.putBoolean(KEY_DECISIONS_SEEDED, true)?.apply()
         dao?.let { localDao ->
             ioScope.launch {
                 localDao.deleteDecisionById(decisionId)
@@ -437,7 +274,6 @@ object RoomRepository {
 
     fun clearSavedHistory() {
         updateSavedDecisionsState(emptyList())
-        prefs?.edit()?.putBoolean(KEY_DECISIONS_SEEDED, true)?.apply()
         dao?.let { localDao ->
             ioScope.launch {
                 localDao.clearAll()
@@ -446,14 +282,12 @@ object RoomRepository {
     }
 
     fun resetSavedDecisionsForTests() {
-        val starters = buildDefaultSavedDecisions()
-        updateSavedDecisionsState(starters)
+        updateSavedDecisionsState(emptyList())
         prefs?.edit()?.clear()?.apply()
         // Yalnızca testlerden çağrılır: sıfırlama bitmeden dönme ki testlerle yarış durumu oluşmasın
         dao?.let { localDao ->
             kotlinx.coroutines.runBlocking(kotlinx.coroutines.Dispatchers.IO) {
                 localDao.clearAll()
-                localDao.upsertDecisions(starters.map { it.toEntity() })
             }
         }
     }

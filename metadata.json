@@ -1,6 +1,8 @@
 {
   "name": "Ne İzlesek? Karar Çarkı",
-  "description": "Seçim krizine son! Sıfır kayıt, eşli senkronize ortak oda, 10 saniyede filtreleme, karar çarkı ve tek haklı veto mekanizmasıyla akşamınızı kurtarın.",
+  "description": "Seçim krizine son! Kayıt yok; ruh haline ve platformuna göre filtrele, karar çarkını çevir, tek veto hakkını kullan ve akşamın filmini saniyeler içinde bul.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

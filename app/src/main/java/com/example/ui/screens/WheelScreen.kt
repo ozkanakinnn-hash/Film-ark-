@@ -80,6 +80,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -87,7 +88,6 @@ import androidx.compose.ui.unit.sp
 import com.example.data.model.AudioLanguageOption
 import com.example.data.model.CustomWheelList
 import com.example.data.model.Movie
-import com.example.data.model.Room
 import com.example.data.audio.rememberWheelFeedbackCoordinator
 import com.example.data.repository.MovieRepository
 import com.example.data.sensor.rememberAccelerometerShakeEffect
@@ -134,7 +134,6 @@ fun WheelScreen(
     isVetoedOnce: Boolean,
     isDecisionLocked: Boolean,
     showStoryModal: Boolean,
-    room: Room?,
     activeCustomList: CustomWheelList? = null,
     selectedGenres: Set<String> = emptySet(),
     selectedAudioOptions: Set<String> = emptySet(),
@@ -291,20 +290,6 @@ fun WheelScreen(
                         )
                     }
 
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Surface(
-                            color = if (room != null) NeonPurple else CinemaTheme.colors.filmTeal,
-                            shape = RoundedCornerShape(8.dp)
-                        ) {
-                            Text(
-                                text = if (room != null) "ORTAK ODA: ${room.roomCode}" else "TEK BAŞINA",
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Black,
-                                color = if (room != null) CinemaTheme.colors.onAccentCrimson else CinemaTheme.colors.onAccentTeal,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                            )
-                        }
-                    }
 
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -1174,7 +1159,6 @@ fun WheelScreen(
         StoryShareDialog(
             movie = selectedMovie,
             isVetoedOnce = isVetoedOnce,
-            roomCode = room?.roomCode,
             onDismiss = onCloseStoryModal
         )
     }
@@ -1183,7 +1167,6 @@ fun WheelScreen(
     if (showDirectShareSheet && selectedMovie != null) {
         SocialShareDialog(
             movie = selectedMovie,
-            roomCode = room?.roomCode,
             onOpenStoryCard = onOpenStoryModal,
             onDismiss = { showDirectShareSheet = false }
         )
@@ -1298,6 +1281,9 @@ private fun WheelMinImdbFilterBar(
     }
 }
 
+/**
+ * Sallayarak çevirme, titreşim ve ses ayarlarını tek satırda gösteren sade ayar şeridi.
+ */
 @Composable
 private fun ShakeToSpinSensorCard(
     hasAccelerometer: Boolean,
@@ -1310,230 +1296,133 @@ private fun ShakeToSpinSensorCard(
     onToggleHaptic: () -> Unit,
     onToggleSound: () -> Unit
 ) {
-    val active = hasAccelerometer && isShakeEnabled
-    val borderColor = when {
-        isSpinning -> PopcornGold
-        active && shakeIntensity > 0.2f -> ElectricCyan
-        active -> ElectricCyan.copy(alpha = 0.55f)
-        else -> CinemaBorder
-    }
-
-    Card(
+    val shakeActive = hasAccelerometer && isShakeEnabled
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .border(1.2.dp, borderColor, RoundedCornerShape(16.dp))
-            .testTag("wheel_shake_sensor_card"),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = CinemaSurface)
+            .testTag("wheel_shake_sensor_card")
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 14.dp, vertical = 12.dp)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.weight(1f).padding(end = 8.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(38.dp)
-                            .background(
-                                color = if (active) ElectricCyan.copy(alpha = 0.18f) else CinemaSurfaceVariant,
-                                shape = CircleShape
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = if (active) Icons.Default.Vibration else Icons.Default.Sensors,
-                            contentDescription = "İvmeölçer hareket sensörü",
-                            tint = when {
-                                isSpinning -> PopcornGold
-                                active -> ElectricCyan
-                                else -> TextMuted
-                            },
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.width(10.dp))
-
-                    Column {
-                        Text(
-                            text = when {
-                                !hasAccelerometer -> "İvmeölçer Sensörü Bulunamadı"
-                                isSpinning -> "Sallama Algılandı! Çark Dönüyor..."
-                                active -> "Telefonu Salla & Çarkı Döndür! 📱"
-                                else -> "Sallayarak Döndürme Kapalı"
-                            },
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = when {
-                                isSpinning -> PopcornGold
-                                active -> TextPrimary
-                                else -> TextSecondary
-                            },
-                            modifier = Modifier.testTag("shake_sensor_status_text")
-                        )
-                        Text(
-                            text = when {
-                                !hasAccelerometer -> "Bu cihazda çarka dokunarak çevirebilirsin"
-                                active -> "Hareket sensörü aktif • Telefonu hafifçe salla"
-                                else -> "Sallayarak başlatmak için sağdaki anahtarı aç"
-                            },
-                            fontSize = 11.sp,
-                            color = TextSecondary
-                        )
-                    }
-                }
-
-                if (hasAccelerometer) {
-                    Switch(
-                        checked = isShakeEnabled,
-                        onCheckedChange = { onToggleShake() },
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color.Black,
-                            checkedTrackColor = ElectricCyan,
-                            uncheckedThumbColor = TextSecondary,
-                            uncheckedTrackColor = CinemaSurfaceVariant
-                        ),
-                        modifier = Modifier
-                            .minimumInteractiveComponentSize()
-                            .testTag("shake_sensor_toggle")
-                    )
-                }
+            if (hasAccelerometer) {
+                WheelSettingChip(
+                    icon = Icons.Default.Sensors,
+                    title = "Salla",
+                    enabled = isShakeEnabled,
+                    accent = ElectricCyan,
+                    statusText = when {
+                        isSpinning && shakeActive -> "Dönüyor"
+                        isShakeEnabled -> "Açık"
+                        else -> "Kapalı"
+                    },
+                    onClick = onToggleShake,
+                    clickTag = "shake_sensor_toggle",
+                    statusTag = "shake_sensor_status_text",
+                    contentDescription = "Telefonu sallayarak çevirme",
+                    modifier = Modifier.weight(1f)
+                )
             }
-
-            if (active) {
-                Spacer(modifier = Modifier.height(8.dp))
+            WheelSettingChip(
+                icon = Icons.Default.Vibration,
+                title = "Titreşim",
+                enabled = isHapticEnabled,
+                accent = PopcornGold,
+                statusText = if (isHapticEnabled) "Açık" else "Kapalı",
+                onClick = onToggleHaptic,
+                clickTag = "wheel_haptic_toggle_button",
+                statusTag = "wheel_haptic_status_label",
+                contentDescription = "Titreşim geri bildirimi",
+                modifier = Modifier.weight(1f)
+            )
+            WheelSettingChip(
+                icon = if (isSoundEnabled) Icons.AutoMirrored.Filled.VolumeUp else Icons.AutoMirrored.Filled.VolumeOff,
+                title = "Ses",
+                enabled = isSoundEnabled,
+                accent = ElectricCyan,
+                statusText = if (isSoundEnabled) "Açık" else "Kapalı",
+                onClick = onToggleSound,
+                clickTag = "wheel_sound_toggle_button",
+                statusTag = "wheel_sound_status_label",
+                contentDescription = "Çark sesi",
+                modifier = Modifier.weight(1f)
+            )
+        }
+        if (shakeActive) {
+            Spacer(modifier = Modifier.height(6.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(3.dp)
+                    .clip(RoundedCornerShape(2.dp))
+                    .background(CinemaSurfaceVariant)
+                    .testTag("shake_intensity_bar")
+            ) {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(6.dp)
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(CinemaSurfaceVariant)
-                        .testTag("shake_intensity_bar")
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth(fraction = shakeIntensity.coerceIn(0.06f, 1f))
-                            .fillMaxHeight()
-                            .background(
-                                Brush.horizontalGradient(listOf(ElectricCyan, PopcornGold))
-                            )
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            // Haptic Vibration Feedback Toggle Row
-            Surface(
-                color = if (isHapticEnabled) PopcornGold.copy(alpha = 0.14f) else CinemaSurfaceVariant,
-                shape = RoundedCornerShape(10.dp),
-                border = BorderStroke(
-                    1.dp,
-                    if (isHapticEnabled) PopcornGold.copy(alpha = 0.55f) else CinemaBorder
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .minimumInteractiveComponentSize()
-                    .clip(RoundedCornerShape(10.dp))
-                    .clickable { onToggleHaptic() }
-                    .testTag("wheel_haptic_toggle_button")
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 10.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Default.Vibration,
-                            contentDescription = "Titreşim geri bildirimi",
-                            tint = if (isHapticEnabled) PopcornGold else TextMuted,
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = "Çark Dönüş & Durma Titreşimi",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = if (isHapticEnabled) TextPrimary else TextSecondary
-                        )
-                    }
-                    Text(
-                        text = if (isHapticEnabled) "Açık ✓" else "Kapalı",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = if (isHapticEnabled) PopcornGold else TextMuted,
-                        modifier = Modifier.testTag("wheel_haptic_status_label")
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Synchronized Mechanical Wheel Click Sound Engine Toggle Row
-            Surface(
-                color = if (isSoundEnabled) ElectricCyan.copy(alpha = 0.14f) else CinemaSurfaceVariant,
-                shape = RoundedCornerShape(10.dp),
-                border = BorderStroke(
-                    1.dp,
-                    if (isSoundEnabled) ElectricCyan.copy(alpha = 0.55f) else CinemaBorder
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .minimumInteractiveComponentSize()
-                    .clip(RoundedCornerShape(10.dp))
-                    .clickable { onToggleSound() }
-                    .testTag("wheel_sound_toggle_button")
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 10.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = if (isSoundEnabled) {
-                                Icons.AutoMirrored.Filled.VolumeUp
-                            } else {
-                                Icons.AutoMirrored.Filled.VolumeOff
-                            },
-                            contentDescription = "Çark tıkırtı ses motoru",
-                            tint = if (isSoundEnabled) ElectricCyan else TextMuted,
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = "Çark Tıkırtı & Durma Sesi",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = if (isSoundEnabled) TextPrimary else TextSecondary
-                        )
-                    }
-                    Text(
-                        text = if (isSoundEnabled) "Açık ✓" else "Kapalı",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = if (isSoundEnabled) ElectricCyan else TextMuted,
-                        modifier = Modifier.testTag("wheel_sound_status_label")
-                    )
-                }
+                        .fillMaxWidth(fraction = shakeIntensity.coerceIn(0.04f, 1f))
+                        .fillMaxHeight()
+                        .background(Brush.horizontalGradient(listOf(ElectricCyan, PopcornGold)))
+                )
             }
         }
     }
 }
 
-
+@Composable
+private fun WheelSettingChip(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    title: String,
+    enabled: Boolean,
+    accent: Color,
+    statusText: String,
+    onClick: () -> Unit,
+    clickTag: String,
+    statusTag: String,
+    contentDescription: String,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        color = if (enabled) accent.copy(alpha = 0.12f) else CinemaSurface,
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(1.dp, if (enabled) accent.copy(alpha = 0.5f) else CinemaBorder),
+        modifier = modifier
+            .minimumInteractiveComponentSize()
+            .clip(RoundedCornerShape(12.dp))
+            .clickable(onClickLabel = "$title ayarını değiştir") { onClick() }
+            .semantics { this.contentDescription = contentDescription }
+            .testTag(clickTag)
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = if (enabled) accent else TextMuted,
+                modifier = Modifier.size(16.dp)
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Column {
+                Text(
+                    text = title,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = if (enabled) TextPrimary else TextSecondary,
+                    maxLines = 1
+                )
+                Text(
+                    text = statusText,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = if (enabled) accent else TextMuted,
+                    maxLines = 1,
+                    modifier = Modifier.testTag(statusTag)
+                )
+            }
+        }
+    }
+}
 

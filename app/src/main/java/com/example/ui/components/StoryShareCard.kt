@@ -70,7 +70,6 @@ import java.util.Locale
 fun StoryShareDialog(
     movie: Movie,
     isVetoedOnce: Boolean,
-    roomCode: String?,
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
@@ -324,7 +323,7 @@ fun StoryShareDialog(
                     // Copy text
                     OutlinedButton(
                         onClick = {
-                            val shareText = "🍿 Ne İzlesek? Karar Çarkı Sonucu:\n\n“$currentQuote”\n\n🎬 Film: ${movie.title} (${movie.year})\n⏱ Süre: ${movie.durationMins} dk\n⭐️ Puan: ${movie.imdb}\n📺 Platform: ${movie.platforms.joinToString(", ")}\n\nSen de seçim krizini bitirmek için odaya katıl: https://neizlesek.app"
+                            val shareText = "🍿 Ne İzlesek? Karar Çarkı Sonucu:\n\n“$currentQuote”\n\n🎬 Film: ${movie.title} (${movie.year})\n⏱ Süre: ${movie.durationMins} dk\n⭐️ Puan: ${movie.imdb}\n📺 Platform: ${movie.platforms.joinToString(", ")}\n\nSen de seçim krizini Ne İzlesek? ile bitir!"
                             clipboardManager.setText(AnnotatedString(shareText))
                             copiedState = true
                         },
@@ -345,7 +344,7 @@ fun StoryShareDialog(
                     // Share Intent (WhatsApp, Instagram, etc.)
                     Button(
                         onClick = {
-                            val shareText = "🍿 Ne İzlesek? Karar Çarkı Sonucu:\n\n“$currentQuote”\n\n🎬 Seçilen Film: ${movie.title} (${movie.year})\n⏱ Süre: ${movie.durationMins} dk | ⭐️ Puan: ${movie.imdb}\n📺 Platform: ${movie.platforms.joinToString(", ")}\n\nKaderimize boyun eğdik! Sen de arkadaşınla odaya katıl: https://neizlesek.app${if (roomCode != null) "/room/$roomCode" else ""}"
+                            val shareText = "🍿 Ne İzlesek? Karar Çarkı Sonucu:\n\n“$currentQuote”\n\n🎬 Seçilen Film: ${movie.title} (${movie.year})\n⏱ Süre: ${movie.durationMins} dk | ⭐️ Puan: ${movie.imdb}\n📺 Platform: ${movie.platforms.joinToString(", ")}\n\nKaderimize boyun eğdik! Sen de Ne İzlesek? ile çarkı çevir."
                             val posterUri = SharePosterRenderer.createMoviePosterShareUri(context, movie)
                             val intent = buildShareIntentWithOptionalPoster(
                                 context = context,

@@ -64,10 +64,8 @@ import androidx.compose.ui.unit.sp
 import com.example.data.model.Movie
 import com.example.data.repository.MovieRepository
 import com.example.data.repository.SavedDecision
-import com.example.data.repository.TrendingCinemaUiState
 import com.example.ui.components.NewReleasesBannerStrip
 import com.example.ui.components.SocialShareDialog
-import com.example.ui.components.WeeklyTrendsSection
 import com.example.ui.theme.CinemaBackground
 import com.example.ui.theme.CinemaBorder
 import com.example.ui.theme.CinemaSurface
@@ -96,11 +94,8 @@ fun HomeScreen(
     onNewReleaseMovieClick: (Movie) -> Unit = {},
     watchLaterIds: List<String> = emptyList(),
     onToggleWatchLater: (Movie) -> Unit = {},
-    weeklyTrendsState: TrendingCinemaUiState = TrendingCinemaUiState.Loading,
-    onRefreshTrends: () -> Unit = {},
     onToggleTheme: () -> Unit = {},
     onSoloClick: () -> Unit,
-    onRoomClick: () -> Unit,
     onCompareClick: () -> Unit = {},
     onCustomListsClick: () -> Unit = {},
     onHistoryClick: () -> Unit,
@@ -109,7 +104,7 @@ fun HomeScreen(
     onSavedDecisionClick: (Movie) -> Unit = {}
 ) {
     val totalMinutesSaved = savedDecisions.sumOf { it.minutesSaved }
-    var trendShareTarget by remember { mutableStateOf<Movie?>(null) }
+    var shareTarget by remember { mutableStateOf<Movie?>(null) }
 
     var detailMovie by remember { mutableStateOf<Movie?>(null) }
     detailMovie?.let { movie ->
@@ -395,13 +390,6 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(22.dp))
 
-            WeeklyTrendsSection(
-                uiState = weeklyTrendsState,
-                onRefreshClick = onRefreshTrends,
-                onShareMovieClick = { movie -> trendShareTarget = movie }
-            )
-
-            Spacer(modifier = Modifier.height(26.dp))
 
             Text(
                 text = "Nasıl Karar Verelim?",
@@ -415,7 +403,7 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(14.dp))
 
-            // 1. HERO ACTION BUTTON: TEK BAŞINA KARAR VER
+            // 1. HERO ACTION BUTTON: KARAR ÇARKINI ÇEVİR
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -452,14 +440,14 @@ fun HomeScreen(
 
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Tek Başına Karar Ver",
+                            text = "Karar Çarkını Çevir",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Tek tıkla modunu seç, çark bu akşamki filmini anında belirlesin.",
+                            text = "Modunu ve platformunu seç, çark bu akşamki filmini anında belirlesin.",
                             fontSize = 13.sp,
                             color = TextSecondary,
                             lineHeight = 17.sp
@@ -470,95 +458,6 @@ fun HomeScreen(
                         imageVector = Icons.Default.PlayArrow,
                         contentDescription = null,
                         tint = ElectricCyan,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // 2. HERO ACTION BUTTON: BİRİYLE KARAR VER (ORTAK ODA - PLG VIRAL LOOP)
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(24.dp))
-                    .clickable { onRoomClick() }
-                    .border(
-                        2.dp,
-                        Brush.horizontalGradient(listOf(NeonPurple, PopcornGold)),
-                        RoundedCornerShape(24.dp)
-                    )
-                    .testTag("room_mode_button"),
-                colors = CardDefaults.cardColors(containerColor = CinemaSurfaceVariant)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            Brush.horizontalGradient(
-                                listOf(
-                                    CinemaTheme.colors.heroGradientStart,
-                                    CinemaTheme.colors.heroGradientEnd
-                                )
-                            )
-                        )
-                        .padding(20.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(56.dp)
-                            .background(
-                                Brush.linearGradient(listOf(NeonPurple, NeonPink)),
-                                CircleShape
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Group,
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(28.dp)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.width(16.dp))
-
-                    Column(modifier = Modifier.weight(1f)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = "Biriyle Karar Ver",
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = PopcornGold
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Surface(
-                                color = NeonPink,
-                                shape = RoundedCornerShape(6.dp)
-                            ) {
-                                Text(
-                                    text = "ORTAK ODA",
-                                    fontSize = 9.sp,
-                                    fontWeight = FontWeight.Black,
-                                    color = Color.White,
-                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                                )
-                            }
-                        }
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = "Eşin veya arkadaşınla bağlan. WhatsApp linkiyle 4 haneli kod paylaş, ortak zevkleriniz dönsün!",
-                            fontSize = 13.sp,
-                            color = TextSecondary,
-                            lineHeight = 17.sp
-                        )
-                    }
-
-                    Icon(
-                        imageVector = Icons.Default.PlayArrow,
-                        contentDescription = null,
-                        tint = PopcornGold,
                         modifier = Modifier.size(24.dp)
                     )
                 }
@@ -835,7 +734,7 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.width(6.dp))
 
                     IconButton(
-                        onClick = { trendShareTarget = decision.movie },
+                        onClick = { shareTarget = decision.movie },
                         modifier = Modifier
                             .minimumInteractiveComponentSize()
                             .size(40.dp)
@@ -858,11 +757,11 @@ fun HomeScreen(
         }
     }
 
-    trendShareTarget?.let { movie ->
+    shareTarget?.let { movie ->
         SocialShareDialog(
             movie = movie,
             onOpenStoryCard = { onSavedDecisionClick(movie) },
-            onDismiss = { trendShareTarget = null }
+            onDismiss = { shareTarget = null }
         )
     }
 }
