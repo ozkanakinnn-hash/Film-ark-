@@ -69,7 +69,7 @@ class PlaceholderTrendingCinemaRepository : TrendingCinemaRepository {
                 trendReason = "IMAX yeniden gösterim haberleriyle sosyal medyada haftanın en çok aranan yapımı.",
                 sourceName = "Örnek Liste • IMDb Popüler",
                 sourceUrl = null,
-                posterPath = "/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
+                posterPath = "/xbiycuc84TrieEWwkkuH2hoEa9S.jpg",
                 accentColorHex = 0xFF1D4ED8,
                 matchedCatalogMovieId = "m13"
             ),
@@ -81,7 +81,7 @@ class PlaceholderTrendingCinemaRepository : TrendingCinemaRepository {
                 trendReason = "Haftanın kült film maratonlarında izlenme listelerinin üst sıralarında.",
                 sourceName = "Örnek Liste • Box Office",
                 sourceUrl = null,
-                posterPath = "/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg",
+                posterPath = "/nx7TmJDMkgyBc09DVo5ze52Wt3F.jpg",
                 accentColorHex = 0xFF047857,
                 matchedCatalogMovieId = "m16"
             ),
@@ -93,7 +93,7 @@ class PlaceholderTrendingCinemaRepository : TrendingCinemaRepository {
                 trendReason = "Aile ve animasyon kategorisinde haftanın en çok önerilen filmi.",
                 sourceName = "Örnek Liste • Sinema Trend",
                 sourceUrl = null,
-                posterPath = "/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg",
+                posterPath = "/ii2MsmBmTL5kQuvBRCtKokUAF8v.jpg",
                 accentColorHex = 0xFFDC2626,
                 matchedCatalogMovieId = "m22"
             ),
@@ -105,7 +105,7 @@ class PlaceholderTrendingCinemaRepository : TrendingCinemaRepository {
                 trendReason = "Hafta sonu arkadaş grubu izlemelerinde en popüler polisiye komedi.",
                 sourceName = "Örnek Liste • Dijital Top 10",
                 sourceUrl = null,
-                posterPath = "/vDGr1YdrlfbU9wxTOdpf3zChmv9.jpg",
+                posterPath = "/5nVRMEnjQ4yDOdDdRZehqqBac9p.jpg",
                 accentColorHex = 0xFFD97706,
                 matchedCatalogMovieId = "m1"
             ),
@@ -117,7 +117,7 @@ class PlaceholderTrendingCinemaRepository : TrendingCinemaRepository {
                 trendReason = "Gece seansı korku listelerinde yükselişini sürdürüyor.",
                 sourceName = "Örnek Liste • Korku Seçkisi",
                 sourceUrl = null,
-                posterPath = "/wVYREutTvI2COPuCm0Yng7IlR.jpg",
+                posterPath = "/jYDRJq5hvD3L4nlOqVQKFHvclF6.jpg",
                 accentColorHex = 0xFF9F1239,
                 matchedCatalogMovieId = "m19"
             )

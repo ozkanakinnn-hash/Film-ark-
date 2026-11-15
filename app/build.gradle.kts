@@ -20,6 +20,10 @@ android {
     versionName = "1.0"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+    // TMDB posterleri. Ticari kullanım (reklam, ücretli sürüm) TMDB ile yazılı lisans gerektirir;
+    // lisans olmadan gelir elde edilecekse "false" yapın: uygulama kendi yer tutucu görsellerini gösterir.
+    buildConfigField("boolean", "TMDB_POSTERS_ENABLED", "true")
   }
 
   // Do not remove or modify these signingConfigs. They are necessary for building, installing,

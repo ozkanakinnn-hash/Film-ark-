@@ -76,6 +76,7 @@ import com.example.data.local.WatchedMovieEntity
 import com.example.data.model.Movie
 import com.example.data.repository.MovieRepository
 import com.example.data.repository.SavedDecision
+import com.example.ui.components.DataSourceAttributionCard
 import com.example.ui.components.FavoritesSocialShareDialog
 import com.example.ui.components.GenreStatisticsPanel
 import com.example.ui.components.MovieCollectionWallCard
@@ -697,6 +698,8 @@ fun ProfileScreen(
         }
 
         item {
+            Spacer(modifier = Modifier.height(20.dp))
+            DataSourceAttributionCard()
             Spacer(modifier = Modifier.height(40.dp))
         }
     }

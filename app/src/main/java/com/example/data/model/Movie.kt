@@ -8,6 +8,7 @@ object TmdbImageConfig {
      * Returns null when [posterPath] is null or blank so UI components render the bundled default placeholder.
      */
     fun getPosterUrl(posterPath: String?): String? {
+        if (!com.example.BuildConfig.TMDB_POSTERS_ENABLED) return null
         val trimmed = posterPath?.trim().orEmpty()
         if (trimmed.isEmpty()) return null
         if (trimmed.startsWith("http://", ignoreCase = true) ||
@@ -42,6 +43,8 @@ data class Movie(
     val logline: String,
     val whyWatch: String,
     val posterPath: String = "",
+    /** TMDB film kimliği (tools/tmdb_poster_sync.py tarafından doldurulur). */
+    val tmdbId: Int? = null,
     val posterUrl: String = TmdbImageConfig.getPosterUrl(posterPath).orEmpty(),
     val colorHex: Long = 0xFF8B5CF6,
     val audioOptions: List<String> = listOf(
