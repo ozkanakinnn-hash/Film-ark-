@@ -1,21 +1,16 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Ne İzlesek? — R8 kuralları (yayın derlemesi)
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Çökme raporlarında satır numaraları okunabilsin (dosya adları gizlenir)
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Manifestte adı geçen bileşenler (Activity, Receiver, Provider, Application) AGP tarafından otomatik korunur.
+# Room varlıkları/DAO'ları ve Compose kendi tüketici kurallarını getirir; ek kural gerekmez.
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Yedek dosyası ve uzaktan katalog org.json (Android platformu) ile elle eşlenir: yansıma yok.
+
+# Enum adları geçmiş kayıtlarında kullanılmıyor (id alanları kullanılıyor), yine de güvenli tarafta kal
+-keepclassmembers enum com.example.data.model.** {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}

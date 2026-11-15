@@ -112,3 +112,14 @@ _Kasım 2026 • kod tabanı `ccr-86f8678f-sm26xa` dalı (commit `85a488b`) üze
 - [Spin The Wheel — Number Picker yorumları](https://justuseapp.com/en/app/6670243063/spin-the-wheel-number-picker/reviews) · [Wheel Spinner yorumları](https://marlvel.ai/apps/wheel-spinner-name-drawing-app/reviews) · [Random Movie Picker](https://appshunter.io/ios/app/6444808440) · [Spinflix](https://apps.apple.com/de/app/spinflix/id6741057161)
 - [TV Time kapanışı — TechCrunch](https://techcrunch.com/2026/07/02/popular-tv-tracking-app-tv-time-is-shutting-down-as-company-focuses-on-ai) · [TV Time — Neowin](https://www.neowin.net/amp/tv-time-is-shutting-down-in-a-couple-of-weeks/) · [TV Time — AlternativeTo](https://alternativeto.net/software/tvshow-time/about) · [TV Time — Kimola](https://kimola.com/reports/unlock-insights-tv-time-app-user-feedback-analysis-app-store-fr-144807)
 - [Ne izlesek (App Store TR)](https://apps.apple.com/tr/app/id6757267284) · [Gnovies](https://www.tamindir.com/indir/gnovies/) · [Nerede izlenir](https://apps.apple.com/us/app/id1556727192) · [What to Watch (Product Hunt)](https://www.producthunt.com/p/undefined/what-to-watch-ai-powered-movie-tv-recommendations-based-on-your-mood)
+
+
+---
+
+## Uygulama durumu (Kasım 2026, sürüm 1.1.0)
+
+Bu analizdeki öneriler uygulandı: ortak oda kaldırıldı; sahte "Haftanın Trendleri" ve sahte örnek geçmiş
+kaldırıldı; otomatik yedekleme kapatıldı (yerine kullanıcının kendi dosyasına yedek/geri yükleme geldi);
+widget eylemleri dışa kapalı alıcıya taşındı; yalnızca HTTPS ağ yapılandırması eklendi; arama, akıllı öneri,
+"Animasyonları azalt", tek paylaşım menüsü, dizi desteği ve haftalık uzaktan katalog eklendi; bağımlılıklar
+güncellendi; yayın derlemesinde R8 açıldı; paket adı `com.ozkanakin.neizlesek` oldu (G7).
