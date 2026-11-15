@@ -90,8 +90,9 @@ fun NewReleasesBannerStrip(
     // Kendiliğinden kayan şerit: kullanıcı sürüklerken durur, bıraktıktan kısa süre sonra devam eder.
     val isDragged by listState.interactionSource.collectIsDraggedAsState()
     val speedPxPerSecond = with(LocalDensity.current) { AUTO_SCROLL_DP_PER_SECOND.dp.toPx() }
-    LaunchedEffect(firstMovieId, movies.size, isDragged) {
-        if (!canLoop || isDragged) return@LaunchedEffect
+    val reduceMotion = com.example.data.local.LocalReduceMotion.current
+    LaunchedEffect(firstMovieId, movies.size, isDragged, reduceMotion) {
+        if (!canLoop || isDragged || reduceMotion) return@LaunchedEffect
         delay(AUTO_SCROLL_RESUME_DELAY_MS)
         snapshotFlow { listState.isScrollInProgress }.first { !it }
         var lastFrameNanos = -1L

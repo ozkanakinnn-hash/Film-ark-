@@ -127,7 +127,8 @@ class DecisionViewModel(
     private fun sampleForWheel(pool: List<Movie>, mustInclude: Movie? = null): List<Movie> {
         fullWheelPool = pool
         _wheelPoolTotal.value = pool.distinctBy { it.id }.size
-        return WheelPoolSampler.sample(pool, mustInclude)
+        val profile = com.example.data.repository.TasteProfileRepository.snapshot()
+        return WheelPoolSampler.sample(pool, mustInclude, weightOf = profile::weightOf)
     }
 
     // Wheel spin state (animated in Compose UI with MonotonicFrameClock)
@@ -147,8 +148,6 @@ class DecisionViewModel(
     private val _isDecisionLocked = MutableStateFlow(false)
     val isDecisionLocked: StateFlow<Boolean> = _isDecisionLocked.asStateFlow()
 
-    private val _showStoryModal = MutableStateFlow(false)
-    val showStoryModal: StateFlow<Boolean> = _showStoryModal.asStateFlow()
 
 
     private val _feedbackToast = MutableStateFlow<String?>(null)
@@ -500,7 +499,8 @@ class DecisionViewModel(
         if (isRespin && fullWheelPool.size > WheelPoolSampler.MAX_SLICES) {
             val freshPool = fullWheelPool.filterNot { excludedIds.contains(it.id) }
             if (freshPool.size > WheelPoolSampler.MAX_SLICES) {
-                _activeWheelMovies.value = WheelPoolSampler.sample(freshPool)
+                val profile = com.example.data.repository.TasteProfileRepository.snapshot()
+                _activeWheelMovies.value = WheelPoolSampler.sample(freshPool, weightOf = profile::weightOf)
             }
         }
         val unwatchedActive = _activeWheelMovies.value.filterNot { excludedIds.contains(it.id) }
@@ -551,6 +551,7 @@ class DecisionViewModel(
         if (_isSpinning.value || _isVetoedOnce.value) return
         val hostId = RoomRepository.currentRoom.value?.host?.id ?: "solo_user"
         val excludedIds = WatchedMovieRepository.excludedWheelMovieIds.value
+        _selectedMovie.value?.let { com.example.data.repository.TasteProfileRepository.recordVeto(it) }
         _isVetoedOnce.value = true
         RoomRepository.applyVeto(hostId, excludedIds)
 
@@ -642,14 +643,6 @@ class DecisionViewModel(
 
     private fun _savedDecisionsTitle(decisionId: String): String? {
         return savedDecisions.value.find { it.id == decisionId }?.movie?.title
-    }
-
-    fun openStoryModal() {
-        _showStoryModal.value = true
-    }
-
-    fun closeStoryModal() {
-        _showStoryModal.value = false
     }
 
     fun clearToast() {
@@ -829,7 +822,6 @@ class DecisionViewModel(
         _isDecisionLocked.value = false
         _isSpinning.value = false
         _spinEvent.value = null
-        _showStoryModal.value = false
         _currentScreen.value = Screen.HOME
     }
 }

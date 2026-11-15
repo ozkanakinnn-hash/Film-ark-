@@ -190,6 +190,16 @@ object CustomWheelListRepository {
         }
     }
 
+    /** Yedekten geri yüklemeden sonra listeleri veritabanından yeniden okur. */
+    suspend fun reloadAfterRestore() {
+        val localDao = dao ?: return
+        val decoded = localDao.getAllListsOnce().mapNotNull { decodeEntity(it) }
+        _customLists.value = decoded
+            .distinctBy { it.id }
+            .sortedWith(compareByDescending<CustomWheelList> { !it.isPreset }.thenByDescending { it.updatedAtMillis })
+        prefs?.edit()?.putBoolean(KEY_PRESETS_SEEDED, true)?.apply()
+    }
+
     fun resetForTests() {
         val starters = buildDefaultStarterPresets()
         _customLists.value = starters

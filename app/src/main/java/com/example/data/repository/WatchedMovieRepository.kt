@@ -175,6 +175,16 @@ object WatchedMovieRepository {
         return _watchedMovieIds.value.contains(movieId)
     }
 
+    /** Yedekten geri yüklemeden sonra veritabanını ve favorileri yeniden okur. */
+    suspend fun reloadAfterRestore(favoriteIds: Set<String>) {
+        val localDao = dao ?: return
+        val persisted = localDao.getAllWatchedMoviesOnce().sortedByDescending { it.watchedAtMillis }
+        syncDerivedFlows(persisted)
+        val favs = _favoriteMovieIds.value + favoriteIds + persisted.filter { it.isFavorite }.map { it.movieId }
+        _favoriteMovieIds.value = favs
+        prefs?.edit()?.putStringSet(KEY_FAVORITE_IDS, favs)?.apply()
+    }
+
     fun clearAllForTests() {
         syncDerivedFlows(emptyList())
         _favoriteMovieIds.value = emptySet()

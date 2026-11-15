@@ -73,16 +73,23 @@ class MainActivity : ComponentActivity() {
         ThemePreferences.init(applicationContext)
         MovieRepository.initDailyFeed(applicationContext)
         com.example.data.repository.WatchLaterRepository.init(applicationContext)
+        com.example.data.repository.TasteProfileRepository.init(applicationContext)
+        com.example.data.local.MotionPreferences.init(applicationContext)
         pendingWidgetMovieId.value = intent?.getStringExtra(MovieWheelAppWidgetProvider.EXTRA_WIDGET_MOVIE_ID)
         enableEdgeToEdge()
         setContent {
             val isDarkTheme by ThemePreferences.isDarkMode.collectAsState()
             val widgetMovieId by pendingWidgetMovieId
+            val reduceMotion by com.example.data.local.MotionPreferences.reduceMotion.collectAsState()
             MyApplicationTheme(darkTheme = isDarkTheme) {
-                DecisionApp(
-                    initialWidgetMovieId = widgetMovieId,
-                    onConsumeWidgetMovieId = { pendingWidgetMovieId.value = null }
-                )
+                androidx.compose.runtime.CompositionLocalProvider(
+                    com.example.data.local.LocalReduceMotion provides reduceMotion
+                ) {
+                    DecisionApp(
+                        initialWidgetMovieId = widgetMovieId,
+                        onConsumeWidgetMovieId = { pendingWidgetMovieId.value = null }
+                    )
+                }
             }
         }
     }
@@ -125,7 +132,6 @@ fun DecisionApp(
     val selectedMovie by viewModel.selectedMovie.collectAsState()
     val isVetoedOnce by viewModel.isVetoedOnce.collectAsState()
     val isDecisionLocked by viewModel.isDecisionLocked.collectAsState()
-    val showStoryModal by viewModel.showStoryModal.collectAsState()
     val isAdvancedFilterMode by viewModel.isAdvancedFilterMode.collectAsState()
     val selectedGenres by viewModel.selectedGenres.collectAsState()
     val selectedAudioOptions by viewModel.selectedAudioOptions.collectAsState()
@@ -193,6 +199,7 @@ fun DecisionApp(
         }
     }
 
+    val reduceMotion = com.example.data.local.LocalReduceMotion.current
     CinematicBackdrop {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -202,7 +209,7 @@ fun DecisionApp(
     ) { innerPadding ->
         AnimatedContent(
             targetState = currentScreen,
-            transitionSpec = { screenTransition() },
+            transitionSpec = { if (reduceMotion) reducedScreenTransition() else screenTransition() },
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
@@ -288,9 +295,9 @@ fun DecisionApp(
                         selectedMovie = selectedMovie,
                         isVetoedOnce = isVetoedOnce,
                         isDecisionLocked = isDecisionLocked,
-                        showStoryModal = showStoryModal,
                         activeCustomList = activeCustomList,
                         selectedGenres = selectedGenres,
+                        selectedPlatforms = selectedPlatforms,
                         selectedAudioOptions = selectedAudioOptions,
                         minYear = minYear,
                         maxYear = maxYear,
@@ -310,7 +317,6 @@ fun DecisionApp(
                         onMarkAsWatched = { viewModel.markMovieAsWatched(it) },
                         onSelectAlternative = { viewModel.chooseAlternativeMovie(it) },
                         onOpenStoryModal = { viewModel.navigateTo(Screen.FLEX) },
-                        onCloseStoryModal = { viewModel.closeStoryModal() },
                         onBack = {
                             if (activeCustomList != null) viewModel.navigateTo(Screen.CUSTOM_LISTS)
                             else viewModel.navigateTo(Screen.FILTERING)
@@ -410,6 +416,10 @@ private val Screen.depth: Int
  * Material "shared axis X" esintili geçiş: yeni ekran kısa bir mesafeden kayarak ve belirerek gelir,
  * eski ekran ters yöne hafifçe kayıp hızla söner. Karar kartı (FLEX) ise sahneye "yakınlaşarak" açılır.
  */
+/** "Animasyonları azalt" açıkken: kayma/ölçek yok, kısa bir çapraz geçiş. */
+private fun reducedScreenTransition(): ContentTransform =
+    fadeIn(tween(120)) togetherWith fadeOut(tween(90))
+
 private fun AnimatedContentTransitionScope<Screen>.screenTransition(): ContentTransform {
     val from = initialState
     val to = targetState

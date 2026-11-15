@@ -42,6 +42,12 @@ object WatchLaterRepository {
     /** Listedeki filmler (katalogda artık olmayanlar atlanır). */
     fun movies(): List<Movie> = _ids.value.mapNotNull { MovieRepository.getMovieById(it) }
 
+    /** Yedekteki kimlikleri mevcut listeyle birleştirir (mevcutlar önde kalır). */
+    fun mergeRestored(restored: List<String>) {
+        _ids.value = (_ids.value + restored).map { it.trim() }.filter { it.isNotEmpty() }.distinct()
+        prefs?.edit()?.putString(KEY_IDS, _ids.value.joinToString(","))?.apply()
+    }
+
     fun clearForTests() {
         _ids.value = emptyList()
         prefs?.edit()?.clear()?.apply()

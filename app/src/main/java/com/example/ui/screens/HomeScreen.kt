@@ -1,6 +1,7 @@
 package com.example.ui.screens
 
 import com.example.ui.components.MovieDetailSheet
+import com.example.ui.components.MovieSearchDialog
 import androidx.compose.ui.semantics.contentDescription
 import com.example.R
 import androidx.compose.ui.res.painterResource
@@ -31,6 +32,7 @@ import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.LocalMovies
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlayArrow
@@ -107,6 +109,14 @@ fun HomeScreen(
     var shareTarget by remember { mutableStateOf<Movie?>(null) }
 
     var detailMovie by remember { mutableStateOf<Movie?>(null) }
+    var showSearch by remember { mutableStateOf(false) }
+    if (showSearch) {
+        MovieSearchDialog(
+            movies = com.example.data.repository.MovieRepository.allMovies,
+            onMovieClick = { movie -> detailMovie = movie },
+            onDismiss = { showSearch = false }
+        )
+    }
     detailMovie?.let { movie ->
         MovieDetailSheet(
             movie = movie,
@@ -177,6 +187,21 @@ fun HomeScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
+                    IconButton(
+                        onClick = { showSearch = true },
+                        modifier = Modifier
+                            .minimumInteractiveComponentSize()
+                            .size(48.dp)
+                            .background(CinemaSurface, CircleShape)
+                            .testTag("home_search_button")
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Film ara",
+                            tint = PopcornGold
+                        )
+                    }
+
                     IconButton(
                         onClick = onToggleTheme,
                         modifier = Modifier

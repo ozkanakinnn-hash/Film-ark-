@@ -281,6 +281,14 @@ object RoomRepository {
         }
     }
 
+    /** Yedekten geri yüklemeden sonra karar geçmişini veritabanından yeniden okur. */
+    suspend fun reloadAfterRestore() {
+        val localDao = dao ?: return
+        updateSavedDecisionsState(
+            localDao.getAllDecisionsOnce().map { it.toDomain() }.sortedByDescending { it.selectedAtMillis }
+        )
+    }
+
     fun resetSavedDecisionsForTests() {
         updateSavedDecisionsState(emptyList())
         prefs?.edit()?.clear()?.apply()

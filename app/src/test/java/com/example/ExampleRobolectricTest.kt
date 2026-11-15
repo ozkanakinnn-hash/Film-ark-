@@ -120,8 +120,10 @@ class ExampleRobolectricTest {
     composeTestRule.onNodeWithTag("wheel_movie_poster").assertIsDisplayed()
 
     composeTestRule.onNodeWithTag("wheel_screen_list")
-      .performScrollToNode(hasTestTag("open_story_modal_button"))
-    composeTestRule.onNodeWithTag("open_story_modal_button").performClick()
+      .performScrollToNode(hasTestTag("wheel_direct_share_button"))
+    composeTestRule.onNodeWithTag("wheel_direct_share_button").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("share_open_story_card_button").performScrollTo().performClick()
     composeTestRule.waitForIdle()
 
     composeTestRule.onNodeWithTag("flex_story_card").assertIsDisplayed()
@@ -143,8 +145,8 @@ class ExampleRobolectricTest {
     composeTestRule.waitForIdle()
 
     composeTestRule.onNodeWithTag("wheel_screen_list")
-      .performScrollToNode(hasTestTag("open_story_modal_button"))
-    composeTestRule.onNodeWithTag("open_story_modal_button").assertIsDisplayed()
+      .performScrollToNode(hasTestTag("wheel_direct_share_button"))
+    composeTestRule.onNodeWithTag("wheel_direct_share_button").assertIsDisplayed()
   }
 
   @Test
@@ -172,8 +174,10 @@ class ExampleRobolectricTest {
     composeTestRule.waitForIdle()
 
     composeTestRule.onNodeWithTag("wheel_screen_list")
-      .performScrollToNode(hasTestTag("open_story_modal_button"))
-    composeTestRule.onNodeWithTag("open_story_modal_button").performClick()
+      .performScrollToNode(hasTestTag("wheel_direct_share_button"))
+    composeTestRule.onNodeWithTag("wheel_direct_share_button").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("share_open_story_card_button").performScrollTo().performClick()
     composeTestRule.waitForIdle()
 
     composeTestRule.onNodeWithTag("flex_story_card").assertIsDisplayed()
@@ -1520,6 +1524,36 @@ class ExampleRobolectricTest {
     assertTrue(requested.contains(android.Manifest.permission.ACCESS_NETWORK_STATE))
     assertTrue(requested.contains(android.Manifest.permission.VIBRATE))
     assertTrue(requested.none { it.startsWith("android.intent.permission.") })
+  }
+
+  @Test
+  fun `home search finds a movie and opens its detail card`() {
+    val movie = MovieRepository.allMovies.first { it.title.length >= 5 }
+    composeTestRule.onNodeWithTag("home_search_button").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("movie_search_dialog").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("movie_search_field").performTextInput(movie.title)
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("movie_search_result_${movie.id}").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithText(movie.logline, substring = true).assertExists()
+  }
+
+  @Test
+  fun `profile settings toggles reduce motion and shows backup buttons`() {
+    com.example.data.local.MotionPreferences.resetForTests()
+    composeTestRule.onNodeWithTag("profile_icon_button").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("profile_screen_list")
+      .performScrollToNode(hasTestTag("profile_settings_section"))
+    composeTestRule.onNodeWithTag("profile_backup_button").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("profile_restore_button").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("profile_reduce_motion_switch").performClick()
+    composeTestRule.waitForIdle()
+    assertTrue(com.example.data.local.MotionPreferences.reduceMotion.value)
+    composeTestRule.onNodeWithTag("profile_reduce_motion_switch").performClick()
+    composeTestRule.waitForIdle()
+    assertFalse(com.example.data.local.MotionPreferences.reduceMotion.value)
   }
 
   @Test

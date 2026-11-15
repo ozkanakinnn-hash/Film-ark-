@@ -94,7 +94,6 @@ import com.example.data.sensor.rememberAccelerometerShakeEffect
 import com.example.ui.components.MoviePosterImage
 import com.example.ui.components.SimilarMoviesSection
 import com.example.ui.components.SocialShareDialog
-import com.example.ui.components.StoryShareDialog
 import com.example.ui.components.WheelCanvas
 import com.example.ui.components.WheelRevealAnimationBanner
 import com.example.ui.components.isHorrorMovie
@@ -133,9 +132,9 @@ fun WheelScreen(
     selectedMovie: Movie?,
     isVetoedOnce: Boolean,
     isDecisionLocked: Boolean,
-    showStoryModal: Boolean,
     activeCustomList: CustomWheelList? = null,
     selectedGenres: Set<String> = emptySet(),
+    selectedPlatforms: Set<String> = emptySet(),
     selectedAudioOptions: Set<String> = emptySet(),
     minYear: Int = 1970,
     maxYear: Int = 2026,
@@ -155,7 +154,6 @@ fun WheelScreen(
     onMarkAsWatched: (Movie) -> Unit = {},
     onSelectAlternative: (Movie) -> Unit = {},
     onOpenStoryModal: () -> Unit,
-    onCloseStoryModal: () -> Unit,
     onBack: () -> Unit
 ) {
     BackHandler { onBack() }
@@ -163,6 +161,7 @@ fun WheelScreen(
     var revealMovie by remember { mutableStateOf<Movie?>(null) }
     var lastRevealMovie by remember { mutableStateOf<Movie?>(null) }
     BackHandler(enabled = revealMovie != null) { revealMovie = null }
+    val reduceMotion = com.example.data.local.LocalReduceMotion.current
     var showDirectShareSheet by remember { mutableStateOf(false) }
     var isShakeEnabled by remember { mutableStateOf(true) }
     var isHapticEnabled by remember { mutableStateOf(true) }
@@ -177,7 +176,7 @@ fun WheelScreen(
     )
 
     val hasAccelerometer = rememberAccelerometerShakeEffect(
-        enabled = isShakeEnabled && movies.isNotEmpty() && !showDirectShareSheet && !showStoryModal,
+        enabled = isShakeEnabled && movies.isNotEmpty() && !showDirectShareSheet,
         isSpinning = isSpinning,
         onShakeIntensityChange = { intensity ->
             rawShakeIntensity = intensity
@@ -222,7 +221,7 @@ fun WheelScreen(
         wheelRotation.animateTo(
             targetValue = event.targetAngle,
             animationSpec = tween(
-                durationMillis = 4400,
+                durationMillis = if (reduceMotion) 1600 else 4400,
                 easing = CubicBezierEasing(0.12f, 0.8f, 0.2f, 1.0f)
             )
         ) {
@@ -255,7 +254,8 @@ fun WheelScreen(
         }
         onSpinCompleted(event.id)
         lastRevealMovie = event.winner
-        revealMovie = event.winner
+        // "Animasyonları azalt" açıksa tam ekran tür sahnesi atlanır
+        revealMovie = if (reduceMotion) null else event.winner
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -312,7 +312,7 @@ fun WheelScreen(
 
                         if (selectedMovie != null) {
                             IconButton(
-                                onClick = onOpenStoryModal,
+                                onClick = { showDirectShareSheet = true },
                                 modifier = Modifier
                                     .minimumInteractiveComponentSize()
                                     .size(48.dp)
@@ -892,6 +892,23 @@ fun WheelScreen(
                                                 color = PopcornGold
                                             )
                                             Spacer(modifier = Modifier.height(4.dp))
+                                            val personalReason = remember(selectedMovie.id, selectedPlatforms, selectedGenres) {
+                                                com.example.data.repository.buildWhyThisMovie(
+                                                    movie = selectedMovie,
+                                                    profile = com.example.data.repository.TasteProfileRepository.snapshot(),
+                                                    selectedPlatforms = selectedPlatforms,
+                                                    selectedGenres = selectedGenres
+                                                )
+                                            }
+                                            Text(
+                                                text = personalReason,
+                                                fontSize = 12.sp,
+                                                fontWeight = FontWeight.SemiBold,
+                                                color = TextPrimary,
+                                                lineHeight = 16.sp,
+                                                modifier = Modifier.testTag("wheel_why_this_movie")
+                                            )
+                                            Spacer(modifier = Modifier.height(4.dp))
                                             Text(
                                                 text = selectedMovie.whyWatch,
                                                 fontSize = 12.sp,
@@ -1062,31 +1079,6 @@ fun WheelScreen(
                                 Spacer(modifier = Modifier.height(10.dp))
                             }
 
-                            // SOCIAL FLEX / INSTAGRAM 9:16 STORY CARD BUTTON
-                            OutlinedButton(
-                                onClick = onOpenStoryModal,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(48.dp)
-                                    .testTag("open_story_modal_button"),
-                                shape = RoundedCornerShape(14.dp),
-                                border = BorderStroke(1.dp, NeonPurple)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Share,
-                                    contentDescription = null,
-                                    tint = PopcornGold,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(
-                                    text = "9:16 Hikaye Kartı Oluştur (Flex) 🍿",
-                                    color = TextPrimary,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 13.sp
-                                )
-                            }
-
                             Spacer(modifier = Modifier.height(12.dp))
 
                             // Spin Again if locked or already watched
@@ -1152,15 +1144,6 @@ fun WheelScreen(
                 )
             }
         }
-    }
-
-    // Instagram / WhatsApp Story Flex Card Dialog
-    if (showStoryModal && selectedMovie != null) {
-        StoryShareDialog(
-            movie = selectedMovie,
-            isVetoedOnce = isVetoedOnce,
-            onDismiss = onCloseStoryModal
-        )
     }
 
     // Multi-Platform Direct Social Share Dialog

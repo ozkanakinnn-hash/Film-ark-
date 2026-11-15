@@ -776,6 +776,8 @@ fun ProfileScreen(
 
         item {
             Spacer(modifier = Modifier.height(20.dp))
+            com.example.ui.components.ProfileSettingsSection()
+            Spacer(modifier = Modifier.height(16.dp))
             DataSourceAttributionCard()
             Spacer(modifier = Modifier.height(40.dp))
         }
