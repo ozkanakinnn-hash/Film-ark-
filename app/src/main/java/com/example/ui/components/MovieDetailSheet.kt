@@ -157,7 +157,7 @@ fun MovieDetailSheet(
                     }
                     Spacer(Modifier.height(6.dp))
                     Text(
-                        text = "${movie.year} • ${movie.genre} • ${movie.durationMins} dk",
+                        text = "${movie.year} • ${movie.genre} • ${movie.durationLabel()}${if (movie.isSeries) " • Dizi" else ""}",
                         fontSize = 13.sp,
                         color = TextSecondary
                     )

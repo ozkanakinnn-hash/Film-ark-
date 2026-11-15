@@ -75,6 +75,7 @@ class MainActivity : ComponentActivity() {
         com.example.data.repository.WatchLaterRepository.init(applicationContext)
         com.example.data.repository.TasteProfileRepository.init(applicationContext)
         com.example.data.local.MotionPreferences.init(applicationContext)
+        com.example.data.repository.RemoteCatalogRepository.init(applicationContext)
         pendingWidgetMovieId.value = intent?.getStringExtra(MovieWheelAppWidgetProvider.EXTRA_WIDGET_MOVIE_ID)
         enableEdgeToEdge()
         setContent {
@@ -133,6 +134,7 @@ fun DecisionApp(
     val isVetoedOnce by viewModel.isVetoedOnce.collectAsState()
     val isDecisionLocked by viewModel.isDecisionLocked.collectAsState()
     val isAdvancedFilterMode by viewModel.isAdvancedFilterMode.collectAsState()
+    val contentKindFilter by viewModel.contentKindFilter.collectAsState()
     val selectedGenres by viewModel.selectedGenres.collectAsState()
     val selectedAudioOptions by viewModel.selectedAudioOptions.collectAsState()
     val selectedYearOptionId by viewModel.selectedYearOptionId.collectAsState()
@@ -246,6 +248,8 @@ fun DecisionApp(
                         selectedMoods = selectedMoods,
                         selectedPlatforms = selectedPlatforms,
                         isAdvancedFilterMode = isAdvancedFilterMode,
+                        contentKindFilter = contentKindFilter,
+                        onContentKindChange = { viewModel.setContentKindFilter(it) },
                         selectedGenres = selectedGenres,
                         selectedAudioOptions = selectedAudioOptions,
                         selectedYearOptionId = selectedYearOptionId,

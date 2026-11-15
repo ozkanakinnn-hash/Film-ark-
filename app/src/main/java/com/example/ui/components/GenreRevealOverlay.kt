@@ -239,7 +239,7 @@ fun GenreRevealOverlay(
                 }
             ) {
                 Text(
-                    text = "${movie.year}  •  ${movie.durationMins} dk  •  ",
+                    text = "${movie.year}  •  ${movie.durationLabel()}  •  ",
                     color = Color.White.copy(alpha = 0.72f),
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Medium

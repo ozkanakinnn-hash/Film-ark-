@@ -164,7 +164,7 @@ fun FlexScreen(
 “$currentQuote”
 
 🎬 Film: ${movie.title} (${movie.year})
-⏱ Süre: ${movie.durationMins} dakika
+⏱ Süre: ${movie.durationLabel()}
 ⭐️ Puan: ${movie.imdb}
 📺 Platform: ${movie.platforms.joinToString(", ")}
 
@@ -410,7 +410,7 @@ Seçim krizine son ver: Ne İzlesek? ile çarkı sen de çevir!
                                 // SÜRE VE YIL
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Text(
-                                        text = "⏱ ${movie.durationMins} dk",
+                                        text = "⏱ ${movie.durationLabel()}",
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.SemiBold,
                                         color = TextPrimary

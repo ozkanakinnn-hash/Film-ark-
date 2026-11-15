@@ -41,7 +41,9 @@ object RoomRepository {
 
     private const val PREF_NAME = "ne_izlesek_saved_decisions_prefs"
 
-    private val ioScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    // Yazımlar sırayla: art arda yapılan işlemler (ör. izlendi + not) birbirini ezmesin
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    private val ioScope = CoroutineScope(SupervisorJob() + Dispatchers.IO.limitedParallelism(1))
 
     @Volatile
     private var dao: SavedDecisionDao? = null

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.example.data.model.AudioLanguageOption
 import com.example.data.model.Mood
+import com.example.data.model.ContentKindFilter
 import com.example.data.model.Movie
 import com.example.data.model.OTHER_PLATFORM_NAME
 import java.text.SimpleDateFormat
@@ -1062,8 +1063,30 @@ object MovieRepository {
 
     private val _dailyExtraMovies = MutableStateFlow<List<Movie>>(emptyList())
 
+    /**
+     * Tüm içerik: günlük ekler + elle seçilmiş filmler + TMDB'den üretilen filmler ve diziler.
+     * Uzaktan katalog (RemoteCatalogRepository) indirildiyse üretilen kısım onunla değiştirilir.
+     */
     val allMovies: List<Movie>
-        get() = (_dailyExtraMovies.value + baseMovies + GeneratedMovies.movies).distinctBy { it.id }
+        get() {
+            val extras = _dailyExtraMovies.value
+            val remote = RemoteCatalogRepository.catalog.value
+            val cached = cache
+            if (cached != null && cached.extras === extras && cached.remote === remote) return cached.all
+            val generated = remote?.items ?: (GeneratedMovies.movies + GeneratedSeries.series)
+            val list = (extras + baseMovies + generated).distinctBy { it.id }
+            cache = CatalogCache(extras, remote, list, list.associateBy { it.id })
+            return list
+        }
+
+    private class CatalogCache(
+        val extras: List<Movie>,
+        val remote: RemoteCatalog?,
+        val all: List<Movie>,
+        val byId: Map<String, Movie>
+    )
+
+    @Volatile private var cache: CatalogCache? = null
 
     private val _dailyFeedLastUpdated = MutableStateFlow(currentDateKey())
     val dailyFeedLastUpdated: StateFlow<String> = _dailyFeedLastUpdated.asStateFlow()
@@ -1219,9 +1242,11 @@ object MovieRepository {
         minRating: Double = 0.0,
         platforms: Set<String> = emptySet(),
         excludedMovieIds: Set<String> = emptySet(),
-        audioOptions: Set<String> = emptySet()
+        audioOptions: Set<String> = emptySet(),
+        contentKinds: ContentKindFilter = ContentKindFilter.BOTH
     ): FilterResult {
-        val candidatePool = allMovies.filterNot { excludedMovieIds.contains(it.id) }.ifEmpty { allMovies }
+        val kindPool = allMovies.filter { contentKinds.accepts(it) }.ifEmpty { allMovies }
+        val candidatePool = kindPool.filterNot { excludedMovieIds.contains(it.id) }.ifEmpty { kindPool }
 
         val exact = candidatePool.filter { movie ->
             val moodMatches = moods.isEmpty() || moods.contains(movie.moodTag)
@@ -1271,7 +1296,8 @@ object MovieRepository {
     }
 
     fun getMovieById(id: String): Movie? {
-        return allMovies.find { it.id == id }
+        allMovies // önbelleği güncel tut
+        return cache?.byId?.get(id)
     }
 
     fun resetDailyFeedForTests() {

@@ -670,7 +670,7 @@ private fun DuelPosterCard(
                 Icon(Icons.Default.Star, contentDescription = null, tint = BrandGold, modifier = Modifier.size(13.dp))
                 Spacer(modifier = Modifier.width(3.dp))
                 Text(text = "${movie.imdb}", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = BrandGold)
-                Text(text = "  •  ${movie.durationMins} dk", fontSize = 11.sp, color = BrandIvory.copy(alpha = 0.7f))
+                Text(text = "  •  ${movie.durationLabel()}", fontSize = 11.sp, color = BrandIvory.copy(alpha = 0.7f))
             }
             Spacer(modifier = Modifier.height(10.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -969,7 +969,7 @@ private fun ChampionStoryCard(champion: Movie, roundsWon: Int, modifier: Modifie
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = "${champion.year} • ${champion.genre} • ${champion.durationMins} dk",
+                text = "${champion.year} • ${champion.genre} • ${champion.durationLabel()}",
                 fontSize = 12.sp,
                 color = BrandIvory.copy(alpha = 0.8f),
                 maxLines = 1,

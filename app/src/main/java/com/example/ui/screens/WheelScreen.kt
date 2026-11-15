@@ -811,7 +811,7 @@ fun WheelScreen(
                                             Spacer(modifier = Modifier.height(8.dp))
 
                                             Text(
-                                                text = "${selectedMovie.year} • ${selectedMovie.durationMins} dakika",
+                                                text = "${selectedMovie.year} • ${if (selectedMovie.isSeries) "Dizi • " + selectedMovie.durationLabel() else "${selectedMovie.durationMins} dakika"}",
                                                 fontSize = 12.sp,
                                                 color = TextSecondary
                                             )

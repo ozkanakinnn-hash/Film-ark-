@@ -100,6 +100,8 @@ fun FilterScreen(
     selectedMoods: Set<String>,
     selectedPlatforms: Set<String>,
     isAdvancedFilterMode: Boolean,
+    contentKindFilter: com.example.data.model.ContentKindFilter = com.example.data.model.ContentKindFilter.BOTH,
+    onContentKindChange: (com.example.data.model.ContentKindFilter) -> Unit = {},
     selectedGenres: Set<String>,
     selectedAudioOptions: Set<String> = emptySet(),
     selectedYearOptionId: String,
@@ -144,7 +146,8 @@ fun FilterScreen(
         minRating = minRating,
         platforms = commonPlatforms,
         excludedMovieIds = watchedMovieIds,
-        audioOptions = selectedAudioOptions
+        audioOptions = selectedAudioOptions,
+        contentKinds = contentKindFilter
     )
     val eligibleMovies = filterResult.movies
     val isExactMatch = filterResult.isExactMatch
@@ -230,6 +233,11 @@ fun FilterScreen(
                     )
                 }
             }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Film / Dizi / İkisi seçimi
+            ContentKindSelector(selected = contentKindFilter, onSelect = onContentKindChange)
 
             Spacer(modifier = Modifier.height(14.dp))
 
@@ -972,6 +980,52 @@ fun FilterScreen(
             }
 
             Spacer(modifier = Modifier.height(40.dp))
+        }
+    }
+}
+
+
+@Composable
+private fun ContentKindSelector(
+    selected: com.example.data.model.ContentKindFilter,
+    onSelect: (com.example.data.model.ContentKindFilter) -> Unit
+) {
+    val options = listOf(
+        com.example.data.model.ContentKindFilter.BOTH,
+        com.example.data.model.ContentKindFilter.MOVIES,
+        com.example.data.model.ContentKindFilter.SERIES
+    )
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(CinemaSurface, RoundedCornerShape(14.dp))
+            .padding(4.dp)
+            .testTag("content_kind_selector"),
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        options.forEach { option ->
+            val isSelected = option == selected
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .weight(1f)
+                    .height(40.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(if (isSelected) PopcornGold else Color.Transparent)
+                    .clickable(onClickLabel = "${option.label} göster") { onSelect(option) }
+                    .testTag("content_kind_${option.id}")
+            ) {
+                Text(
+                    text = when (option) {
+                        com.example.data.model.ContentKindFilter.BOTH -> "Film + Dizi"
+                        com.example.data.model.ContentKindFilter.MOVIES -> "Film"
+                        com.example.data.model.ContentKindFilter.SERIES -> "Dizi"
+                    },
+                    fontSize = 13.sp,
+                    fontWeight = if (isSelected) FontWeight.Black else FontWeight.SemiBold,
+                    color = if (isSelected) MaterialTheme.colorScheme.onPrimary else TextSecondary
+                )
+            }
         }
     }
 }

@@ -88,6 +88,13 @@ class DecisionViewModel(
     private val _selectedGenres = MutableStateFlow<Set<String>>(emptySet())
     val selectedGenres: StateFlow<Set<String>> = _selectedGenres.asStateFlow()
 
+    private val _contentKindFilter = MutableStateFlow(com.example.data.model.ContentKindFilter.BOTH)
+    val contentKindFilter: StateFlow<com.example.data.model.ContentKindFilter> = _contentKindFilter.asStateFlow()
+
+    fun setContentKindFilter(filter: com.example.data.model.ContentKindFilter) {
+        _contentKindFilter.value = filter
+    }
+
     private val _selectedAudioOptions = MutableStateFlow<Set<String>>(emptySet())
     val selectedAudioOptions: StateFlow<Set<String>> = _selectedAudioOptions.asStateFlow()
 
@@ -322,23 +329,26 @@ class DecisionViewModel(
             minRating = minRatingOverride,
             platforms = effectivePlatforms,
             excludedMovieIds = excludedIds,
-            audioOptions = _selectedAudioOptions.value
+            audioOptions = _selectedAudioOptions.value,
+            contentKinds = _contentKindFilter.value
         ).movies
 
+        val kindMovies = MovieRepository.allMovies.filter { _contentKindFilter.value.accepts(it) }
+            .ifEmpty { MovieRepository.allMovies }
         val strictlyRated = if (minRatingOverride > 0.0) {
             result.filter { it.imdb >= minRatingOverride }.ifEmpty {
-                MovieRepository.allMovies
+                kindMovies
                     .filter { !excludedIds.contains(it.id) && it.imdb >= minRatingOverride }
-                    .ifEmpty { MovieRepository.allMovies.filter { it.imdb >= minRatingOverride } }
+                    .ifEmpty { kindMovies.filter { it.imdb >= minRatingOverride } }
             }
         } else {
             result
         }
 
         return strictlyRated.ifEmpty {
-            MovieRepository.allMovies
+            kindMovies
                 .filterNot { excludedIds.contains(it.id) }
-                .ifEmpty { MovieRepository.allMovies }
+                .ifEmpty { kindMovies }
                 .take(8)
         }
     }

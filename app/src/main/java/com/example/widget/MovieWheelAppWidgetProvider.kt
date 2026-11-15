@@ -52,7 +52,7 @@ class MovieWheelAppWidgetProvider : AppWidgetProvider() {
             views.setTextViewText(R.id.widget_movie_title, movie.title)
             views.setTextViewText(
                 R.id.widget_movie_meta,
-                "${movie.year} • ${movie.genre} • ${movie.durationMins} dk"
+                "${movie.year} • ${movie.genre} • ${movie.durationLabel()}"
             )
             views.setTextViewText(
                 R.id.widget_movie_hook,

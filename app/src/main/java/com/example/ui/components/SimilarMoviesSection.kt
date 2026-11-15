@@ -243,7 +243,7 @@ private fun SimilarMovieItemCard(
                 Spacer(modifier = Modifier.height(2.dp))
 
                 Text(
-                    text = "${movie.year} • ${movie.durationMins} dk • ${movie.genre}",
+                    text = "${movie.year} • ${movie.durationLabel()} • ${movie.genre}",
                     fontSize = 11.sp,
                     color = TextSecondary,
                     maxLines = 1,

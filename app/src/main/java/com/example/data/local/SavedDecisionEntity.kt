@@ -55,7 +55,10 @@ data class SavedDecisionEntity(
                 whyWatch = movieWhyWatch,
                 posterPath = moviePosterPath,
                 posterUrl = resolvedUrl,
-                colorHex = movieColorHex
+                colorHex = movieColorHex,
+                kind = if (movieId.startsWith("tv")) com.example.data.model.ContentKind.SERIES
+                else com.example.data.model.ContentKind.MOVIE,
+                seasonCount = com.example.data.repository.MovieRepository.getMovieById(movieId)?.seasonCount
             ),
             dateText = dateText,
             minutesSaved = minutesSaved,

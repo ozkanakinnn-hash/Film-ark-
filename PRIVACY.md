@@ -26,6 +26,10 @@ Bu dosya bizim sunucularımıza gönderilmez.
 ## İnternet bağlantısı
 - **Film afişleri** TMDB'nin görsel sunucusundan (`image.tmdb.org`) yüklenir. Her internet isteğinde
   olduğu gibi IP adresiniz bu sunucu tarafından görülebilir. Uygulama TMDB'ye kişisel bilgi göndermez.
+- **Katalog güncellemesi:** Uygulama haftada en fazla bir kez, güncel film ve dizi listesini (herkese açık bir
+  JSON dosyası) GitHub'dan (`raw.githubusercontent.com`) indirir. Bu istekte sizinle ilgili hiçbir bilgi
+  gönderilmez; GitHub, her internet isteğinde olduğu gibi IP adresinizi görebilir. İndirme başarısız olursa
+  uygulamanın içindeki katalog kullanılır.
 - **Fragmanlar** yalnızca "Resmi Fragmanı İzle" düğmesine dokunduğunuzda YouTube uygulamasında
   veya tarayıcıda açılır. Bu durumda YouTube'un kendi gizlilik politikası geçerlidir.
 - **Paylaşım** yalnızca siz "Paylaş" düğmesine dokunduğunuzda, seçtiğiniz uygulama üzerinden yapılır.
@@ -68,6 +72,8 @@ Uygulamaya reklam ya da yeni bir özellik eklenirse bu politika güncellenir ve 
 - Watched/favorite movies, decision history, custom lists and settings are stored **only on your device**
   and are deleted when you uninstall the app. Android auto-backup is disabled; you can export a backup file
   yourself from the Profile screen.
+- Once a week at most, the app downloads the public film/series catalog JSON from GitHub
+  (`raw.githubusercontent.com`); no personal data is sent.
 - Movie posters are loaded from TMDB's image server (`image.tmdb.org`), which can see your IP address like
   any web request. Trailers open in YouTube only when you tap the trailer button (YouTube's privacy policy
   applies). Sharing happens only when you tap "Share", through the app you choose.

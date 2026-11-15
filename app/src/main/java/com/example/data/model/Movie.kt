@@ -55,8 +55,21 @@ data class Movie(
     ),
     val isCultOrMostWatched: Boolean = false,
     val isNewRelease: Boolean = year >= 2024,
-    val addedDateKey: String? = null
+    val addedDateKey: String? = null,
+    /** Film mi dizi mi. Dizilerde [durationMins] bölüm süresidir. */
+    val kind: ContentKind = ContentKind.MOVIE,
+    /** Yalnızca diziler: sezon sayısı. */
+    val seasonCount: Int? = null
 ) {
+    val isSeries: Boolean get() = kind == ContentKind.SERIES
+
+    /** "112 dk" ya da "3 sezon • bölüm 45 dk". */
+    fun durationLabel(): String = if (isSeries) {
+        listOfNotNull(seasonCount?.let { "$it sezon" }, "bölüm $durationMins dk").joinToString(" • ")
+    } else {
+        "$durationMins dk"
+    }
+
     fun resolvedPosterUrl(): String? =
         TmdbImageConfig.getPosterUrl(posterPath.ifBlank { posterUrl })
 
@@ -74,6 +87,24 @@ data class Movie(
             hasSub -> "Türkçe Altyazı"
             else -> "Orijinal Dil"
         }
+    }
+}
+
+enum class ContentKind(val id: String, val label: String) {
+    MOVIE("movie", "Film"),
+    SERIES("series", "Dizi")
+}
+
+/** Filtre ekranındaki "Film / Dizi / İkisi" seçimi. */
+enum class ContentKindFilter(val id: String, val label: String) {
+    BOTH("both", "İkisi"),
+    MOVIES("movies", "Film"),
+    SERIES("series", "Dizi");
+
+    fun accepts(movie: Movie): Boolean = when (this) {
+        BOTH -> true
+        MOVIES -> !movie.isSeries
+        SERIES -> movie.isSeries
     }
 }
 

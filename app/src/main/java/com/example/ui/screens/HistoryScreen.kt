@@ -587,7 +587,7 @@ fun HistoryScreen(
                                 Spacer(modifier = Modifier.height(4.dp))
 
                                 Text(
-                                    text = "${decision.movie.year} • ${decision.movie.durationMins} dk • ${decision.movie.genre}",
+                                    text = "${decision.movie.year} • ${decision.movie.durationLabel()} • ${decision.movie.genre}",
                                     fontSize = 12.sp,
                                     color = TextMuted,
                                     maxLines = 1,

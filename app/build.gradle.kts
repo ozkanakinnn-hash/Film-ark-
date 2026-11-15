@@ -29,6 +29,9 @@ android {
     val posterCardStyle = (project.findProperty("neizlesek.posterCardStyle") as String?) ?: "neonbilet"
     buildConfigField("boolean", "TMDB_POSTERS_ENABLED", (posterMode != "cards").toString())
     buildConfigField("String", "POSTER_CARD_STYLE", "\"$posterCardStyle\"")
+    // Haftalık uzaktan katalog (herkese açık JSON, yalnızca HTTPS). Boş bırakılırsa yalnızca APK içi katalog kullanılır.
+    val remoteCatalogUrl = (project.findProperty("neizlesek.remoteCatalogUrl") as String?) ?: ""
+    buildConfigField("String", "REMOTE_CATALOG_URL", "\"$remoteCatalogUrl\"")
   }
 
   // Do not remove or modify these signingConfigs. They are necessary for building, installing,

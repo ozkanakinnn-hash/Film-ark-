@@ -302,6 +302,8 @@ def main():
     print(f"Üretilen ek film: {len(movies)}  | ruh hali dağılımı: {moods}")
     print(f"Fragmanı olan: {sum(1 for m in movies if m['trailerKey'])}  | "
           f"Türkiye'de platformu bilinen: {sum(1 for m in movies if m['platforms'] != ['Diğer'])}")
+    import export_catalog_json
+    export_catalog_json.main()  # uzaktan katalog JSON'unu da yenile
 
 
 if __name__ == "__main__":

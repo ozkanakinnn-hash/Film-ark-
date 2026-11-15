@@ -189,7 +189,7 @@ private fun SearchResultRow(movie: Movie, onClick: () -> Unit) {
                 overflow = TextOverflow.Ellipsis
             )
             Text(
-                text = "${movie.year} • ${movie.genre}",
+                text = listOfNotNull(movie.year.toString(), if (movie.isSeries) "Dizi" else null, movie.genre).joinToString(" • "),
                 color = TextSecondary,
                 fontSize = 12.sp,
                 maxLines = 1,

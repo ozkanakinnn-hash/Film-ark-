@@ -19,7 +19,9 @@ object WatchedMovieRepository {
     private const val PREF_NAME = "ne_izlesek_favorites_prefs"
     private const val KEY_FAVORITE_IDS = "favorite_movie_ids"
 
-    private val ioScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    // Yazımlar sırayla: art arda yapılan işlemler (ör. izlendi + not) birbirini ezmesin
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    private val ioScope = CoroutineScope(SupervisorJob() + Dispatchers.IO.limitedParallelism(1))
 
     @Volatile
     private var dao: WatchedMovieDao? = null
