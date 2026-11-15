@@ -38,11 +38,15 @@ def norm(text: str) -> str:
 
 
 def api_get(path: str, **params) -> dict:
-    url = f"{API}{path}?{urllib.parse.urlencode(params)}"
     headers = {"Accept": "application/json"}
-    token = os.environ.get("TMDB_TOKEN")
-    if token:
+    token = (os.environ.get("TMDB_TOKEN") or "").strip()
+    if token and len(token) <= 40:
+        # Kısa "API Key (v3)" verilmişse sorgu parametresi olarak gönder
+        params = {**params, "api_key": token}
+    elif token:
+        # Uzun "API Read Access Token" (v4) -> Bearer başlığı
         headers["Authorization"] = f"Bearer {token}"
+    url = f"{API}{path}?{urllib.parse.urlencode(params)}"
     for attempt in range(4):
         try:
             with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=20) as r:

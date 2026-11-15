@@ -1,0 +1,69 @@
+# Haftalık katalog yenileme: TMDB'den güncel film ve dizileri çeker, catalog/catalog.json'u
+# (ve APK içi yedek kataloğu) yeniler ve main dalına gönderir. Uygulama yeni listeyi bir hafta
+# içinde kendiliğinden indirir; uygulama güncellemesi gerekmez.
+#
+# Gerekli gizli değişken: Settings → Secrets and variables → Actions → TMDB_TOKEN
+# (TMDB "API Read Access Token" ya da "API Key").
+name: Haftalık katalog yenileme
+
+on:
+  schedule:
+    - cron: "17 3 * * 1"   # Her pazartesi 03:17 UTC (06:17 Türkiye)
+  workflow_dispatch: {}      # Actions sekmesinden elle de çalıştırılabilir
+
+permissions:
+  contents: write
+
+concurrency:
+  group: weekly-catalog
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Token var mı?
+        env:
+          TMDB_TOKEN: ${{ secrets.TMDB_TOKEN }}
+        run: |
+          if [ -z "$TMDB_TOKEN" ]; then
+            echo "::error::TMDB_TOKEN gizli değişkeni eklenmemiş (Settings → Secrets and variables → Actions)."
+            exit 1
+          fi
+
+      - name: Filmleri yenile
+        env:
+          TMDB_TOKEN: ${{ secrets.TMDB_TOKEN }}
+        run: python3 tools/tmdb_catalog_build.py --limit 200
+
+      - name: Dizileri yenile
+        env:
+          TMDB_TOKEN: ${{ secrets.TMDB_TOKEN }}
+        run: python3 tools/tmdb_series_build.py --limit 100
+
+      - name: Kataloğu denetle
+        run: python3 tools/check_catalog.py
+
+      - name: Değişiklik varsa main'e gönder
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add catalog/catalog.json \
+            app/src/main/java/com/example/data/repository/GeneratedMovies.kt \
+            app/src/main/java/com/example/data/repository/GeneratedSeries.kt \
+            app/src/main/java/com/example/data/repository/MovieRepository.kt
+          if git diff --cached --quiet; then
+            echo "Katalogda değişiklik yok."
+          else
+            git commit -m "Haftalık katalog yenileme ($(date -u +%Y-%m-%d))"
+            git push origin HEAD:main
+          fi

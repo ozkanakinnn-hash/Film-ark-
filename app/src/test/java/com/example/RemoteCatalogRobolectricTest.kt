@@ -41,8 +41,9 @@ class RemoteCatalogRobolectricTest {
     fun publishedCatalogJson_isValidAndMatchesBundledCatalog() {
         val parsed = RemoteCatalogRepository.parse(catalogText())
         assertNotNull(parsed)
-        assertEquals(300, parsed!!.items.size)
-        assertEquals(100, parsed.items.count { it.isSeries })
+        // Haftalık iş kataloğu yeniden ürettiği için sayılar değişebilir; alt sınırları denetle
+        assertTrue(parsed!!.items.size >= 150)
+        assertTrue(parsed.items.count { it.isSeries } >= 50)
         assertTrue(parsed.items.filter { it.isSeries }.all { (it.seasonCount ?: 0) >= 1 })
     }
 
@@ -57,7 +58,7 @@ class RemoteCatalogRobolectricTest {
         items.getJSONObject(1).put("platforms", org.json.JSONArray(listOf("EvilTV")))
         items.getJSONObject(2).put("id", "../../etc")
         val parsed = RemoteCatalogRepository.parse(root.toString())!!
-        assertEquals(299, parsed.items.size)
+        assertEquals(items.length() - 1, parsed.items.size)
         assertEquals("", parsed.items.first { it.id == items.getJSONObject(0).getString("id") }.posterPath)
         assertEquals(listOf("Diğer"), parsed.items.first { it.id == items.getJSONObject(1).getString("id") }.platforms)
 
