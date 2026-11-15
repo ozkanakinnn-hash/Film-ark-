@@ -1,8 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:width="66dp"
-        android:height="66dp"
-        android:drawable="@drawable/app_icon_wheel_1794444730871"
-        android:gravity="center" />
-</layer-list>
+<!-- Ne İzlesek? logosu (H1): soru işareti + oynat tuşu + karar ibresi -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:scaleX="0.16970"
+        android:scaleY="0.16970"
+        android:translateX="10.5576"
+        android:translateY="12.0848">
+        <path
+            android:pathData="M166,196 A90,90 0 1,1 256,286 L256,306"
+            android:strokeColor="#E9B949"
+            android:strokeWidth="48"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+        <path
+            android:pathData="M296,196 L245,225.44 L245,166.56 Z"
+            android:fillColor="#E9B949"
+            android:strokeColor="#E9B949"
+            android:strokeWidth="12"
+            android:strokeLineJoin="round" />
+        <path
+            android:pathData="M226,356 L286,356 L256,404 Z"
+            android:fillColor="#D63447"
+            android:strokeColor="#D63447"
+            android:strokeWidth="16"
+            android:strokeLineJoin="round" />
+    </group>
+</vector>

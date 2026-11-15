@@ -60,6 +60,7 @@ First-time setup on a fresh machine (e.g. a cloud session):
 - `components/CinematicBackdrop.kt` — Ambient projector glow, vignette and film grain behind every screen (wrapped in `MainActivity`). Screen roots are transparent; do not add `.background(CinemaBackground)` back to them.
 - `theme/` — `Theme.kt`, `Color.kt`, `Type.kt` (full typography scale), `Motion.kt` (`CinemaMotion` easing/duration tokens, `CinemaShapes`, `Modifier.pressScale`), `WheelThemeManager.kt` (auto dark/light wheel recoloring).
 - Navigation transitions: `MainActivity` wraps screens in `AnimatedContent`; `Screen.depth` decides forward/back slide direction, FLEX opens with a scale transition. Give new screens a depth.
+- App icon: logo "H1" (question mark + play triangle + red wheel needle). Adaptive layers are vectors in `res/drawable/ic_launcher_{background,foreground,monochrome}.xml` (mark kept inside the 66dp safe zone); legacy PNG mipmaps and `branding/play-store-icon-512.png` are rendered from `branding/logo-options/harman-H1-*.svg`. Brand colors: gold `#E9B949`, crimson `#D63447`, noir `#0B0A0F`.
 - `widget/` — `MovieWheelAppWidgetProvider.kt` & `WidgetMovieStateStore.kt` for home-screen widget spins and daily recommendation.
 
 ## Conventions
