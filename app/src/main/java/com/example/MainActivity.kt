@@ -73,6 +73,7 @@ class MainActivity : ComponentActivity() {
         RoomRepository.init(applicationContext)
         ThemePreferences.init(applicationContext)
         MovieRepository.initDailyFeed(applicationContext)
+        com.example.data.repository.WatchLaterRepository.init(applicationContext)
         pendingWidgetMovieId.value = intent?.getStringExtra(MovieWheelAppWidgetProvider.EXTRA_WIDGET_MOVIE_ID)
         enableEdgeToEdge()
         setContent {
@@ -123,6 +124,7 @@ fun DecisionApp(
     val partnerPlatforms by viewModel.partnerPlatforms.collectAsState()
     val activeWheelMovies by viewModel.activeWheelMovies.collectAsState()
     val wheelPoolTotal by viewModel.wheelPoolTotal.collectAsState()
+    val watchLaterIds by viewModel.watchLaterIds.collectAsState()
     val spinEvent by viewModel.spinEvent.collectAsState()
     val isSpinning by viewModel.isSpinning.collectAsState()
     val selectedMovie by viewModel.selectedMovie.collectAsState()
@@ -226,6 +228,8 @@ fun DecisionApp(
                         dailyFeedDateLabel = dailyFeedDateLabel,
                         onRefreshNewReleases = { viewModel.refreshDailyMovieFeed(forceRefresh = true) },
                         onNewReleaseMovieClick = { movie -> viewModel.openMovieInWheelFromShowcase(movie) },
+                        watchLaterIds = watchLaterIds,
+                        onToggleWatchLater = { movie -> viewModel.toggleWatchLater(movie) },
                         weeklyTrendsState = weeklyTrendsState,
                         onRefreshTrends = { viewModel.refreshWeeklyTrends(forceRefresh = true) },
                         onToggleTheme = { viewModel.toggleTheme() },
@@ -387,6 +391,9 @@ fun DecisionApp(
 
                 Screen.PROFILE -> {
                     ProfileScreen(
+                        watchLaterMovies = remember(watchLaterIds) { watchLaterIds.mapNotNull { MovieRepository.getMovieById(it) } },
+                        onToggleWatchLater = { movie -> viewModel.toggleWatchLater(movie) },
+                        onAddToWheel = { movie -> viewModel.openMovieInWheelFromShowcase(movie) },
                         watchedMovies = watchedMovies,
                         savedDecisions = savedDecisions,
                         favoriteMovieIds = favoriteMovieIds,

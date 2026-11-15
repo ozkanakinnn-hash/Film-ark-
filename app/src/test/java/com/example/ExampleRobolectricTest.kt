@@ -74,6 +74,8 @@ class ExampleRobolectricTest {
     CustomWheelListRepository.resetForTests()
     ThemePreferences.setDarkMode(true)
     WidgetMovieStateStore.clearForTests(context)
+    com.example.data.repository.WatchLaterRepository.init(context)
+    com.example.data.repository.WatchLaterRepository.clearForTests()
   }
 
   @Test
@@ -1342,6 +1344,12 @@ class ExampleRobolectricTest {
       .performClick()
     composeTestRule.waitForIdle()
 
+    // Afişe dokunmak önce film kartını açar; çarka geçiş "Çarka Ekle" ile
+    composeTestRule.onNodeWithTag("movie_detail_sheet").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("movie_detail_title").assertTextContains(firstNewMovie.title, substring = false)
+    composeTestRule.onNodeWithTag("movie_detail_open_wheel").performScrollTo().performClick()
+    composeTestRule.waitForIdle()
+
     composeTestRule.onNodeWithTag("wheel_screen_list")
       .performScrollToNode(hasTestTag("wheel_selected_movie_title"))
     composeTestRule.onNodeWithTag("wheel_selected_movie_title")
@@ -1506,5 +1514,27 @@ class ExampleRobolectricTest {
     composeTestRule.onNodeWithTag("crash_report_share_button").performClick()
     composeTestRule.waitForIdle()
     assertNull("Report is cleared after sharing", com.example.crash.CrashReporter.pendingReport(app))
+  }
+
+  @Test
+  fun `new release card opens movie detail with watch later and shows it in profile`() {
+    val movie = MovieRepository.dailyUpdatedMovies.value.first()
+    composeTestRule.onNodeWithTag("new_releases_carousel")
+      .performScrollToNode(hasTestTag("new_release_card_${movie.id}"))
+    composeTestRule.onNodeWithTag("new_release_card_${movie.id}").performClick()
+    composeTestRule.waitForIdle()
+
+    composeTestRule.onNodeWithTag("movie_detail_sheet").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("movie_detail_watch_later").performScrollTo().performClick()
+    composeTestRule.waitForIdle()
+    assertTrue(com.example.data.repository.WatchLaterRepository.contains(movie.id))
+    composeTestRule.onNodeWithTag("movie_detail_close").performClick()
+    composeTestRule.waitForIdle()
+
+    composeTestRule.onNodeWithTag("profile_icon_button").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("profile_screen_list")
+      .performScrollToNode(hasTestTag("profile_watch_later_section"))
+    composeTestRule.onNodeWithTag("watch_later_item_${movie.id}").assertIsDisplayed()
   }
 }

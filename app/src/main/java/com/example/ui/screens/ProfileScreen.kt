@@ -1,5 +1,7 @@
 package com.example.ui.screens
 
+import androidx.compose.foundation.lazy.LazyRow
+import com.example.ui.components.MovieDetailSheet
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.os.Build
@@ -112,6 +114,9 @@ private val QuickNoteChips = listOf(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ProfileScreen(
+    watchLaterMovies: List<Movie> = emptyList(),
+    onToggleWatchLater: (Movie) -> Unit = {},
+    onAddToWheel: (Movie) -> Unit = {},
     watchedMovies: List<WatchedMovieEntity>,
     savedDecisions: List<SavedDecision>,
     favoriteMovieIds: Set<String> = emptySet(),
@@ -125,6 +130,20 @@ fun ProfileScreen(
     onBack: () -> Unit
 ) {
     BackHandler { onBack() }
+
+    var watchLaterDetail by remember { mutableStateOf<Movie?>(null) }
+    watchLaterDetail?.let { movie ->
+        MovieDetailSheet(
+            movie = movie,
+            onDismiss = { watchLaterDetail = null },
+            onAddToWheel = {
+                watchLaterDetail = null
+                onAddToWheel(movie)
+            },
+            isInWatchLater = watchLaterMovies.any { it.id == movie.id },
+            onToggleWatchLater = { onToggleWatchLater(movie) }
+        )
+    }
 
     val totalWatchedMins = watchedMovies.sumOf { it.durationMins }
     val totalHours = totalWatchedMins / 60
@@ -435,6 +454,62 @@ fun ProfileScreen(
                 favoriteMovieIds = favoriteMovieIds,
                 onShareMovie = { shareTargetMovie = it }
             )
+
+            // "Daha Sonra İzle" listesi
+            if (watchLaterMovies.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(18.dp))
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("profile_watch_later_section")
+                ) {
+                    Text(
+                        text = "🔖 Daha Sonra İzle (${watchLaterMovies.size})",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Black,
+                        color = TextPrimary
+                    )
+                    Text(
+                        text = "Bir afişe dokun: fragmanı izle ya da çarka ekle",
+                        fontSize = 12.sp,
+                        color = TextSecondary
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        items(watchLaterMovies, key = { "wl_${it.id}" }) { movie ->
+                            Column(
+                                modifier = Modifier
+                                    .width(104.dp)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .clickable { watchLaterDetail = movie }
+                                    .testTag("watch_later_item_${movie.id}")
+                            ) {
+                                MoviePosterImage(
+                                    title = movie.title,
+                                    posterPath = movie.posterPath,
+                                    posterUrl = movie.posterUrl,
+                                    accentColorHex = movie.colorHex,
+                                    genre = movie.genre,
+                                    year = movie.year,
+                                    cornerRadius = 12.dp,
+                                    modifier = Modifier
+                                        .width(104.dp)
+                                        .height(154.dp)
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = movie.title,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = TextPrimary,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                        }
+                    }
+                }
+            }
 
             if (favoriteMoviesList.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(18.dp))

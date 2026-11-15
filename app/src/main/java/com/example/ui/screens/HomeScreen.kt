@@ -1,5 +1,6 @@
 package com.example.ui.screens
 
+import com.example.ui.components.MovieDetailSheet
 import androidx.compose.ui.semantics.contentDescription
 import com.example.R
 import androidx.compose.ui.res.painterResource
@@ -93,6 +94,8 @@ fun HomeScreen(
     dailyFeedDateLabel: String = MovieRepository.dailyFeedLastUpdated.value,
     onRefreshNewReleases: () -> Unit = {},
     onNewReleaseMovieClick: (Movie) -> Unit = {},
+    watchLaterIds: List<String> = emptyList(),
+    onToggleWatchLater: (Movie) -> Unit = {},
     weeklyTrendsState: TrendingCinemaUiState = TrendingCinemaUiState.Loading,
     onRefreshTrends: () -> Unit = {},
     onToggleTheme: () -> Unit = {},
@@ -107,6 +110,20 @@ fun HomeScreen(
 ) {
     val totalMinutesSaved = savedDecisions.sumOf { it.minutesSaved }
     var trendShareTarget by remember { mutableStateOf<Movie?>(null) }
+
+    var detailMovie by remember { mutableStateOf<Movie?>(null) }
+    detailMovie?.let { movie ->
+        MovieDetailSheet(
+            movie = movie,
+            onDismiss = { detailMovie = null },
+            onAddToWheel = {
+                detailMovie = null
+                onNewReleaseMovieClick(movie)
+            },
+            isInWatchLater = watchLaterIds.contains(movie.id),
+            onToggleWatchLater = { onToggleWatchLater(movie) }
+        )
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -237,7 +254,8 @@ fun HomeScreen(
                     movies = dailyNewReleases,
                     lastUpdatedDate = dailyFeedDateLabel,
                     onRefreshClick = onRefreshNewReleases,
-                    onMovieClick = onNewReleaseMovieClick
+                    // Afişe dokununca önce film kartı açılır; çarka geçiş karttaki "Çarkta Aç" ile
+                    onMovieClick = { movie -> detailMovie = movie }
                 )
                 Spacer(modifier = Modifier.height(18.dp))
             }

@@ -127,6 +127,15 @@ class DecisionViewModel(
     private val _activeWheelMovies = MutableStateFlow<List<Movie>>(emptyList())
     val activeWheelMovies: StateFlow<List<Movie>> = _activeWheelMovies.asStateFlow()
 
+    /** "Daha Sonra İzle" listesindeki film kimlikleri (en yeni başta). */
+    val watchLaterIds: StateFlow<List<String>> = com.example.data.repository.WatchLaterRepository.ids
+
+    fun toggleWatchLater(movie: Movie) {
+        val added = com.example.data.repository.WatchLaterRepository.toggle(movie.id)
+        _feedbackToast.value = if (added) "🔖 '${movie.title}' daha sonra izle listesine eklendi"
+        else "'${movie.title}' listeden çıkarıldı"
+    }
+
     /** Çarkın arkasındaki tam uygun film havuzu (çarkta en fazla 12 tanesi gösterilir). */
     private var fullWheelPool: List<Movie> = emptyList()
     private val _wheelPoolTotal = MutableStateFlow(0)
