@@ -277,9 +277,9 @@ private fun NewReleasePosterCard(
     movie: Movie,
     onClick: () -> Unit
 ) {
-    val isAddedToday = movie.addedDateKey != null
-    val badgeColor = if (isAddedToday) EmeraldGreen else NeonPink
-    val badgeText = if (isAddedToday) "BUGÜN EKLENDİ" else "YENİ ${movie.year}"
+    val isRecentlyAdded = movie.addedDateKey != null
+    val badgeColor = if (isRecentlyAdded) EmeraldGreen else NeonPink
+    val badgeText = if (isRecentlyAdded) "SON EKLENEN" else "YENİ ${movie.year}"
     val primaryPlatform = movie.platforms.firstOrNull() ?: "Yeni"
 
     Card(
@@ -324,7 +324,7 @@ private fun NewReleasePosterCard(
                         text = badgeText,
                         fontSize = 9.sp,
                         fontWeight = FontWeight.Black,
-                        color = if (isAddedToday) Color.Black else Color.White,
+                        color = if (isRecentlyAdded) Color.Black else Color.White,
                         modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp)
                     )
                 }
