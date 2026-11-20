@@ -132,6 +132,14 @@ fun ProfileScreen(
     BackHandler { onBack() }
 
     var watchLaterDetail by remember { mutableStateOf<Movie?>(null) }
+    var watchedKindTab by remember { mutableStateOf(0) }
+    val watchedSeriesCount = watchedMovies.count { it.movieId.startsWith("tv") }
+    val watchedFilmCount = watchedMovies.size - watchedSeriesCount
+    val shownWatched = when (watchedKindTab) {
+        1 -> watchedMovies.filterNot { it.movieId.startsWith("tv") }
+        2 -> watchedMovies.filter { it.movieId.startsWith("tv") }
+        else -> watchedMovies
+    }
     watchLaterDetail?.let { movie ->
         MovieDetailSheet(
             movie = movie,
@@ -693,7 +701,7 @@ fun ProfileScreen(
             ) {
                 Column(modifier = Modifier.weight(1f).padding(end = 8.dp)) {
                     Text(
-                        text = "İzlediğim Filmler",
+                        text = "İzlediklerim",
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary
@@ -709,7 +717,7 @@ fun ProfileScreen(
                     shape = RoundedCornerShape(8.dp)
                 ) {
                     Text(
-                        text = "${watchedMovies.size} Film",
+                        text = "${watchedFilmCount} Film • ${watchedSeriesCount} Dizi",
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         color = PopcornGold,
@@ -720,10 +728,42 @@ fun ProfileScreen(
                 }
             }
 
+            Spacer(modifier = Modifier.height(10.dp))
+            // Filmler / Diziler ayrımı (dizi kimlikleri "tv" ile başlar)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(CinemaSurface, RoundedCornerShape(12.dp))
+                    .padding(4.dp)
+                    .testTag("profile_watched_kind_tabs")
+            ) {
+                listOf(0 to "Tümü (${watchedMovies.size})", 1 to "Filmler ($watchedFilmCount)", 2 to "Diziler ($watchedSeriesCount)")
+                    .forEach { (idx, label) ->
+                        val selected = watchedKindTab == idx
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(36.dp)
+                                .clip(RoundedCornerShape(9.dp))
+                                .background(if (selected) PopcornGold else Color.Transparent)
+                                .clickable { watchedKindTab = idx }
+                                .testTag("profile_watched_tab_$idx")
+                        ) {
+                            Text(
+                                label,
+                                fontSize = 12.sp,
+                                fontWeight = if (selected) FontWeight.Black else FontWeight.SemiBold,
+                                color = if (selected) MaterialTheme.colorScheme.onPrimary else TextSecondary,
+                                maxLines = 1
+                            )
+                        }
+                    }
+            }
             Spacer(modifier = Modifier.height(12.dp))
         }
 
-        if (watchedMovies.isEmpty()) {
+        if (shownWatched.isEmpty()) {
             item {
                 Card(
                     modifier = Modifier
@@ -742,7 +782,11 @@ fun ProfileScreen(
                         Text(text = "🎞️", fontSize = 36.sp)
                         Spacer(modifier = Modifier.height(10.dp))
                         Text(
-                            text = "Henüz izlediğin bir film yok",
+                            text = when (watchedKindTab) {
+                                2 -> "Henüz izlediğin bir dizi yok"
+                                1 -> "Henüz izlediğin bir film yok"
+                                else -> "Henüz izlediğin bir film ya da dizi yok"
+                            },
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextPrimary
@@ -759,7 +803,7 @@ fun ProfileScreen(
                 }
             }
         } else {
-            items(watchedMovies, key = { it.movieId }) { watched ->
+            items(shownWatched, key = { it.movieId }) { watched ->
                 val isFav = watched.isFavorite || favoriteMovieIds.contains(watched.movieId)
                 WatchedMovieCard(
                     watched = watched,
@@ -776,8 +820,6 @@ fun ProfileScreen(
 
         item {
             Spacer(modifier = Modifier.height(20.dp))
-            com.example.ui.components.ProfileSettingsSection()
-            Spacer(modifier = Modifier.height(16.dp))
             DataSourceAttributionCard()
             Spacer(modifier = Modifier.height(40.dp))
         }

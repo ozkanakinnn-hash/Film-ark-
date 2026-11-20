@@ -88,6 +88,8 @@ import androidx.compose.ui.unit.sp
 import com.example.data.model.AudioLanguageOption
 import com.example.data.model.CustomWheelList
 import com.example.data.model.Movie
+import com.example.data.model.kindNoun
+import com.example.data.model.contentNoun
 import com.example.data.audio.rememberWheelFeedbackCoordinator
 import com.example.data.repository.MovieRepository
 import com.example.data.sensor.rememberAccelerometerShakeEffect
@@ -352,7 +354,7 @@ fun WheelScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "${activeCustomList.emoji} Özel Çark: ${activeCustomList.name} (${movies.size} Film)",
+                                text = "${activeCustomList.emoji} Özel Çark: ${activeCustomList.name} (${movies.size} ${movies.contentNoun()})",
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Black,
                                 color = TextPrimary,
@@ -445,7 +447,7 @@ fun WheelScreen(
                             shape = RoundedCornerShape(8.dp)
                         ) {
                             Text(
-                                text = "${movies.size} Film",
+                                text = "${movies.size} ${movies.contentNoun()}",
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = EmeraldGreen,
@@ -527,6 +529,7 @@ fun WheelScreen(
                 WheelMinImdbFilterBar(
                     currentMinRating = minRating,
                     poolCount = movies.size,
+                    poolNoun = movies.contentNoun(),
                     poolTotal = poolTotal,
                     isSpinning = isSpinning,
                     onSelectMinRating = onWheelMinRatingChange
@@ -615,7 +618,7 @@ fun WheelScreen(
                             .testTag("wheel_winner_highlight_badge")
                     ) {
                         Text(
-                            text = "✨ Seçilen Film Vurgulandı (${revealStyle.badgeLabel}): ${selectedMovie.title}",
+                            text = "✨ Seçilen ${selectedMovie.kindNoun} Vurgulandı (${revealStyle.badgeLabel}): ${selectedMovie.title}",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             color = revealStyle.secondaryColor,
@@ -886,7 +889,7 @@ fun WheelScreen(
                                     ) {
                                         Column {
                                             Text(
-                                                text = "💡 Neden Bu Film?",
+                                                text = "💡 Neden Bu ${selectedMovie.kindNoun}?",
                                                 fontSize = 11.sp,
                                                 fontWeight = FontWeight.Bold,
                                                 color = PopcornGold
@@ -1099,7 +1102,7 @@ fun WheelScreen(
                                     )
                                     Spacer(modifier = Modifier.width(6.dp))
                                     Text(
-                                        text = "Yeni Bir Film İçin Çevir",
+                                        text = "Yeni Bir ${movies.contentNoun()} İçin Çevir",
                                         color = TextSecondary,
                                         fontSize = 13.sp
                                     )
@@ -1140,7 +1143,12 @@ fun WheelScreen(
             if (movieForReveal != null) {
                 GenreRevealOverlay(
                     movie = movieForReveal,
-                    onFinished = { revealMovie = null }
+                    onFinished = { revealMovie = null },
+                    stampText = if (activeCustomList?.id == com.example.data.repository.SmartWheelLists.WORST) {
+                        "Bunu sen istedin! 🤷"
+                    } else {
+                        null
+                    }
                 )
             }
         }
@@ -1175,6 +1183,7 @@ private val WheelImdbPresets = listOf(
 private fun WheelMinImdbFilterBar(
     currentMinRating: Double,
     poolCount: Int,
+    poolNoun: String = "Film",
     poolTotal: Int = poolCount,
     isSpinning: Boolean,
     onSelectMinRating: (Double) -> Unit
@@ -1218,7 +1227,7 @@ private fun WheelMinImdbFilterBar(
                     shape = RoundedCornerShape(8.dp)
                 ) {
                     Text(
-                        text = if (poolTotal > poolCount) "$poolCount/$poolTotal Film" else "$poolCount Film",
+                        text = if (poolTotal > poolCount) "$poolCount/$poolTotal $poolNoun" else "$poolCount $poolNoun",
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         color = EmeraldGreen,

@@ -64,7 +64,9 @@ data class Movie(
     val isSeries: Boolean get() = kind == ContentKind.SERIES
 
     /** "112 dk" ya da "3 sezon • bölüm 45 dk". */
-    fun durationLabel(): String = if (isSeries) {
+    fun durationLabel(): String = if (durationMins <= 0) {
+        "Süre açıklanmadı"
+    } else if (isSeries) {
         listOfNotNull(seasonCount?.let { "$it sezon" }, "bölüm $durationMins dk").joinToString(" • ")
     } else {
         "$durationMins dk"
@@ -93,6 +95,70 @@ data class Movie(
 enum class ContentKind(val id: String, val label: String) {
     MOVIE("movie", "Film"),
     SERIES("series", "Dizi")
+}
+
+/**
+ * Türkiye'de yakında vizyona girecek (ya da yeni girmiş) film. Çarka girmez; "Yakında" sekmesinde gösterilir.
+ * [releaseDate] ISO biçiminde (yyyy-MM-dd).
+ */
+data class UpcomingRelease(
+    val id: String,
+    val tmdbId: Int,
+    val title: String,
+    val originalTitle: String = "",
+    val releaseDate: String,
+    val durationMins: Int = 0,
+    val genre: String = "",
+    val logline: String = "",
+    val posterPath: String = "",
+    val trailerKey: String? = null,
+    val colorHex: Long = 0xFF8B5CF6
+) {
+    val year: Int get() = releaseDate.take(4).toIntOrNull() ?: 0
+
+    /** Film kartında ve detayda kullanmak için Movie görünümü (çarka eklenmez). */
+    fun asMovie(): Movie = Movie(
+        id = id,
+        title = title,
+        originalTitle = originalTitle,
+        year = year,
+        durationMins = durationMins,
+        imdb = 0.0,
+        moodTag = "easy_watch",
+        platforms = listOf("Sinema"),
+        genre = genre.ifBlank { "Dram" },
+        logline = logline,
+        whyWatch = "Vizyon tarihi: ${formatTurkishDate(releaseDate)}",
+        posterPath = posterPath,
+        tmdbId = tmdbId,
+        trailerKey = trailerKey,
+        colorHex = colorHex,
+        isNewRelease = true
+    )
+}
+
+private val TR_MONTHS = listOf(
+    "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
+    "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"
+)
+
+/** "2026-11-27" -> "27 Kasım 2026". */
+fun formatTurkishDate(iso: String): String {
+    val parts = iso.split("-")
+    val y = parts.getOrNull(0) ?: return iso
+    val m = parts.getOrNull(1)?.toIntOrNull()?.takeIf { it in 1..12 } ?: return iso
+    val d = parts.getOrNull(2)?.toIntOrNull() ?: return iso
+    return "$d ${TR_MONTHS[m - 1]} $y"
+}
+
+/** "Film" ya da "Dizi". */
+val Movie.kindNoun: String get() = if (isSeries) "Dizi" else "Film"
+
+/** Liste için sayaç adı: hepsi film → "Film", hepsi dizi → "Dizi", karışık → "Yapım". */
+fun List<Movie>.contentNoun(): String = when {
+    isEmpty() || none { it.isSeries } -> "Film"
+    all { it.isSeries } -> "Dizi"
+    else -> "Yapım"
 }
 
 /** Filtre ekranındaki "Film / Dizi / İkisi" seçimi. */

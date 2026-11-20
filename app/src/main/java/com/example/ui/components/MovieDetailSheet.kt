@@ -72,7 +72,8 @@ import com.example.ui.theme.TextSecondary
 fun MovieDetailSheet(
     movie: Movie,
     onDismiss: () -> Unit,
-    onAddToWheel: () -> Unit,
+    /** null ise "Çarka Ekle" gizlenir (ör. henüz vizyona girmemiş filmler). */
+    onAddToWheel: (() -> Unit)?,
     isInWatchLater: Boolean = false,
     onToggleWatchLater: (() -> Unit)? = null
 ) {
@@ -128,7 +129,7 @@ fun MovieDetailSheet(
                     ) {
                         Icon(Icons.Default.Close, contentDescription = "Kapat", tint = Color.White)
                     }
-                    Surface(
+                    if (movie.imdb > 0.0) Surface(
                         color = Color.Black.copy(alpha = 0.55f),
                         shape = RoundedCornerShape(999.dp),
                         modifier = Modifier
@@ -220,7 +221,7 @@ fun MovieDetailSheet(
                                 )
                             }
                         }
-                        Button(
+                        if (onAddToWheel != null) Button(
                             onClick = onAddToWheel,
                             shape = RoundedCornerShape(14.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = PopcornGold),

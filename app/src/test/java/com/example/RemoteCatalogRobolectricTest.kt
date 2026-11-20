@@ -42,8 +42,12 @@ class RemoteCatalogRobolectricTest {
         val parsed = RemoteCatalogRepository.parse(catalogText())
         assertNotNull(parsed)
         // Haftalık iş kataloğu yeniden ürettiği için sayılar değişebilir; alt sınırları denetle
-        assertTrue(parsed!!.items.size >= 150)
-        assertTrue(parsed.items.count { it.isSeries } >= 50)
+        assertTrue(parsed!!.items.size >= 400)
+        assertTrue(parsed.items.count { it.isSeries } >= 120)
+        assertTrue("Popüler film bölümü dolu", parsed.popularMovieTmdbIds.size >= 10)
+        assertTrue("Popüler dizi bölümü dolu", parsed.popularSeriesTmdbIds.size >= 10)
+        assertTrue("En kötüler bölümü dolu", parsed.worstMovieTmdbIds.size >= 10)
+        assertTrue("Yakında listesi doğrulanmış", parsed.upcoming.isNotEmpty())
         assertTrue(parsed.items.filter { it.isSeries }.all { (it.seasonCount ?: 0) >= 1 })
     }
 

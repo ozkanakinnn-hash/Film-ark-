@@ -16,6 +16,9 @@ Ruh halini ve izlediğin platformları seçersin, karar çarkı döner ve izleye
 
 - 🎡 **Karar çarkı:** Filtrelere uyan filmler çarka dizilir; çark durduğunda filmin türüne özel sinematik bir açılış sahnesi oynar.
 - 🎯 **Tek veto hakkı:** Çıkan filmi beğenmezsen bir kez veto edebilirsin; ikinci karar kesindir.
+- 🧭 **Alt menü:** Ana Sayfa, Yakında (vizyona girecekler), Popüler, Diziler ve Forum (yakında).
+- ✨ **Sana özel:** İlk açılışta izlediklerini ve beğendiklerini seç, öneriler sana göre gelsin.
+- 🤦 **Hazır çarklar:** Şu An Popüler, Popüler Diziler ve "Bunu Niye İzledim?".
 - 📺 **Film ve dizi:** "Film + Dizi / Film / Dizi" seçimiyle çarka diziler de girer (sezon ve bölüm süresiyle).
 - 🔎 **Arama ve akıllı öneri:** Tüm katalogda arama; sevdiğin türler çarka daha sık girer, "Neden bu film?" açıklaması.
 - 💾 **Yedekle / geri yükle:** Verilerini kendi seçtiğin dosyaya kaydet, yeni telefonda geri yükle.

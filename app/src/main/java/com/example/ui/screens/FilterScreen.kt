@@ -75,6 +75,8 @@ import com.example.data.model.AvailablePlatforms
 import com.example.data.model.CustomWheelList
 import com.example.data.model.Mood
 import com.example.data.model.Movie
+import com.example.data.model.kindNoun
+import com.example.data.model.contentNoun
 import com.example.data.repository.MovieRepository
 import com.example.ui.components.MovieFilterComponent
 import com.example.ui.components.MoviePosterImage
@@ -110,6 +112,7 @@ fun FilterScreen(
     minRating: Double,
     watchedMovieIds: Set<String> = emptySet(),
     customWheelLists: List<CustomWheelList> = emptyList(),
+    smartWheelLists: List<CustomWheelList> = emptyList(),
     onSpinCustomList: (String) -> Unit = {},
     onOpenCustomLists: () -> Unit = {},
     onToggleFilterMode: (Boolean) -> Unit,
@@ -289,7 +292,7 @@ fun FilterScreen(
                         .fillMaxWidth()
                         .testTag("filter_custom_lists_row")
                 ) {
-                    items(customWheelLists, key = { "filter_cl_${it.id}" }) { customList ->
+                    items(smartWheelLists + customWheelLists, key = { "filter_cl_${it.id}" }) { customList ->
                         val accent = Color(customList.accentColorHex)
                         Surface(
                             color = accent.copy(alpha = 0.14f),
@@ -314,7 +317,7 @@ fun FilterScreen(
                                         color = TextPrimary
                                     )
                                     Text(
-                                        text = "${customList.movies.size} Film • Çevir",
+                                        text = "${customList.movies.size} ${customList.movies.contentNoun()} • Çevir",
                                         fontSize = 10.sp,
                                         color = accent,
                                         fontWeight = FontWeight.SemiBold
@@ -943,7 +946,7 @@ fun FilterScreen(
                         }
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "${eligibleMovies.size} Film Çarka Eklendi 🎡",
+                            text = "${eligibleMovies.size} ${eligibleMovies.contentNoun()} Çarka Eklendi 🎡",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.ExtraBold,
                             color = PopcornGold,

@@ -107,7 +107,7 @@ def candidates(limit):
         dict(with_original_language="tr", sort_by="vote_count.desc", **{"vote_count.gte": 60}),
     ]
     seen, order = set(), []
-    for page in range(1, 6):
+    for page in range(1, 9):
         for q in queries:
             data = api_get("/discover/tv", language="tr-TR", page=page, **q)
             for r in data.get("results", []):
@@ -172,10 +172,15 @@ def write_generated(items):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--limit", type=int, default=100)
+    ap.add_argument("--limit", type=int, default=200)
     args = ap.parse_args()
     items = []
-    for tid in candidates(args.limit):
+    ids = candidates(args.limit)
+    hl_path = os.path.join(ROOT, "tools/highlights.json")
+    if os.path.exists(hl_path):
+        import json
+        ids = list(dict.fromkeys(json.load(open(hl_path, encoding="utf-8")).get("popularSeries", []) + ids))
+    for tid in ids:
         if len(items) >= args.limit:
             break
         d = api_get(f"/tv/{tid}", language="tr-TR", append_to_response="videos,watch/providers",

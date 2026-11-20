@@ -9,16 +9,22 @@ import com.example.data.model.CustomWheelList
 import com.example.data.model.HistoryDashboardSummary
 import com.example.data.model.Mood
 import com.example.data.model.Movie
+import com.example.data.model.kindNoun
+import com.example.data.model.contentNoun
 import com.example.data.model.OTHER_PLATFORM_NAME
 import com.example.data.repository.CustomWheelListRepository
 import com.example.data.repository.MovieRepository
 import com.example.data.repository.WheelPoolSampler
+import com.example.data.repository.SmartWheelLists
+import com.example.data.repository.HighlightsRepository
 import com.example.data.repository.RoomRepository
 import com.example.data.repository.SavedDecision
 import com.example.data.repository.WatchedMovieRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 enum class Screen {
@@ -30,7 +36,17 @@ enum class Screen {
     HISTORY,
     PROFILE,
     STATS,
-    FLEX
+    FLEX,
+    // Alt menü sekmeleri
+    UPCOMING,
+    POPULAR,
+    SERIES,
+    FORUM,
+    SETTINGS,
+    ONBOARDING;
+
+    /** Alt menüde görünen sekmeler. */
+    val isBottomTab: Boolean get() = this == HOME || this == UPCOMING || this == POPULAR || this == SERIES || this == FORUM
 }
 
 data class SpinEvent(
@@ -54,7 +70,9 @@ data class CompareUiState(
 class DecisionViewModel(
 ) : ViewModel() {
 
-    private val _currentScreen = MutableStateFlow(Screen.HOME)
+    private val _currentScreen = MutableStateFlow(
+        if (com.example.data.local.OnboardingPreferences.shouldShow.value) Screen.ONBOARDING else Screen.HOME
+    )
     val currentScreen: StateFlow<Screen> = _currentScreen.asStateFlow()
 
     val savedDecisions: StateFlow<List<SavedDecision>> = RoomRepository.savedDecisions
@@ -64,6 +82,12 @@ class DecisionViewModel(
     val excludedWheelMovieIds: StateFlow<Set<String>> = WatchedMovieRepository.excludedWheelMovieIds
     val favoriteMovieIds: StateFlow<Set<String>> = WatchedMovieRepository.favoriteMovieIds
     val customWheelLists: StateFlow<List<CustomWheelList>> = CustomWheelListRepository.customLists
+
+    /** Hazır çarklar (Şu An Popüler, Popüler Diziler, Bunu Niye İzledim?); uzaktan katalog gelince yenilenir. */
+    val smartWheelLists: StateFlow<List<CustomWheelList>> =
+        com.example.data.repository.RemoteCatalogRepository.catalog
+            .map { SmartWheelLists.all() }
+            .stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.Eagerly, SmartWheelLists.all())
     val isDarkTheme: StateFlow<Boolean> = ThemePreferences.isDarkMode
 
     private val _activeCustomList = MutableStateFlow<CustomWheelList?>(null)
@@ -88,7 +112,7 @@ class DecisionViewModel(
     private val _selectedGenres = MutableStateFlow<Set<String>>(emptySet())
     val selectedGenres: StateFlow<Set<String>> = _selectedGenres.asStateFlow()
 
-    private val _contentKindFilter = MutableStateFlow(com.example.data.model.ContentKindFilter.BOTH)
+    private val _contentKindFilter = MutableStateFlow(com.example.data.model.ContentKindFilter.MOVIES)
     val contentKindFilter: StateFlow<com.example.data.model.ContentKindFilter> = _contentKindFilter.asStateFlow()
 
     fun setContentKindFilter(filter: com.example.data.model.ContentKindFilter) {
@@ -310,9 +334,9 @@ class DecisionViewModel(
         }
 
         _feedbackToast.value = if (minImdb <= 0.0) {
-            "Puan filtresi kaldırıldı • Havuzda ${filtered.size} film"
+            "Puan filtresi kaldırıldı • Havuzda ${filtered.size} ${filtered.contentNoun().lowercase()}"
         } else {
-            "★ ${minImdb}+ puan filtresi uygulandı • Havuzda ${filtered.size} film"
+            "★ ${minImdb}+ puan filtresi uygulandı • Havuzda ${filtered.size} ${filtered.contentNoun().lowercase()}"
         }
     }
 
@@ -485,13 +509,15 @@ class DecisionViewModel(
         _isDecisionLocked.value = false
         activeSpinModeOverride = null
         _activeCustomList.value = list
+        // Hazır çarklar çok kalabalık olabilir: okunaklı kalsın diye 12 dilim örneklenir
+        val shown = if (SmartWheelLists.isSmart(list.id)) sampleForWheel(pool) else pool
         fullWheelPool = pool
         _wheelPoolTotal.value = pool.size
-        _activeWheelMovies.value = pool
+        _activeWheelMovies.value = shown
         RoomRepository.prepareSoloSpin(
             moods = _selectedMoods.value,
             platforms = _selectedPlatforms.value,
-            customMovies = pool,
+            customMovies = shown,
             excludedMovieIds = effectiveExcluded
         )
         _selectedMovie.value = null
@@ -505,7 +531,8 @@ class DecisionViewModel(
         val excludedIds = WatchedMovieRepository.excludedWheelMovieIds.value
 
         // Karar verilmiş bir çark yeniden çevrilirken dilimleri büyük havuzdan tazele
-        val isRespin = _selectedMovie.value != null && !_isVetoedOnce.value && _activeCustomList.value == null
+        val isRespin = _selectedMovie.value != null && !_isVetoedOnce.value &&
+            (_activeCustomList.value == null || SmartWheelLists.isSmart(_activeCustomList.value?.id))
         if (isRespin && fullWheelPool.size > WheelPoolSampler.MAX_SLICES) {
             val freshPool = fullWheelPool.filterNot { excludedIds.contains(it.id) }
             if (freshPool.size > WheelPoolSampler.MAX_SLICES) {
@@ -529,7 +556,8 @@ class DecisionViewModel(
             )
         }
 
-        val result = RoomRepository.triggerSpin(excludedIds) ?: return
+        // Kazanan, ekranda çizilen dilimlerden (aynı sırayla) seçilir: ibre ile sonuç her zaman eşleşir
+        val result = RoomRepository.triggerSpin(excludedIds, wheelSlices = _activeWheelMovies.value) ?: return
         val winner = result.first
         val targetAngle = result.second
 
@@ -624,6 +652,76 @@ class DecisionViewModel(
     fun removeWatchedMovie(movieId: String) {
         WatchedMovieRepository.removeWatched(movieId)
         _feedbackToast.value = "Film izlenenlerden çıkarıldı, tekrar çarka girebilir."
+    }
+
+    // ---------------- Kişiselleştirme ----------------
+
+    /** İlk açılış seçim ekranında gösterilecek tanınmış yapımlar: şu an popüler + çok bilinen film ve diziler. */
+    fun onboardingCandidates(): List<Movie> {
+        val popular = HighlightsRepository.popularMovies().take(30) + HighlightsRepository.popularSeries().take(24)
+        val classics = MovieRepository.allMovies
+            .filter { it.imdb >= 7.8 && it.tmdbId != null }
+            .sortedByDescending { it.imdb }
+            .take(30)
+        return (popular + classics).distinctBy { it.id }
+    }
+
+    /** Seçim ekranı bitti: izlenenler çarktan çıkar, beğenilenler favori olur (türleri öne çıkar). */
+    fun completeTasteOnboarding(watched: List<Movie>, liked: List<Movie>) {
+        (watched + liked).distinctBy { it.id }.forEach { movie ->
+            if (!WatchedMovieRepository.isWatched(movie.id)) WatchedMovieRepository.markAsWatched(movie)
+        }
+        liked.forEach { movie ->
+            if (!WatchedMovieRepository.isFavorite(movie.id)) WatchedMovieRepository.toggleFavorite(movie.id)
+        }
+        com.example.data.local.OnboardingPreferences.markDone()
+        refreshPersonalPicks()
+        val total = (watched + liked).distinctBy { it.id }.size
+        if (total > 0) _feedbackToast.value = "✨ $total seçimine göre önerilerin hazır!"
+        _currentScreen.value = Screen.HOME
+    }
+
+    fun skipTasteOnboarding() {
+        com.example.data.local.OnboardingPreferences.markDone()
+        _currentScreen.value = Screen.HOME
+    }
+
+    private val _personalPicks = MutableStateFlow<List<Movie>>(emptyList())
+    /** "Sana Özel": zevk profiline göre izlenmemiş film ve diziler (profil boşsa boş). */
+    val personalPicks: StateFlow<List<Movie>> = _personalPicks.asStateFlow()
+
+    init {
+        // İzlenenler, favoriler ya da katalog değişince "Sana Özel" listesi yenilenir
+        viewModelScope.launch {
+            kotlinx.coroutines.flow.combine(
+                WatchedMovieRepository.watchedMovies,
+                WatchedMovieRepository.favoriteMovieIds,
+                com.example.data.repository.RemoteCatalogRepository.catalog
+            ) { _, _, _ -> Unit }.collect { refreshPersonalPicks() }
+        }
+    }
+
+    fun refreshPersonalPicks() {
+        val profile = com.example.data.repository.TasteProfileRepository.snapshot()
+        if (profile.likedGenres.isEmpty()) {
+            _personalPicks.value = emptyList()
+            return
+        }
+        val watched = WatchedMovieRepository.watchedMovieIds.value
+        val popularIds = (HighlightsRepository.popularMovies() + HighlightsRepository.popularSeries()).map { it.id }.toSet()
+        _personalPicks.value = MovieRepository.allMovies
+            .asSequence()
+            .filterNot { watched.contains(it.id) }
+            .map { m ->
+                val popularBonus = if (m.id in popularIds) 1.25 else 1.0
+                val ratingFactor = (m.imdb.coerceIn(4.0, 9.5) - 3.0) / 6.5
+                m to profile.weightOf(m) * ratingFactor * popularBonus
+            }
+            .filter { it.second > 0.9 }
+            .sortedByDescending { it.second }
+            .map { it.first }
+            .take(16)
+            .toList()
     }
 
     fun toggleFavoriteMovie(movieId: String, title: String? = null) {

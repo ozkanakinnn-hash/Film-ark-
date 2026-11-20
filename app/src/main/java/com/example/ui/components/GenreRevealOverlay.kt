@@ -78,7 +78,9 @@ private const val SKIP_FROM = 0.88f
 fun GenreRevealOverlay(
     movie: Movie,
     onFinished: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    /** Verilirse tür başlığının yerine büyük, sallanan bir "damga" olarak gösterilir (ör. "Bunu sen istedin!"). */
+    stampText: String? = null
 ) {
     val style = remember(movie.id) { movie.resolveGenreRevealStyle() }
     val particles = remember(movie.id) { buildParticles(movie.id.hashCode()) }
@@ -257,6 +259,31 @@ fun GenreRevealOverlay(
             Spacer(Modifier.height(16.dp))
 
             val headlineIn = segment(t, 0.5f, 0.7f)
+            if (stampText != null) {
+                // "Bunu Niye İzledim?" çarkı: kırmızı mühür gibi çarpıp hafifçe sallanan yazı
+                val stampIn = segment(t, 0.46f, 0.6f)
+                val wobble = kotlin.math.sin(t * 40f) * (1f - segment(t, 0.6f, 0.8f)) * 4f
+                Text(
+                    text = stampText,
+                    color = Color(0xFFFF4D5E),
+                    fontSize = 26.sp,
+                    fontWeight = FontWeight.Black,
+                    letterSpacing = 1.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .graphicsLayer {
+                            alpha = stampIn
+                            val sc = 2.2f - 1.2f * CinemaMotion.EmphasizedDecelerate.transform(stampIn)
+                            scaleX = sc
+                            scaleY = sc
+                            rotationZ = -8f + wobble
+                        }
+                        .border(3.dp, Color(0xFFFF4D5E).copy(alpha = 0.9f * stampIn), RoundedCornerShape(10.dp))
+                        .padding(horizontal = 16.dp, vertical = 6.dp)
+                        .testTag("reveal_stamp_text")
+                )
+                Spacer(Modifier.height(10.dp))
+            }
             Text(
                 text = style.headline,
                 color = style.secondaryColor,

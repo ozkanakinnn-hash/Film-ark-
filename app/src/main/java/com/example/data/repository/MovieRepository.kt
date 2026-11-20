@@ -1138,9 +1138,13 @@ object MovieRepository {
         todayKey: String = currentDateKey()
     ): List<Movie> {
         val extras = _dailyExtraMovies.value
-        val newerBase = baseMovies
-            .filter { it.isNewRelease || it.year >= 2024 }
-            .sortedWith(compareByDescending<Movie> { it.year }.thenByDescending { it.imdb })
+        // Öne Çıkanlar: Türkiye'de platformlarda şu an popüler filmler (haftalık katalogdan)
+        val popular = runCatching { HighlightsRepository.popularMovies() }.getOrDefault(emptyList())
+        val newerBase = popular.ifEmpty {
+            baseMovies
+                .filter { it.isNewRelease || it.year >= 2024 }
+                .sortedWith(compareByDescending<Movie> { it.year }.thenByDescending { it.imdb })
+        }
 
         val rotatedBase = if (newerBase.isNotEmpty() && rotationOffset > 0) {
             val shift = rotationOffset % newerBase.size
@@ -1151,13 +1155,7 @@ object MovieRepository {
 
         return (extras + rotatedBase)
             .distinctBy { it.id }
-            .mapIndexed { index, movie ->
-                if (movie.addedDateKey == null && index < 4) {
-                    movie.copy(addedDateKey = todayKey)
-                } else {
-                    movie
-                }
-            }
+            .take(24)
     }
 
     fun getCultAndOtherMovies(

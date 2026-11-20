@@ -910,8 +910,10 @@ class DecisionUnitTest {
             "https://www.youtube.com/watch?v=abcdefghijk",
             com.example.ui.components.TrailerLauncher.youtubeUrl("abcdefghijk")
         )
-        val harryPotter = all.count { it.title.startsWith("Harry Potter") }
-        assertTrue("At most one film per franchise", harryPotter <= 1)
+        // Seri kuralı: şu an popüler listesindekiler hariç her seriden en fazla bir film
+        val popularIds = com.example.data.repository.HighlightsRepository.popularMovies().map { it.id }.toSet()
+        val harryPotter = all.count { it.title.startsWith("Harry Potter") && it.id !in popularIds }
+        assertTrue("At most one non-popular film per franchise", harryPotter <= 1)
     }
 
     @Test
@@ -950,4 +952,32 @@ class DecisionUnitTest {
         ).toDomain()
         assertEquals(listOf("HBO Max", "Netflix"), legacy.movie.platforms)
     }
+
+    @Test
+    fun testSpin_winnerAlwaysMatchesSliceUnderNeedle_andSeriesFilterKeepsOnlySeries() {
+        val vm = DecisionViewModel()
+        fun sliceUnderNeedle(slices: List<com.example.data.model.Movie>, angle: Float): com.example.data.model.Movie {
+            val sweep = 360f / slices.size
+            // Dilim i'nin ortası, çark "angle" kadar döndüğünde tepeye gelir: (i*sweep + sweep/2 + angle) % 360 == 0
+            val normalized = ((360f - (angle % 360f)) % 360f + 360f) % 360f
+            val idx = (((normalized - sweep / 2f) / sweep).let { kotlin.math.round(it).toInt() } % slices.size + slices.size) % slices.size
+            return slices[idx]
+        }
+        vm.proceedToWheel()
+        repeat(20) {
+            vm.spinWheel()
+            val event = vm.spinEvent.value!!
+            val slices = vm.activeWheelMovies.value
+            assertEquals("İbre altındaki dilim kazananla aynı olmalı", event.winner.id, sliceUnderNeedle(slices, event.targetAngle).id)
+            vm.completeSpin(event.id)
+        }
+        vm.setContentKindFilter(com.example.data.model.ContentKindFilter.SERIES)
+        vm.proceedToWheel()
+        assertTrue(vm.activeWheelMovies.value.isNotEmpty())
+        assertTrue("Dizi çarkında film olmamalı", vm.activeWheelMovies.value.all { it.isSeries })
+        vm.setContentKindFilter(com.example.data.model.ContentKindFilter.MOVIES)
+        vm.proceedToWheel()
+        assertTrue("Varsayılan film çarkında dizi olmamalı", vm.activeWheelMovies.value.none { it.isSeries })
+    }
+
 }

@@ -252,7 +252,7 @@ class ExampleRobolectricTest {
     composeTestRule.onNodeWithTag("stats_mode_duration").performScrollTo().performClick()
     composeTestRule.waitForIdle()
 
-    composeTestRule.onNodeWithTag("profile_watched_count").assertTextContains("1 Film")
+    composeTestRule.onNodeWithTag("profile_watched_count").assertTextContains("1 Film", substring = true)
     composeTestRule.onNodeWithTag("profile_screen_list")
       .performScrollToNode(hasTestTag("watched_movie_card_$watchedId"))
     composeTestRule.onNodeWithTag("watched_movie_card_$watchedId").assertIsDisplayed()
@@ -356,9 +356,13 @@ class ExampleRobolectricTest {
   fun `theme toggle switches between light and dark cinematic themes across screens`() {
     assertTrue("App starts in dark cinematic mode", ThemePreferences.isDarkMode.value)
 
+    composeTestRule.onNodeWithTag("home_settings_button").performClick()
+    composeTestRule.waitForIdle()
     composeTestRule.onNodeWithTag("theme_toggle_button").performClick()
     composeTestRule.waitForIdle()
     assertFalse("Clicking toggle should switch to light cinematic mode", ThemePreferences.isDarkMode.value)
+    composeTestRule.onNodeWithTag("settings_back_button").performClick()
+    composeTestRule.waitForIdle()
 
     composeTestRule.onNodeWithTag("profile_icon_button").performClick()
     composeTestRule.waitForIdle()
@@ -1542,11 +1546,11 @@ class ExampleRobolectricTest {
   }
 
   @Test
-  fun `profile settings toggles reduce motion and shows backup buttons`() {
+  fun `settings screen toggles reduce motion and shows backup buttons`() {
     com.example.data.local.MotionPreferences.resetForTests()
-    composeTestRule.onNodeWithTag("profile_icon_button").performClick()
+    composeTestRule.onNodeWithTag("home_settings_button").performClick()
     composeTestRule.waitForIdle()
-    composeTestRule.onNodeWithTag("profile_screen_list")
+    composeTestRule.onNodeWithTag("settings_screen_list")
       .performScrollToNode(hasTestTag("profile_settings_section"))
     composeTestRule.onNodeWithTag("profile_backup_button").assertIsDisplayed()
     composeTestRule.onNodeWithTag("profile_restore_button").assertIsDisplayed()
@@ -1556,6 +1560,74 @@ class ExampleRobolectricTest {
     composeTestRule.onNodeWithTag("profile_reduce_motion_switch").performClick()
     composeTestRule.waitForIdle()
     assertFalse(com.example.data.local.MotionPreferences.reduceMotion.value)
+  }
+
+  @Test
+  fun `bottom navigation opens upcoming, popular, series and forum tabs`() {
+    composeTestRule.onNodeWithTag("bottom_nav_upcoming").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("upcoming_screen_grid").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("bottom_nav_popular").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("popular_screen_grid").assertIsDisplayed()
+    val firstPopular = com.example.data.repository.HighlightsRepository.popularMovies().first()
+    composeTestRule.onNodeWithTag("popular_item_${firstPopular.id}").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("movie_detail_open_wheel").assertExists()
+    composeTestRule.onNodeWithTag("movie_detail_close").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("bottom_nav_series").performClick()
+    composeTestRule.waitForIdle()
+    val firstSeries = com.example.data.repository.HighlightsRepository.popularSeries().first()
+    assertTrue(firstSeries.isSeries)
+    composeTestRule.onNodeWithTag("series_item_${firstSeries.id}").assertExists()
+    composeTestRule.onNodeWithTag("bottom_nav_forum").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("forum_coming_soon_banner").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("bottom_nav_home").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("home_screen_list").assertIsDisplayed()
+  }
+
+  @Test
+  fun `taste onboarding marks picks as watched and liked and fills personal picks`() {
+    composeTestRule.onNodeWithTag("home_settings_button").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("settings_screen_list").performScrollToNode(hasTestTag("settings_redo_onboarding"))
+    composeTestRule.onNodeWithTag("settings_redo_onboarding").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("onboarding_screen").assertIsDisplayed()
+    val candidates = com.example.data.repository.HighlightsRepository.popularMovies()
+    val watched = candidates[0]
+    val liked = candidates[1]
+    composeTestRule.onNodeWithTag("onboarding_item_${watched.id}").performClick()
+    composeTestRule.onNodeWithTag("onboarding_item_${liked.id}").performClick()
+    composeTestRule.onNodeWithTag("onboarding_item_${liked.id}").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("onboarding_counter").assertTextContains("1 izledim • 1 beğendim")
+    composeTestRule.onNodeWithTag("onboarding_finish_button").performClick()
+    composeTestRule.waitForIdle()
+    assertTrue(WatchedMovieRepository.isWatched(watched.id))
+    assertTrue(WatchedMovieRepository.isWatched(liked.id))
+    assertTrue(WatchedMovieRepository.isFavorite(liked.id))
+    composeTestRule.onNodeWithTag("home_screen_list").performScrollToNode(hasTestTag("home_personal_picks"))
+    composeTestRule.onNodeWithTag("home_personal_picks").assertIsDisplayed()
+  }
+
+  @Test
+  fun `worst movies smart wheel opens from filter strip and spins`() {
+    composeTestRule.onNodeWithTag("solo_mode_button").performScrollTo().performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("filter_custom_lists_row")
+      .performScrollToNode(hasTestTag("filter_custom_list_${com.example.data.repository.SmartWheelLists.WORST}"))
+    composeTestRule.onNodeWithTag("filter_custom_list_${com.example.data.repository.SmartWheelLists.WORST}").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("spin_wheel_button").performScrollTo().performClick()
+    composeTestRule.mainClock.advanceTimeBy(6000L)
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("wheel_screen_list")
+      .performScrollToNode(hasTestTag("wheel_winner_highlight_badge"))
+    composeTestRule.onNodeWithTag("wheel_winner_highlight_badge").assertExists()
   }
 
   @Test

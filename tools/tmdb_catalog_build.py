@@ -162,7 +162,7 @@ def candidates(limit, exclude):
                         **{"vote_count.gte": 500}))
     seen, order = set(exclude), []
     page = 1
-    while len(order) < limit and page <= 4:
+    while len(order) < limit and page <= 8:
         for q in queries:
             data = api_get("/discover/movie", language="tr-TR", include_adult="false", page=page, **q)
             for r in data.get("results", []):
@@ -260,7 +260,7 @@ def patch_curated():
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--limit", type=int, default=200)
+    ap.add_argument("--limit", type=int, default=400)
     args = ap.parse_args()
 
     titles = patch_curated()
@@ -270,6 +270,14 @@ def main():
 
     curated_ids = {r["tmdbId"] for r in json.load(open(os.path.join(ROOT, "tools/tmdb_poster_report.json"), encoding="utf-8"))}
     ids = candidates(args.limit + 160, curated_ids)
+    priority_set = set()
+    # Vitrin listeleri (tools/tmdb_highlights_build.py): popüler ve "en kötü" filmler kataloğa öncelikle girer
+    hl_path = os.path.join(ROOT, "tools/highlights.json")
+    if os.path.exists(hl_path):
+        hl = json.load(open(hl_path, encoding="utf-8"))
+        priority = [i for i in hl.get("popularMovies", []) + hl.get("worstMovies", []) if i not in curated_ids]
+        priority_set.update(priority)
+        ids = list(dict.fromkeys(priority + ids))
     movies = []
     by_collection = {}
     for tid in ids:
@@ -279,6 +287,8 @@ def main():
         if not d.get("runtime") or d["runtime"] < 70 or len((d.get("overview") or "").strip()) < 60:
             continue
         coll = (d.get("belongs_to_collection") or {}).get("id")
+        if tid in priority_set:
+            coll = None  # popüler/en kötü listesindeki filmler seri kuralından muaf
         if coll:
             # Seriler çarkı tek tipleştirmesin: her seriden yalnızca en yüksek puanlı tek film
             if coll in curated_collections:

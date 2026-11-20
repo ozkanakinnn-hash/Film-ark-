@@ -21,6 +21,53 @@ SOURCES = [
     os.path.join(ROOT, "app/src/main/java/com/example/data/repository/GeneratedSeries.kt"),
 ]
 OUT = os.path.join(ROOT, "catalog/catalog.json")
+HIGHLIGHTS = os.path.join(ROOT, "tools/highlights.json")
+HIGHLIGHTS_KT = os.path.join(ROOT, "app/src/main/java/com/example/data/repository/GeneratedHighlights.kt")
+
+
+def kstr(s):
+    return '"' + (s or "").replace("\\", "\\\\").replace('"', '\\"').replace("$", "\\$") + '"'
+
+
+def write_highlights_kotlin(hl):
+    """APK içi yedek: internet yokken de Popüler / Yakında / En Kötüler çalışsın."""
+    def ints(xs):
+        return ", ".join(str(int(x)) for x in xs)
+    rows = []
+    for u in hl.get("upcoming", []):
+        trailer = kstr(u["trailerKey"]) if u.get("trailerKey") else "null"
+        rows.append(
+            "        UpcomingRelease(\n"
+            f"            id = {kstr(u['id'])},\n"
+            f"            tmdbId = {int(u['tmdbId'])},\n"
+            f"            title = {kstr(u['title'])},\n"
+            f"            originalTitle = {kstr(u.get('originalTitle'))},\n"
+            f"            releaseDate = {kstr(u['releaseDate'])},\n"
+            f"            durationMins = {int(u.get('durationMins') or 0)},\n"
+            f"            genre = {kstr(u.get('genre'))},\n"
+            f"            logline = {kstr(u.get('logline'))},\n"
+            f"            posterPath = {kstr(u.get('posterPath'))},\n"
+            f"            trailerKey = {trailer},\n"
+            f"            colorHex = 0x{int(u.get('colorHex') or 0xFF8B5CF6):08X}\n"
+            "        )")
+    out = [
+        "package com.example.data.repository", "",
+        "import com.example.data.model.UpcomingRelease", "",
+        "// BU DOSYA OTOMATİK ÜRETİLMİŞTİR: python3 tools/export_catalog_json.py (kaynak: tools/highlights.json)",
+        "// Elle düzenlemeyin. Bilgiler ve posterler: TMDB.",
+        "internal object GeneratedHighlights {",
+        f"    const val GENERATED_AT = {kstr(hl.get('generatedAt'))}",
+        f"    val popularMovieTmdbIds: List<Int> = listOf({ints(hl.get('popularMovies', []))})",
+        f"    val popularSeriesTmdbIds: List<Int> = listOf({ints(hl.get('popularSeries', []))})",
+        f"    val worstMovieTmdbIds: List<Int> = listOf({ints(hl.get('worstMovies', []))})",
+        "    val upcoming: List<UpcomingRelease> by lazy {",
+        "        listOf(",
+        ",\n".join(rows),
+        "        )",
+        "    }",
+        "}",
+    ]
+    open(HIGHLIGHTS_KT, "w", encoding="utf-8").write("\n".join(out) + "\n")
 
 
 def unquote(s):
@@ -88,6 +135,15 @@ def main():
                        "This product uses the TMDB API but is not endorsed or certified by TMDB.",
         "items": items,
     }
+    if os.path.exists(HIGHLIGHTS):
+        hl = json.load(open(HIGHLIGHTS, encoding="utf-8"))
+        doc["sections"] = {
+            "popularMovies": hl.get("popularMovies", []),
+            "popularSeries": hl.get("popularSeries", []),
+            "worstMovies": hl.get("worstMovies", []),
+        }
+        doc["upcoming"] = hl.get("upcoming", [])
+        write_highlights_kotlin(hl)
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(doc, f, ensure_ascii=False, indent=1)
         f.write("\n")

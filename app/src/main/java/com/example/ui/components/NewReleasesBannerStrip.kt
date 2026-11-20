@@ -279,7 +279,7 @@ private fun NewReleasePosterCard(
 ) {
     val isRecentlyAdded = movie.addedDateKey != null
     val badgeColor = if (isRecentlyAdded) EmeraldGreen else NeonPink
-    val badgeText = if (isRecentlyAdded) "SON EKLENEN" else "YENİ ${movie.year}"
+    val badgeText = if (isRecentlyAdded) "SON EKLENEN" else "POPÜLER"
     val primaryPlatform = movie.platforms.firstOrNull() ?: "Yeni"
 
     Card(

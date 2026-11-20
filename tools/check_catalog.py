@@ -14,10 +14,14 @@ if doc.get("format") != "ne-izlesek-catalog" or doc.get("version") != 1:
 items = doc.get("items", [])
 movies = [i for i in items if i.get("kind") == "movie"]
 series = [i for i in items if i.get("kind") == "series"]
-if len(movies) < 100:
+if len(movies) < 250:
     errors.append(f"film sayısı çok az: {len(movies)}")
-if len(series) < 50:
+if len(series) < 120:
     errors.append(f"dizi sayısı çok az: {len(series)}")
+sections = doc.get("sections") or {}
+for key, minimum in (("popularMovies", 10), ("popularSeries", 10), ("worstMovies", 10)):
+    if len(sections.get(key, [])) < minimum:
+        errors.append(f"{key} listesi çok kısa: {len(sections.get(key, []))}")
 bad_ids = [i.get("id") for i in items if not re.fullmatch(r"(t|tv)[0-9]{1,9}", str(i.get("id")))]
 if bad_ids:
     errors.append(f"geçersiz kimlikler: {bad_ids[:5]}")

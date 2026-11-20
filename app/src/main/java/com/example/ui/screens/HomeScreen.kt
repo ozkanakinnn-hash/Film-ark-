@@ -33,6 +33,7 @@ import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.LocalMovies
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlayArrow
@@ -97,6 +98,8 @@ fun HomeScreen(
     watchLaterIds: List<String> = emptyList(),
     onToggleWatchLater: (Movie) -> Unit = {},
     onToggleTheme: () -> Unit = {},
+    onSettingsClick: () -> Unit = {},
+    personalPicks: List<Movie> = emptyList(),
     onSoloClick: () -> Unit,
     onCompareClick: () -> Unit = {},
     onCustomListsClick: () -> Unit = {},
@@ -208,16 +211,16 @@ fun HomeScreen(
                     }
 
                     IconButton(
-                        onClick = onToggleTheme,
+                        onClick = onSettingsClick,
                         modifier = Modifier
                             .minimumInteractiveComponentSize()
                             .size(40.dp)
                             .background(CinemaSurface, CircleShape)
-                            .testTag("theme_toggle_button")
+                            .testTag("home_settings_button")
                     ) {
                         Icon(
-                            imageVector = if (isDarkTheme) Icons.Default.LightMode else Icons.Default.DarkMode,
-                            contentDescription = if (isDarkTheme) "Açık Temaya Geç" else "Koyu Temaya Geç",
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Ayarlar",
                             tint = PopcornGold
                         )
                     }
@@ -266,6 +269,14 @@ fun HomeScreen(
                     lastUpdatedDate = dailyFeedDateLabel,
                     onRefreshClick = onRefreshNewReleases,
                     // Afişe dokununca önce film kartı açılır; çarka geçiş karttaki "Çarkta Aç" ile
+                    onMovieClick = { movie -> detailMovie = movie }
+                )
+                Spacer(modifier = Modifier.height(18.dp))
+            }
+
+            if (personalPicks.isNotEmpty()) {
+                com.example.ui.components.PersonalPicksStrip(
+                    picks = personalPicks,
                     onMovieClick = { movie -> detailMovie = movie }
                 )
                 Spacer(modifier = Modifier.height(18.dp))

@@ -42,6 +42,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.data.local.ThemePreferences
 import com.example.data.repository.CustomWheelListRepository
+import com.example.data.model.Movie
 import com.example.data.repository.MovieRepository
 import com.example.data.repository.RoomRepository
 import com.example.data.repository.WatchedMovieRepository
@@ -76,6 +77,7 @@ class MainActivity : ComponentActivity() {
         com.example.data.repository.TasteProfileRepository.init(applicationContext)
         com.example.data.local.MotionPreferences.init(applicationContext)
         com.example.data.repository.RemoteCatalogRepository.init(applicationContext)
+        com.example.data.local.OnboardingPreferences.init(applicationContext)
         pendingWidgetMovieId.value = intent?.getStringExtra(MovieWheelAppWidgetProvider.EXTRA_WIDGET_MOVIE_ID)
         enableEdgeToEdge()
         setContent {
@@ -134,6 +136,7 @@ fun DecisionApp(
     val isVetoedOnce by viewModel.isVetoedOnce.collectAsState()
     val isDecisionLocked by viewModel.isDecisionLocked.collectAsState()
     val isAdvancedFilterMode by viewModel.isAdvancedFilterMode.collectAsState()
+    val smartWheelLists by viewModel.smartWheelLists.collectAsState()
     val contentKindFilter by viewModel.contentKindFilter.collectAsState()
     val selectedGenres by viewModel.selectedGenres.collectAsState()
     val selectedAudioOptions by viewModel.selectedAudioOptions.collectAsState()
@@ -202,12 +205,36 @@ fun DecisionApp(
     }
 
     val reduceMotion = com.example.data.local.LocalReduceMotion.current
+    val personalPicks by viewModel.personalPicks.collectAsState()
+    // Alt menü sekmelerinde dokunulan yapımın film kartı (Yakında'daki filmler çarka eklenemez)
+    var tabDetailMovie by remember { mutableStateOf<Movie?>(null) }
+    var tabDetailIsUpcoming by remember { mutableStateOf(false) }
+    tabDetailMovie?.let { movie ->
+        com.example.ui.components.MovieDetailSheet(
+            movie = movie,
+            onDismiss = { tabDetailMovie = null },
+            onAddToWheel = if (tabDetailIsUpcoming) null else ({
+                tabDetailMovie = null
+                viewModel.openMovieInWheelFromShowcase(movie)
+            }),
+            isInWatchLater = watchLaterIds.contains(movie.id),
+            onToggleWatchLater = if (tabDetailIsUpcoming) null else ({ viewModel.toggleWatchLater(movie) })
+        )
+    }
     CinematicBackdrop {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = Color.Transparent,
         contentWindowInsets = WindowInsets.safeDrawing,
-        snackbarHost = { SnackbarHost(snackbarHostState) }
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        bottomBar = {
+            if (currentScreen.isBottomTab) {
+                com.example.ui.components.MainBottomBar(
+                    current = currentScreen,
+                    onSelect = { viewModel.navigateTo(it) }
+                )
+            }
+        }
     ) { innerPadding ->
         AnimatedContent(
             targetState = currentScreen,
@@ -233,6 +260,8 @@ fun DecisionApp(
                         watchLaterIds = watchLaterIds,
                         onToggleWatchLater = { movie -> viewModel.toggleWatchLater(movie) },
                         onToggleTheme = { viewModel.toggleTheme() },
+                        onSettingsClick = { viewModel.navigateTo(Screen.SETTINGS) },
+                        personalPicks = personalPicks,
                         onSoloClick = { viewModel.startSoloFlow() },
                         onCompareClick = { viewModel.openCompareMode() },
                         onCustomListsClick = { viewModel.openCustomLists() },
@@ -258,6 +287,7 @@ fun DecisionApp(
                         minRating = minRating,
                         watchedMovieIds = excludedWheelMovieIds,
                         customWheelLists = customWheelLists,
+                        smartWheelLists = smartWheelLists,
                         onSpinCustomList = { listId -> viewModel.spinCustomWheelList(listId) },
                         onOpenCustomLists = { viewModel.openCustomLists() },
                         onToggleFilterMode = { viewModel.setFilterMode(it) },
@@ -387,6 +417,69 @@ fun DecisionApp(
                     )
                 }
 
+                Screen.UPCOMING -> {
+                    val upcoming = remember { com.example.data.repository.HighlightsRepository.upcoming() }
+                    val nowPlaying = remember { com.example.data.repository.HighlightsRepository.nowPlaying() }
+                    com.example.ui.screens.UpcomingScreen(
+                        upcoming = upcoming,
+                        nowPlaying = nowPlaying,
+                        onItemClick = { item ->
+                            tabDetailIsUpcoming = true
+                            tabDetailMovie = item.asMovie()
+                        }
+                    )
+                }
+
+                Screen.POPULAR -> {
+                    val popular = remember { com.example.data.repository.HighlightsRepository.popularMovies() }
+                    com.example.ui.screens.PopularGridScreen(
+                        title = "Popüler",
+                        subtitle = "Türkiye'de platformlarda bu hafta en çok izlenen filmler",
+                        movies = popular,
+                        gridTag = "popular_screen_grid",
+                        itemTagPrefix = "popular_item_",
+                        onMovieClick = { movie ->
+                            tabDetailIsUpcoming = false
+                            tabDetailMovie = movie
+                        }
+                    )
+                }
+
+                Screen.SERIES -> {
+                    val series = remember { com.example.data.repository.HighlightsRepository.popularSeries() }
+                    com.example.ui.screens.PopularGridScreen(
+                        title = "Diziler",
+                        subtitle = "Türkiye'de platformlarda bu hafta en popüler diziler",
+                        movies = series,
+                        gridTag = "series_screen_grid",
+                        itemTagPrefix = "series_item_",
+                        onMovieClick = { movie ->
+                            tabDetailIsUpcoming = false
+                            tabDetailMovie = movie
+                        }
+                    )
+                }
+
+                Screen.FORUM -> com.example.ui.screens.ForumScreen()
+
+                Screen.SETTINGS -> {
+                    com.example.ui.screens.SettingsScreen(
+                        isDarkTheme = isDarkTheme,
+                        onToggleTheme = { viewModel.toggleTheme() },
+                        onRedoTasteOnboarding = { viewModel.navigateTo(Screen.ONBOARDING) },
+                        onBack = { viewModel.navigateTo(Screen.HOME) }
+                    )
+                }
+
+                Screen.ONBOARDING -> {
+                    val candidates = remember { viewModel.onboardingCandidates() }
+                    com.example.ui.screens.OnboardingScreen(
+                        candidates = candidates,
+                        onFinish = { watched, liked -> viewModel.completeTasteOnboarding(watched, liked) },
+                        onSkip = { viewModel.skipTasteOnboarding() }
+                    )
+                }
+
                 Screen.STATS -> {
                     StatsScreen(
                         savedDecisions = savedDecisions,
@@ -409,7 +502,8 @@ fun DecisionApp(
  */
 private val Screen.depth: Int
     get() = when (this) {
-        Screen.HOME -> 0
+        Screen.HOME, Screen.UPCOMING, Screen.POPULAR, Screen.SERIES, Screen.FORUM, Screen.ONBOARDING -> 0
+        Screen.SETTINGS -> 1
         Screen.CUSTOM_LISTS, Screen.COMPARE, Screen.HISTORY, Screen.PROFILE -> 1
         Screen.FILTERING, Screen.STATS -> 2
         Screen.WHEEL -> 3
@@ -427,6 +521,10 @@ private fun reducedScreenTransition(): ContentTransform =
 private fun AnimatedContentTransitionScope<Screen>.screenTransition(): ContentTransform {
     val from = initialState
     val to = targetState
+    // Alt menü sekmeleri arasında kısa bir çapraz geçiş
+    if (from.isBottomTab && to.isBottomTab) {
+        return fadeIn(tween(180)) togetherWith fadeOut(tween(120))
+    }
     val enterDuration = CinemaMotion.DurationLong
     val exitDuration = CinemaMotion.DurationMedium
 

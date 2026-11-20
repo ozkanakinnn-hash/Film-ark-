@@ -10,6 +10,7 @@ import com.example.data.model.ContentKind
 import com.example.data.model.Mood
 import com.example.data.model.Movie
 import com.example.data.model.OTHER_PLATFORM_NAME
+import com.example.data.model.UpcomingRelease
 import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
@@ -23,8 +24,15 @@ import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
 
-/** Doğrulanmış uzaktan katalog. */
-class RemoteCatalog(val generatedAt: String, val items: List<Movie>)
+/** Doğrulanmış uzaktan katalog. Bölümler TMDB kimlik listeleridir (yoksa boş). */
+class RemoteCatalog(
+    val generatedAt: String,
+    val items: List<Movie>,
+    val popularMovieTmdbIds: List<Int> = emptyList(),
+    val popularSeriesTmdbIds: List<Int> = emptyList(),
+    val worstMovieTmdbIds: List<Int> = emptyList(),
+    val upcoming: List<UpcomingRelease> = emptyList()
+)
 
 /**
  * Haftalık katalog güncellemesi.
@@ -142,7 +150,23 @@ object RemoteCatalogRepository {
         val items = (0 until arr.length()).mapNotNull { i -> arr.optJSONObject(i)?.let { runCatching { toMovie(it) }.getOrNull() } }
             .distinctBy { it.id }
         if (items.size < MIN_ITEMS) return null
-        return RemoteCatalog(root.optString("generatedAt").take(40), items)
+        val sections = root.optJSONObject("sections")
+        fun ids(key: String): List<Int> {
+            val a = sections?.optJSONArray(key) ?: return emptyList()
+            return (0 until minOf(a.length(), 200)).mapNotNull { a.optInt(it, 0).takeIf { id -> id > 0 } }.distinct()
+        }
+        val upcomingArr = root.optJSONArray("upcoming")
+        val upcoming = if (upcomingArr == null) emptyList() else (0 until minOf(upcomingArr.length(), 100))
+            .mapNotNull { i -> upcomingArr.optJSONObject(i)?.let { runCatching { toUpcoming(it) }.getOrNull() } }
+            .distinctBy { it.id }
+        return RemoteCatalog(
+            generatedAt = root.optString("generatedAt").take(40),
+            items = items,
+            popularMovieTmdbIds = ids("popularMovies"),
+            popularSeriesTmdbIds = ids("popularSeries"),
+            worstMovieTmdbIds = ids("worstMovies"),
+            upcoming = upcoming
+        )
     }
 
     private fun JSONObject.text(key: String, max: Int): String? =
@@ -193,6 +217,28 @@ object RemoteCatalogRepository {
             isCultOrMostWatched = o.optBoolean("isCult", false),
             kind = kind,
             seasonCount = if (kind == ContentKind.SERIES) o.optInt("seasonCount", 1).coerceIn(1, 99) else null
+        )
+    }
+
+    private val UPCOMING_ID = Regex("^u[0-9]{1,9}$")
+    private val ISO_DATE = Regex("^20[0-9]{2}-[01][0-9]-[0-3][0-9]$")
+
+    private fun toUpcoming(o: JSONObject): UpcomingRelease? {
+        val id = o.optString("id").takeIf { UPCOMING_ID.matches(it) } ?: return null
+        val title = o.text("title", 120)?.takeIf { it.isNotEmpty() } ?: return null
+        val date = o.optString("releaseDate").takeIf { ISO_DATE.matches(it) } ?: return null
+        return UpcomingRelease(
+            id = id,
+            tmdbId = o.optInt("tmdbId", 0).takeIf { it > 0 } ?: return null,
+            title = title,
+            originalTitle = o.text("originalTitle", 120).orEmpty(),
+            releaseDate = date,
+            durationMins = o.optInt("durationMins", 0).coerceIn(0, 600),
+            genre = o.text("genre", 60).orEmpty(),
+            logline = o.text("logline", 600).orEmpty(),
+            posterPath = o.optString("posterPath").takeIf { POSTER.matches(it) }.orEmpty(),
+            trailerKey = o.optString("trailerKey").takeIf { TRAILER.matches(it) },
+            colorHex = o.optLong("colorHex", 0xFF8B5CF6L).let { if (it in 0xFF000000L..0xFFFFFFFFL) it else 0xFF8B5CF6L }
         )
     }
 

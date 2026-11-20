@@ -63,6 +63,7 @@ object CustomWheelListRepository {
     }
 
     fun getListById(listId: String): CustomWheelList? {
+        if (SmartWheelLists.isSmart(listId)) return SmartWheelLists.byId(listId)
         return _customLists.value.find { it.id == listId }
     }
 

@@ -154,12 +154,19 @@ object RoomRepository {
         _currentRoom.value = room.copy(eligibleMovieIds = remaining)
     }
 
+    /**
+     * Kazananı seçer ve ibreyi o dilimin ortasına getirecek açıyı hesaplar.
+     *
+     * [wheelSlices] verilirse kazanan MUTLAKA bu listeden (ekranda çizilen dilimlerden, aynı sırayla) seçilir;
+     * böylece ibrenin durduğu dilim ile açılan film her zaman aynıdır.
+     */
     fun triggerSpin(
-        excludedMovieIds: Set<String> = WatchedMovieRepository.excludedWheelMovieIds.value
+        excludedMovieIds: Set<String> = WatchedMovieRepository.excludedWheelMovieIds.value,
+        wheelSlices: List<Movie>? = null
     ): Pair<Movie, Float>? {
         val room = _currentRoom.value ?: return null
         val excluded = room.vetoHistory + excludedMovieIds
-        val eligibleMovies = if (room.eligibleMovieIds.isNotEmpty()) {
+        val eligibleMovies = wheelSlices?.takeIf { it.isNotEmpty() } ?: if (room.eligibleMovieIds.isNotEmpty()) {
             room.eligibleMovieIds.mapNotNull {
                 MovieRepository.getMovieById(it) ?: CustomWheelListRepository.findCustomMovieById(it)
             }
