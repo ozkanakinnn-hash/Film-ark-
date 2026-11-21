@@ -1,0 +1,38 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:400px;background:#0e0c11;font-family:Roboto,Arial,sans-serif;color:#f5efe6;padding:18px 16px 24px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.circ{width:44px;height:44px;border-radius:50%;background:#17141b;display:flex;align-items:center;justify-content:center;font-size:20px}
+.hdr{border-radius:16px;padding:14px;background:linear-gradient(120deg,#2a141b,#17121a);border:1.5px dashed rgba(255,77,94,.6);display:flex;gap:12px;align-items:center}
+.hdr img{width:44px;height:44px;border-radius:11px}
+.hdr .t{font-size:17px;font-weight:900} .hdr .s{font-size:11.5px;color:rgba(245,239,230,.65);margin-top:2px;line-height:1.3}
+.stamp{margin-left:auto;font-size:9.5px;font-weight:900;color:#ff4d5e;border:1.5px solid #ff4d5e;border-radius:7px;padding:3px 7px;transform:rotate(-7deg);white-space:nowrap}
+.meter{margin-top:12px;border-radius:16px;padding:12px 14px;background:#17141b;border:1px solid #2a2530}
+.meter .h{display:flex;justify-content:space-between;font-size:13px;font-weight:900}
+.meter .h span{color:#ff4d5e}
+.bar{height:10px;border-radius:6px;margin-top:9px;background:linear-gradient(90deg,#ff4d5e 0%,#d97706 50%,#3a3340 100%);position:relative}
+.bar i{position:absolute;top:-4px;width:3px;height:18px;background:#fff;border-radius:2px}
+.scale{display:flex;justify-content:space-between;font-size:10px;color:rgba(245,239,230,.5);margin-top:5px}
+.chips{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.chip{font-size:10.5px;font-weight:800;padding:4px 8px;border-radius:999px;background:rgba(255,77,94,.12);color:#ffb3bb;border:1px solid rgba(255,77,94,.4)}
+.wrap{position:relative;width:300px;height:300px;margin:18px auto 0}
+.wheel{position:absolute;inset:0;border-radius:50%;background:conic-gradient(#3a1d24 0.0deg 30.0deg,#1c1820 30.0deg 60.0deg,#5a2430 60.0deg 90.0deg,#1c1820 90.0deg 120.0deg,#3a1d24 120.0deg 150.0deg,#1c1820 150.0deg 180.0deg,#5a2430 180.0deg 210.0deg,#1c1820 210.0deg 240.0deg,#3a1d24 240.0deg 270.0deg,#1c1820 270.0deg 300.0deg,#5a2430 300.0deg 330.0deg,#1c1820 330.0deg 360.0deg);box-shadow:inset 0 0 0 6px #9c2a3a,0 0 0 3px #e9b949,0 0 30px rgba(255,77,94,.25)}
+.lab{position:absolute;left:50%;top:50%;transform-origin:0 0;width:84px;margin-top:-8px;display:flex;flex-direction:column;align-items:flex-start;font-size:8.5px;font-weight:800;line-height:1.05;white-space:nowrap}
+.lab span{max-width:80px;overflow:hidden;text-overflow:ellipsis}
+.lab b{color:#ff8a96;font-size:8px}
+.hub{position:absolute;left:50%;top:50%;width:62px;height:62px;margin:-31px;border-radius:50%;background:#0b0a0f;border:3px solid #e9b949;display:flex;align-items:center;justify-content:center}
+.hub img{width:36px;height:36px}
+.needle{position:absolute;left:50%;top:-10px;margin-left:-12px;border-left:12px solid transparent;border-right:12px solid transparent;border-top:24px solid #ff4d5e;z-index:3}
+.btn{margin-top:18px;border-radius:16px;padding:15px;text-align:center;font-weight:900;font-size:17px;background:linear-gradient(180deg,#ef5466,#c22a3c);color:#fff}
+.note{font-size:11px;color:rgba(245,239,230,.45);text-align:center;margin-top:10px}
+</style></head><body>
+<div class="top"><div class="circ">←</div><div class="circ">⚙</div></div>
+<div class="hdr"><img src="logo.svg"><div><div class="t">Bunu Niye İzledim?</div><div class="s">Çok izlenmiş ama puanı en düşük filmler</div></div><div class="stamp">BUNU SEN İSTEDİN</div></div>
+<div class="meter"><div class="h">Rezalet Ölçer<span>★ 2.9 – 5.6</span></div>
+<div class="bar"><i style="left:8%"></i><i style="left:30%"></i></div>
+<div class="scale"><span>Felaket</span><span>Kötü</span><span>İdare eder</span></div>
+<div class="chips"><span class="chip">👥 1.500+ oy almış</span><span class="chip">🎯 40 filmlik havuz</span><span class="chip">🔄 Her çevirişte yeni 12</span></div></div>
+<div class="wrap"><div class="needle"></div><div class="wheel"></div><div class="lab" style="transform:rotate(-75.0deg) translateX(64px)"><span>The Room</span><b>★4.0</b></div><div class="lab" style="transform:rotate(-45.0deg) translateX(64px)"><span>Ejder Topu: Evrim</span><b>★2.9</b></div><div class="lab" style="transform:rotate(-15.0deg) translateX(64px)"><span>Batman ve Robin</span><b>★4.4</b></div><div class="lab" style="transform:rotate(15.0deg) translateX(64px)"><span>Maske 2</span><b>★4.2</b></div><div class="lab" style="transform:rotate(45.0deg) translateX(64px)"><span>Fantastik Dörtlü</span><b>★4.4</b></div><div class="lab" style="transform:rotate(75.0deg) translateX(64px)"><span>Elektra</span><b>★5.0</b></div><div class="lab" style="transform:rotate(105.0deg) translateX(64px)"><span>Sokak Dövüşçüsü</span><b>★4.7</b></div><div class="lab" style="transform:rotate(135.0deg) translateX(64px)"><span>İşte Spartalılar</span><b>★4.1</b></div><div class="lab" style="transform:rotate(165.0deg) translateX(64px)"><span>Jack ve Jill</span><b>★4.4</b></div><div class="lab" style="transform:rotate(195.0deg) translateX(64px)"><span>Köpek Balığı İstilası</span><b>★3.9</b></div><div class="lab" style="transform:rotate(225.0deg) translateX(64px)"><span>Destansı Bir Film</span><b>★3.8</b></div><div class="lab" style="transform:rotate(255.0deg) translateX(64px)"><span>Ölüm Defteri</span><b>★4.3</b></div><div class="hub"><img src="logo.svg"></div></div>
+<div class="btn">▶ Kendi İsteğinle Çevir</div>
+<div class="note">Bu çarkta "Minimum Puan" filtresi yok • Çıkan filmde "Bunu sen istedin!" damgası vurulur</div>
+</body></html>
