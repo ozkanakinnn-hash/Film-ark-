@@ -114,6 +114,16 @@ private fun ClapperStick(modifier: Modifier, mirrored: Boolean) {
 private fun SoftBlendBackdrops(urls: List<String>, modifier: Modifier) {
     val context = LocalContext.current
     Box(modifier = modifier.background(CNoir)) {
+        if (urls.size == 1) {
+            // Tek görüntü: kutuyu tamamen kaplar (en popüler yapım)
+            AsyncImage(
+                model = ImageRequest.Builder(context).data(urls.first()).crossfade(true).build(),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+            return@Box
+        }
         urls.take(2).forEachIndexed { i, url ->
             val isLeft = i == 0
             AsyncImage(
