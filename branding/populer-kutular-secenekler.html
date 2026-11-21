@@ -1,0 +1,63 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:430px;background:#0b0a0f;font-family:Roboto,"Noto Sans",Arial,sans-serif;color:#f5efe6;padding:18px 16px 30px}
+.opt{margin:0 0 34px}
+.tag{display:inline-block;font-size:11px;font-weight:900;letter-spacing:2px;color:#0b0a0f;background:#E9B949;border-radius:6px;padding:4px 9px;margin-bottom:6px}
+.oh{font-size:18px;font-weight:900;margin:2px 2px 2px} .od{font-size:12px;color:rgba(245,239,230,.6);margin:0 2px 12px;line-height:1.45}
+.sec{display:flex;align-items:center;gap:8px;margin:0 2px 10px} .sec img{width:22px;height:22px;border-radius:6px}
+.sec b{font-size:15px;font-weight:900} .sec span{font-size:11px;color:rgba(245,239,230,.5);margin-left:auto}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pill{white-space:nowrap;flex-shrink:0;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:900;letter-spacing:1px;padding:7px 12px;border-radius:999px;background:#E9B949;color:#0b0a0f}
+.pill.red{background:#D63447;color:#fff}
+.t{font-weight:900;font-size:16px;line-height:1.1}
+.s{font-size:11px;color:rgba(245,239,230,.62);margin-top:3px}
+/* A yelpaze */
+.a{background:linear-gradient(180deg,#1a1720,#121016);border:1px solid rgba(233,185,73,.18);border-radius:20px;padding:14px 12px 12px;height:250px;position:relative;overflow:hidden}
+.fan{position:relative;height:140px;margin:4px 0 12px}
+.fan img{position:absolute;width:66px;height:99px;object-fit:cover;border-radius:8px;box-shadow:0 8px 18px rgba(0,0,0,.6);border:1.5px solid rgba(255,255,255,.12);bottom:6px}
+/* B karisim */
+.b{border-radius:20px;height:250px;position:relative;overflow:hidden;padding:14px}
+.b.f{background:linear-gradient(150deg,#E9B949 0%,#D63447 70%,#5a1020 100%)}
+.b.d{background:linear-gradient(150deg,#2DD4BF 0%,#3b49c9 65%,#1b1450 100%)}
+.coll{position:absolute;right:-26px;top:-8px;width:150px;display:grid;grid-template-columns:1fr 1fr;gap:6px;transform:rotate(12deg)}
+.coll img{width:100%;aspect-ratio:2/3;object-fit:cover;border-radius:8px;box-shadow:0 6px 16px rgba(0,0,0,.45)}
+.b .bot{position:absolute;left:0;right:0;bottom:0;padding:40px 14px 14px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.55) 45%,rgba(0,0,0,.7))}
+.b .t{font-size:22px;text-shadow:0 2px 10px rgba(0,0,0,.35)}
+.b .s{color:rgba(255,255,255,.85)}
+.b .lg{position:absolute;left:14px;top:14px;width:30px;height:30px;border-radius:8px;box-shadow:0 4px 10px rgba(0,0,0,.3)}
+.b .pill{background:rgba(11,10,15,.85);color:#fff;margin-top:10px}
+/* C sinemaskop */
+.c{position:relative;border-radius:18px;overflow:hidden;height:190px;margin-bottom:12px;background:#000}
+.c .bg{position:absolute;inset:22px 0;background-size:cover;background-position:center}
+.c .bar{position:absolute;left:0;right:0;height:22px;background:#000;display:flex;align-items:center;padding:0 12px;font-size:9px;letter-spacing:3px;color:rgba(245,239,230,.45);font-weight:700}
+.c .bar.top{top:0}.c .bar.bt{bottom:0;justify-content:flex-end}
+.c .shade{position:absolute;inset:22px 0;background:linear-gradient(90deg,rgba(0,0,0,.85) 0%,rgba(0,0,0,.35) 60%,rgba(0,0,0,.1))}
+.c .txt{position:absolute;left:16px;top:42px;right:120px}
+.c .serif{font-family:Georgia,"Times New Roman",serif;font-style:italic;font-size:28px;font-weight:700;line-height:1}
+.c .thumbs{position:absolute;right:12px;bottom:32px;display:flex}
+.c .thumbs img{width:40px;height:60px;object-fit:cover;border-radius:6px;margin-left:-12px;border:1.5px solid #000;box-shadow:0 4px 10px rgba(0,0,0,.6)}
+/* D makara & ekran */
+.dcard{border-radius:20px;padding:12px;height:262px;position:relative;overflow:hidden;background:#141218;border:1px solid rgba(255,255,255,.08)}
+.strip{background:#050505;border-radius:6px;padding:12px 0;position:relative;transform:rotate(-4deg);margin:10px -18px 14px}
+.strip:before,.strip:after{content:"";position:absolute;left:0;right:0;height:7px;background:repeating-linear-gradient(90deg,transparent 0 6px,#e9e0cf 6px 12px,transparent 12px 18px);opacity:.85}
+.strip:before{top:3px}.strip:after{bottom:3px}
+.strip .fr{display:flex;gap:5px;padding:0 6px}
+.strip img{width:56px;height:84px;object-fit:cover;border-radius:2px}
+.tv{margin:6px auto 12px;width:150px;height:124px;background:linear-gradient(160deg,#6b4a2b,#3b2715);border-radius:16px;padding:10px 34px 10px 10px;position:relative;box-shadow:inset 0 2px 0 rgba(255,255,255,.15),0 10px 20px rgba(0,0,0,.5)}
+.tv .scr{width:100%;height:100%;border-radius:14px/18px;overflow:hidden;position:relative;background:#000;box-shadow:inset 0 0 18px rgba(0,0,0,.9)}
+.tv .scr img{width:50%;height:100%;object-fit:cover;float:left;filter:saturate(1.15)}
+.tv .scr:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 2px,transparent 2px 4px),radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.55))}
+.tv .k1,.tv .k2{position:absolute;right:9px;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#e8d6b0,#7a5a2c)}
+.tv .k1{top:22px}.tv .k2{top:50px}
+.tv .ant{position:absolute;top:-26px;left:50%;width:2px;height:30px;background:#aaa;transform-origin:bottom;}
+.tv .ant.l{transform:rotate(-28deg)}.tv .ant.r{transform:rotate(28deg)}
+.foot{display:flex;align-items:flex-end;justify-content:space-between;gap:6px}.foot .t{font-size:15px}.foot .pill{padding:7px 10px}
+</style></head><body><div class="opt"><div class="tag">A • YELPAZE</div><div class="oh">Letterboxd liste kartı</div><div class="od">Beş güncel afiş el kartı gibi yelpaze açılır; ortadaki en popüler. Sade, koyu kart, altın kenar.</div><div class="sec"><img src="harman-H1-ikon-dark.svg"><b>Hazır Çarklar</b><span>her pazartesi yenilenir</span></div>
+<div class="row"><div class="a"><div class="fan"><img src="p2/9qjZeIZ52CWgmZuEuVuBPaypChy.jpg" style="left:calc(50% - 33px + -40px);transform:rotate(-16deg) translateY(9.6px);z-index:3"><img src="p2/pS2R3DEiucuizVkKP80qzdO97TE.jpg" style="left:calc(50% - 33px + -20px);transform:rotate(-8deg) translateY(4.8px);z-index:4"><img src="p2/l80bthReoL08m8oU74R4ZMxgnGZ.jpg" style="left:calc(50% - 33px + 0px);transform:rotate(0deg) translateY(0.0px);z-index:5"><img src="p2/zhxlzxBlO1sWB1rPn7RmAoeQ2na.jpg" style="left:calc(50% - 33px + 20px);transform:rotate(8deg) translateY(4.8px);z-index:4"><img src="p2/wkIk82YOiFSay7qdFjihSE99CLy.jpg" style="left:calc(50% - 33px + 40px);transform:rotate(16deg) translateY(9.6px);z-index:3"></div><div class="foot"><div><div class="t">Popüler<br>Filmler</div><div class="s">Bu hafta Türkiye'de</div></div><div class="pill">▶ ÇEVİR</div></div></div>
+<div class="a"><div class="fan"><img src="p2/ad75MS8xP2EmkYXy4101ljmpIfn.jpg" style="left:calc(50% - 33px + -40px);transform:rotate(-16deg) translateY(9.6px);z-index:3"><img src="p2/b6XvpFijtZg2f23J8xbMZe0RyIi.jpg" style="left:calc(50% - 33px + -20px);transform:rotate(-8deg) translateY(4.8px);z-index:4"><img src="p2/z0XiwdrCQ9yVIr4O0pxzaAYRxdW.jpg" style="left:calc(50% - 33px + 0px);transform:rotate(0deg) translateY(0.0px);z-index:5"><img src="p2/3KUjDt8XY7w2Ku70UE0SECmv1zP.jpg" style="left:calc(50% - 33px + 20px);transform:rotate(8deg) translateY(4.8px);z-index:4"><img src="p2/k0kMdO52LpC5JWgd0uWEH7gqcCe.jpg" style="left:calc(50% - 33px + 40px);transform:rotate(16deg) translateY(9.6px);z-index:3"></div><div class="foot"><div><div class="t">Popüler<br>Diziler</div><div class="s">Bu hafta Türkiye'de</div></div><div class="pill">▶ ÇEVİR</div></div></div></div></div><div class="opt"><div class="tag">B • KARIŞIM</div><div class="oh">Spotify "Mix" / Netflix koleksiyon kutusu</div><div class="od">Canlı renk geçişli kare kutu, köşeden taşan eğik 2×2 afiş kolajı, büyük kalın başlık. Film altın-kırmızı, dizi turkuaz-mor.</div><div class="sec"><img src="harman-H1-ikon-dark.svg"><b>Hazır Çarklar</b><span>her pazartesi yenilenir</span></div>
+<div class="row"><div class="b f"><img class="lg" src="harman-H1-ikon-dark.svg"><div class="coll"><img src="p2/9qjZeIZ52CWgmZuEuVuBPaypChy.jpg"><img src="p2/pS2R3DEiucuizVkKP80qzdO97TE.jpg"><img src="p2/l80bthReoL08m8oU74R4ZMxgnGZ.jpg"><img src="p2/zhxlzxBlO1sWB1rPn7RmAoeQ2na.jpg"></div><div class="bot"><div class="t">Popüler<br>Filmler</div><div class="s">Bu hafta en çok izlenenler</div><div class="pill">▶ ÇEVİR</div></div></div>
+<div class="b d"><img class="lg" src="harman-H1-ikon-dark.svg"><div class="coll"><img src="p2/ad75MS8xP2EmkYXy4101ljmpIfn.jpg"><img src="p2/b6XvpFijtZg2f23J8xbMZe0RyIi.jpg"><img src="p2/z0XiwdrCQ9yVIr4O0pxzaAYRxdW.jpg"><img src="p2/3KUjDt8XY7w2Ku70UE0SECmv1zP.jpg"></div><div class="bot"><div class="t">Popüler<br>Diziler</div><div class="s">Bu hafta en çok izlenenler</div><div class="pill">▶ ÇEVİR</div></div></div></div></div><div class="opt"><div class="tag">C • SİNEMASKOP</div><div class="oh">Mubi / Apple TV sinematik şerit</div><div class="od">Tam genişlik, perdede sahne görüntüsü ve siyah sinemaskop bantları; zarif italik başlık, sağda üst üste küçük afişler. Kutular alt alta.</div><div class="sec"><img src="harman-H1-ikon-dark.svg"><b>Hazır Çarklar</b><span>her pazartesi yenilenir</span></div>
+<div class="c"><div class="bg" style="background-image:url(p/bd2_qVgZu5BTx6pu4owCvVOm4zjTfOi.jpg)"></div><div class="shade"></div><div class="bar top">NE İZLESEK? • FİLM</div><div class="bar bt">2.39 : 1</div>
+<div class="txt"><div class="serif">Popüler Filmler</div><div class="s" style="margin-top:6px">Türkiye'de bu hafta en çok izlenenlerden<br>12 dilimlik çark</div><div class="pill" style="margin-top:12px">▶ ÇARKI ÇEVİR</div></div><div class="thumbs"><img src="p2/9qjZeIZ52CWgmZuEuVuBPaypChy.jpg"><img src="p2/pS2R3DEiucuizVkKP80qzdO97TE.jpg"><img src="p2/l80bthReoL08m8oU74R4ZMxgnGZ.jpg"><img src="p2/zhxlzxBlO1sWB1rPn7RmAoeQ2na.jpg"></div></div><div class="c"><div class="bg" style="background-image:url(p/bd2_8VXhcrl5z2I1zEU9X3pkkNrZlD.jpg)"></div><div class="shade"></div><div class="bar top">NE İZLESEK? • DİZİ</div><div class="bar bt">2.39 : 1</div>
+<div class="txt"><div class="serif">Popüler Diziler</div><div class="s" style="margin-top:6px">Türkiye'de bu hafta en çok izlenenlerden<br>12 dilimlik çark</div><div class="pill" style="margin-top:12px">▶ ÇARKI ÇEVİR</div></div><div class="thumbs"><img src="p2/ad75MS8xP2EmkYXy4101ljmpIfn.jpg"><img src="p2/b6XvpFijtZg2f23J8xbMZe0RyIi.jpg"><img src="p2/z0XiwdrCQ9yVIr4O0pxzaAYRxdW.jpg"><img src="p2/3KUjDt8XY7w2Ku70UE0SECmv1zP.jpg"></div></div></div><div class="opt"><div class="tag">D • MAKARA &amp; EKRAN</div><div class="oh">Film = film şeridi, Dizi = retro televizyon</div><div class="od">İki kutu türünü ilk bakışta anlatır: filmlerde delikli film şeridinden geçen afişler, dizilerde antenli tüplü televizyonda oynayan diziler.</div><div class="sec"><img src="harman-H1-ikon-dark.svg"><b>Hazır Çarklar</b><span>her pazartesi yenilenir</span></div>
+<div class="row"><div class="dcard"><div class="strip"><div class="fr"><img src="p2/9qjZeIZ52CWgmZuEuVuBPaypChy.jpg"><img src="p2/pS2R3DEiucuizVkKP80qzdO97TE.jpg"><img src="p2/l80bthReoL08m8oU74R4ZMxgnGZ.jpg"><img src="p2/zhxlzxBlO1sWB1rPn7RmAoeQ2na.jpg"><img src="p2/wkIk82YOiFSay7qdFjihSE99CLy.jpg"></div></div><div class="foot"><div><div class="t">Popüler<br>Filmler</div><div class="s">Bu hafta Türkiye'de</div></div><div class="pill">▶ ÇEVİR</div></div></div><div class="dcard"><div class="tv"><div class="ant l"></div><div class="ant r"></div><div class="scr"><img src="p2/ad75MS8xP2EmkYXy4101ljmpIfn.jpg"><img src="p2/z0XiwdrCQ9yVIr4O0pxzaAYRxdW.jpg"></div><div class="k1"></div><div class="k2"></div></div><div class="foot"><div><div class="t">Popüler<br>Diziler</div><div class="s">Bu hafta Türkiye'de</div></div><div class="pill">▶ ÇEVİR</div></div></div></div></div></body></html>

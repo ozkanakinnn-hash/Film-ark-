@@ -322,7 +322,7 @@ class ExampleRobolectricTest {
 
   @Test
   fun `compare mode displays two side by side movies, supports skipping, picking, and sharing champion`() {
-    composeTestRule.onNodeWithTag("compare_mode_button").performScrollTo().performClick()
+    composeTestRule.onNodeWithTag("home_ticket_duel").performScrollTo().performClick()
     composeTestRule.waitForIdle()
 
     composeTestRule.onNodeWithTag("compare_left_card").assertIsDisplayed()
@@ -1016,7 +1016,7 @@ class ExampleRobolectricTest {
 
   @Test
   fun `compare mode supports tinder horizontal swipe left and right gestures`() {
-    composeTestRule.onNodeWithTag("compare_mode_button").performScrollTo().performClick()
+    composeTestRule.onNodeWithTag("home_ticket_duel").performScrollTo().performClick()
     composeTestRule.waitForIdle()
 
     composeTestRule.onNodeWithTag("compare_round_label")
@@ -1700,5 +1700,22 @@ class ExampleRobolectricTest {
     assertTrue(all.contains("Açılış hatası"))
     assertTrue(all.contains("Raporu Paylaş"))
     com.example.crash.CrashReporter.clear(app)
+  }
+
+  @Test
+  fun `home ready lists stay collapsed until the toggle is tapped`() {
+    composeTestRule.onNodeWithTag("home_screen_list").performScrollToNode(hasTestTag("home_ready_lists_toggle"))
+    composeTestRule.onNodeWithTag("home_ready_lists_toggle").assertIsDisplayed()
+    assertTrue(
+      "Hazır listeler başta kapalı olmalı",
+      composeTestRule.onAllNodesWithTag("home_list_tile_preset_korku_gecesi").fetchSemanticsNodes().isEmpty()
+    )
+    composeTestRule.onNodeWithTag("home_ready_lists_toggle").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("home_screen_list").performScrollToNode(hasTestTag("home_list_tile_preset_korku_gecesi"))
+    composeTestRule.onNodeWithTag("home_list_tile_preset_korku_gecesi").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("home_ready_lists_toggle").performClick()
+    composeTestRule.waitForIdle()
+    assertTrue(composeTestRule.onAllNodesWithTag("home_list_tile_preset_korku_gecesi").fetchSemanticsNodes().isEmpty())
   }
 }

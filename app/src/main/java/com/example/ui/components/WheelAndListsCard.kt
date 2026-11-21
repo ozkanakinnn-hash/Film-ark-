@@ -16,7 +16,19 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -108,7 +120,20 @@ fun WheelAndListsCard(
 
         if (lists.isNotEmpty()) {
             Spacer(Modifier.height(16.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            // Hazır listeler varsayılan olarak kapalı; başlığa dokununca açılır/kapanır
+            var expanded by rememberSaveable { mutableStateOf(false) }
+            val arrowTurn by animateFloatAsState(if (expanded) 180f else 0f, label = "lists_arrow")
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color(0xFF1B1820))
+                    .border(1.dp, PopcornGold.copy(alpha = if (expanded) 0.55f else 0.3f), RoundedCornerShape(12.dp))
+                    .clickable(onClickLabel = if (expanded) "Hazır listeleri gizle" else "Hazır listeleri göster") { expanded = !expanded }
+                    .padding(horizontal = 12.dp, vertical = 11.dp)
+                    .testTag("home_ready_lists_toggle")
+            ) {
                 Text("HAZIR LİSTELER", fontSize = 11.sp, letterSpacing = 1.8.sp, fontWeight = FontWeight.Black, color = PopcornGold)
                 Spacer(Modifier.width(8.dp))
                 Text(
@@ -120,9 +145,27 @@ fun WheelAndListsCard(
                         .background(Color(0x2222C55E), RoundedCornerShape(6.dp))
                         .padding(horizontal = 6.dp, vertical = 2.dp)
                 )
-                Spacer(Modifier.width(10.dp))
-                Box(Modifier.weight(1f).height(1.dp).background(CinemaBorder))
+                Spacer(Modifier.weight(1f))
+                Text(
+                    if (expanded) "Gizle" else "Göster",
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextSecondary
+                )
+                Spacer(Modifier.width(4.dp))
+                Icon(
+                    imageVector = Icons.Filled.KeyboardArrowDown,
+                    contentDescription = null,
+                    tint = PopcornGold,
+                    modifier = Modifier.size(22.dp).graphicsLayer { rotationZ = arrowTurn }
+                )
             }
+            AnimatedVisibility(
+                visible = expanded,
+                enter = expandVertically() + fadeIn(),
+                exit = shrinkVertically() + fadeOut()
+            ) {
+            Column {
             Spacer(Modifier.height(10.dp))
             lists.chunked(2).forEach { pair ->
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
@@ -151,9 +194,11 @@ fun WheelAndListsCard(
                 }
                 Spacer(Modifier.height(8.dp))
             }
+            }
+            }
         }
 
-        Spacer(Modifier.height(2.dp))
+        Spacer(Modifier.height(10.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
             Text(
                 "＋ Kendi Listeni Oluştur",
