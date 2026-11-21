@@ -168,6 +168,7 @@ fun WheelScreen(
     // Veto mührü animasyonu oynarken gösterilen film; bitince veto uygulanır
     var vetoStampMovie by remember { mutableStateOf<Movie?>(null) }
     var showDirectShareSheet by remember { mutableStateOf(false) }
+    val shareContext = androidx.compose.ui.platform.LocalContext.current
     var isShakeEnabled by remember { mutableStateOf(true) }
     var isHapticEnabled by remember { mutableStateOf(true) }
     var isSoundEnabled by remember { mutableStateOf(true) }
@@ -1166,7 +1167,7 @@ fun WheelScreen(
                             onAddToWatchLater(movieForReveal)
                             revealMovie = null
                         },
-                        onShare = { showDirectShareSheet = true },
+                        onShare = { com.example.ui.components.shareMovieNative(shareContext, movieForReveal) },
                         onClose = { revealMovie = null }
                     ),
                     stampText = if (activeCustomList?.id == com.example.data.repository.SmartWheelLists.WORST) {

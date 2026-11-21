@@ -84,7 +84,7 @@ class RevealActions(
     val onClose: () -> Unit
 )
 
-private enum class RevealStamp(val title: String, val sub: String, val color: Color) {
+internal enum class RevealStamp(val title: String, val sub: String, val color: Color) {
     VETO("VETO", "NE İZLESEK? • REDDEDİLDİ", Color(0xFFE8283C)),
     WATCH("İZLENECEK", "NE İZLESEK? • LİSTEYE EKLENDİ", Color(0xFFE9B949))
 }
@@ -105,6 +105,11 @@ fun GenreRevealOverlay(
     /** Verilirse sahne sonunda durur ve VETO / İZLENECEK / Paylaş / Kapat düğmeleri çıkar. */
     actions: RevealActions? = null
 ) {
+    if (actions != null) {
+        // Sonuç kartı: türe özel sinematik atmosfer, büyük afiş, Veto / İzlenecek / Paylaş (ResultCardScene.kt)
+        ResultCardScene(movie = movie, actions = actions, stampText = stampText, modifier = modifier)
+        return
+    }
     val reduceMotion = com.example.data.local.LocalReduceMotion.current
     val style = remember(movie.id) { movie.resolveGenreRevealStyle() }
     val particles = remember(movie.id) { buildParticles(movie.id.hashCode()) }
@@ -112,7 +117,7 @@ fun GenreRevealOverlay(
     val scope = rememberCoroutineScope()
     val latestOnFinished by rememberUpdatedState(onFinished)
 
-    val latestActions by rememberUpdatedState(actions)
+    val latestActions by rememberUpdatedState<RevealActions?>(actions)
     // Mühür (VETO / İZLENECEK) zaman çizelgesi: 0 → 1, bitince ilgili eylem çağrılır
     var stamp by remember(movie.id) { mutableStateOf<RevealStamp?>(null) }
     val stampT = remember(movie.id) { Animatable(0f) }

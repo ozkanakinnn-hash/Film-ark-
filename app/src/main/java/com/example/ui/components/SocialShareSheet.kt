@@ -108,6 +108,8 @@ fun buildMovieShareText(
         appendLine("🎭 Tür: ${movie.genre}")
         appendLine("⭐️ Puan: ${movie.imdb} • ⏱ ${movie.durationLabel()}")
         if (platformLine.isNotEmpty()) appendLine(platformLine)
+        movie.resolvedPosterUrl()?.let { appendLine("🖼 Afiş: ${it.replace("/w500/", "/original/")}") }
+        movie.tmdbDetailUrl()?.let { appendLine("🔗 Detay: $it") }
         appendLine()
         append("Sen de film çarkını çevir: Ne İzlesek?")
     }.trim()
@@ -725,3 +727,15 @@ private fun PlatformShareGrid(
     }
 }
 
+
+
+/** Filmin TMDB detay sayfası (dizi kimlikleri "tv" ile başlar). TMDB kimliği yoksa null. */
+fun Movie.tmdbDetailUrl(): String? {
+    val id = tmdbId ?: return null
+    return if (isSeries) "https://www.themoviedb.org/tv/$id" else "https://www.themoviedb.org/movie/$id"
+}
+
+/** Sonuç kartındaki "Paylaş": telefonun kendi paylaşım menüsü (afiş görseli + metin + bağlantılar). */
+fun shareMovieNative(context: Context, movie: Movie) {
+    shareMovieToPlatform(context, movie, SocialPlatform.SYSTEM_MORE)
+}

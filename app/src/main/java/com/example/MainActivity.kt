@@ -513,6 +513,7 @@ fun DecisionApp(
     // Ana sayfa bilet çarkının sonucu: tüm uygulamanın üstünde, seçim yapılana kadar açık kalır
     val homeReveal by viewModel.homeRevealMovie.collectAsState()
     var homeShareMovie by remember { mutableStateOf<com.example.data.model.Movie?>(null) }
+    val shareCtx = androidx.compose.ui.platform.LocalContext.current
     androidx.activity.compose.BackHandler(enabled = homeReveal != null) { viewModel.closeHomeReveal() }
     androidx.compose.animation.AnimatedVisibility(
         visible = homeReveal != null,
@@ -529,7 +530,7 @@ fun DecisionApp(
                     canVeto = true,
                     onVeto = { viewModel.vetoHomeReveal() },
                     onWatchLater = { viewModel.watchLaterHomeReveal() },
-                    onShare = { homeShareMovie = movie },
+                    onShare = { com.example.ui.components.shareMovieNative(shareCtx, movie) },
                     onClose = { viewModel.closeHomeReveal() }
                 )
             )
