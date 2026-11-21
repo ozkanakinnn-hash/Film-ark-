@@ -266,14 +266,13 @@ private fun WheelStub(posters: List<Movie>, onClick: () -> Unit, modifier: Modif
             .padding(top = 12.dp)
     ) {
         Text("KARAR ÇARKI", fontSize = 9.5.sp, letterSpacing = 2.5.sp, fontWeight = FontWeight.Black, color = Gold)
-        Spacer(Modifier.height(6.dp))
-        FilmReelWheel(posters = posters, size = 128.dp)
-        Spacer(Modifier.height(2.dp))
+        Spacer(Modifier.height(8.dp))
+        FilmReelWheel(posters = posters, size = 112.dp)
+        Spacer(Modifier.height(10.dp))
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier
-                .offset(y = (-8).dp)
                 .shadow(6.dp, RoundedCornerShape(999.dp))
                 .background(Brush.verticalGradient(listOf(Color(0xFFF3CF74), Color(0xFFD9A23A))), RoundedCornerShape(999.dp))
                 .padding(horizontal = 12.dp, vertical = 5.dp)

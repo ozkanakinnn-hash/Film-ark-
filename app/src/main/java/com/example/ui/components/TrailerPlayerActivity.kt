@@ -1,7 +1,8 @@
 package com.example.ui.components
 
 import android.annotation.SuppressLint
-import android.app.Activity
+import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -31,12 +32,13 @@ import com.example.BuildConfig
  * YouTube API Hizmetleri kuralları: resmi oynatıcı değiştirilmeden kullanılır (logo, reklam, kontroller),
  * en az 200x200, arka planda oynatma yok (ekran kapanınca WebView yok edilir), indirme yok.
  */
-class TrailerPlayerActivity : Activity() {
+class TrailerPlayerActivity : ComponentActivity() {
 
     private var webView: WebView? = null
     private var root: FrameLayout? = null
     private var fullscreenView: View? = null
     private var fullscreenCallback: WebChromeClient.CustomViewCallback? = null
+    private var chromeClient: WebChromeClient? = null
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -100,7 +102,7 @@ class TrailerPlayerActivity : Activity() {
                     return true
                 }
             }
-            webChromeClient = object : WebChromeClient() {
+            chromeClient = object : WebChromeClient() {
                 override fun onShowCustomView(view: View, callback: CustomViewCallback) {
                     fullscreenView = view
                     fullscreenCallback = callback
@@ -115,6 +117,7 @@ class TrailerPlayerActivity : Activity() {
                     column.visibility = View.VISIBLE
                 }
             }
+            webChromeClient = chromeClient
             loadDataWithBaseURL("https://${BuildConfig.APPLICATION_ID}/", playerHtml(embedUrl), "text/html", "utf-8", null)
         }
         webView = player
@@ -149,6 +152,18 @@ class TrailerPlayerActivity : Activity() {
 
         frame.addView(column, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
         setContentView(frame)
+
+        // Geri: önce tam ekrandan çık, sonra oynatıcıyı kapat
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (fullscreenView != null) {
+                    fullscreenCallback?.onCustomViewHidden()
+                    chromeClient?.onHideCustomView()
+                } else {
+                    finish()
+                }
+            }
+        })
     }
 
     override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
@@ -156,17 +171,6 @@ class TrailerPlayerActivity : Activity() {
         // Döndürünce oynatıcı 16:9 kalsın
         webView?.let { wv ->
             wv.layoutParams = wv.layoutParams.apply { height = resources.displayMetrics.widthPixels * 9 / 16 }
-        }
-    }
-
-    @Deprecated("Geri tuşu: önce tam ekrandan çık")
-    override fun onBackPressed() {
-        if (fullscreenView != null) {
-            fullscreenCallback?.onCustomViewHidden()
-            webView?.webChromeClient?.onHideCustomView()
-        } else {
-            @Suppress("DEPRECATION")
-            super.onBackPressed()
         }
     }
 
