@@ -33,6 +33,14 @@
             </intent-filter>
         </activity>
 
+        <!-- Fragman oynatıcı: opak, donanım hızlandırmalı ekran (YouTube resmi gömülü oynatıcı) -->
+        <activity
+            android:name=".ui.components.TrailerPlayerActivity"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|smallestScreenSize"
+            android:exported="false"
+            android:hardwareAccelerated="true"
+            android:theme="@android:style/Theme.Material.NoActionBar.Fullscreen" />
+
         <!-- Çökme raporu: ayrı süreçte, Compose kullanmayan basit ekran -->
         <activity
             android:name=".crash.CrashReportActivity"

@@ -35,7 +35,7 @@ import com.example.ui.theme.TextSecondary
 
 /**
  * Resmi fragman: uygulama içinde YouTube'un RESMİ gömülü oynatıcısıyla bir pencerede oynatılır
- * ([TrailerPlayerDialog]); gömmeye kapalı videolar için "YouTube'da Aç" yedeği vardır.
+ * ([TrailerPlayerActivity]); gömmeye kapalı videolar için "YouTube'da Aç" yedeği vardır.
  *
  * YouTube API Hizmetleri koşulları: oynatıcı değiştirilmez (logo, reklam, kontroller gizlenmez),
  * en az 200x200 boyutundadır, video indirilmez/arka planda oynatılmaz, yalnızca kullanıcı dokununca yüklenir.
@@ -68,12 +68,13 @@ fun TrailerButton(
     accent: Color = Color(0xFFD63447)
 ) {
     val key = movie.trailerKey ?: return
-    var showPlayer by remember { mutableStateOf(false) }
-    if (showPlayer) {
-        TrailerPlayerDialog(title = movie.title, trailerKey = key, onDismiss = { showPlayer = false })
-    }
+    val context = LocalContext.current
     OutlinedButton(
-        onClick = { showPlayer = true },
+        onClick = {
+            // Ayrı, opak oynatıcı ekranı: görüntü + kontroller düzgün görünür (Dialog içinde sadece ses geliyordu)
+            runCatching { context.startActivity(TrailerPlayerActivity.intent(context, movie.title, key)) }
+                .onFailure { TrailerLauncher.open(context, key) }
+        },
         shape = RoundedCornerShape(14.dp),
         border = BorderStroke(1.2.dp, accent),
         modifier = modifier
