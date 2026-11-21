@@ -1630,6 +1630,34 @@ class ExampleRobolectricTest {
   }
 
   @Test
+  fun `home ticket opens quick filter from wheel stub and duel from ticket body`() {
+    composeTestRule.onNodeWithTag("home_screen_list").performScrollToNode(hasTestTag("home_ticket_hero"))
+    composeTestRule.onNodeWithTag("home_ticket_wheel").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("filter_screen_list").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("filter_custom_lists_row")
+      .performScrollToNode(hasTestTag("filter_custom_list_${com.example.data.repository.SmartWheelLists.WORST}"))
+    composeTestRule.onNodeWithTag("filter_back_button").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("home_screen_list").performScrollToNode(hasTestTag("home_ticket_hero"))
+    composeTestRule.onNodeWithTag("home_ticket_duel").performClick()
+    composeTestRule.waitForIdle()
+    assertEquals(com.example.ui.viewmodel.Screen.COMPARE, composeTestRule.activity.let {
+      androidx.lifecycle.ViewModelProvider(it)[com.example.ui.viewmodel.DecisionViewModel::class.java].currentScreen.value
+    })
+  }
+
+  @Test
+  fun `home smart wheels row spins worst movies wheel directly`() {
+    composeTestRule.onNodeWithTag("home_screen_list").performScrollToNode(hasTestTag("home_smart_wheels_row"))
+    composeTestRule.onNodeWithTag("home_smart_wheels_row")
+      .performScrollToNode(hasTestTag("home_smart_wheel_${com.example.data.repository.SmartWheelLists.WORST}"))
+    composeTestRule.onNodeWithTag("home_smart_wheel_${com.example.data.repository.SmartWheelLists.WORST}").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("spin_wheel_button").assertExists()
+  }
+
+  @Test
   fun `manifest disables backup and keeps widget action receiver private`() {
     val app = ApplicationProvider.getApplicationContext<Application>()
     val pm = app.packageManager

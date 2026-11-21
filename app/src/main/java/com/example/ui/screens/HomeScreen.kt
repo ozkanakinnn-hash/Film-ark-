@@ -100,6 +100,9 @@ fun HomeScreen(
     onToggleTheme: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
     personalPicks: List<Movie> = emptyList(),
+    ticketPosters: List<Movie> = emptyList(),
+    smartWheelLists: List<com.example.data.model.CustomWheelList> = emptyList(),
+    onSpinSmartList: (String) -> Unit = {},
     onSoloClick: () -> Unit,
     onCompareClick: () -> Unit = {},
     onCustomListsClick: () -> Unit = {},
@@ -108,7 +111,6 @@ fun HomeScreen(
     onStatsClick: () -> Unit = {},
     onSavedDecisionClick: (Movie) -> Unit = {}
 ) {
-    val totalMinutesSaved = savedDecisions.sumOf { it.minutesSaved }
     var shareTarget by remember { mutableStateOf<Movie?>(null) }
 
     var detailMovie by remember { mutableStateOf<Movie?>(null) }
@@ -282,73 +284,48 @@ fun HomeScreen(
                 Spacer(modifier = Modifier.height(18.dp))
             }
 
-            // Psychological Value Hook Card
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(
-                        Brush.linearGradient(
-                            listOf(
-                                CinemaTheme.colors.heroGradientStart,
-                                CinemaTheme.colors.heroGradientEnd
-                            )
-                        )
-                    )
-                    .border(
-                        1.dp,
-                        Brush.horizontalGradient(listOf(NeonPurple, PopcornGold)),
-                        RoundedCornerShape(20.dp)
-                    )
-                    .padding(20.dp)
-            ) {
-                Column {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(text = "⚡", fontSize = 18.sp)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "SEÇİM YORGUNLUĞUNA SON",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = ElectricCyan,
-                            letterSpacing = 1.sp
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "45 dakikalık 'Ne izlesek?' tartışmasını 10 saniyede bitirin.",
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = TextPrimary,
-                        lineHeight = 22.sp
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Koltukta kavga etmeyin, kararı kadere ve çarka bırakın. Beğenilmezse kimse suçlu değil!",
-                        fontSize = 13.sp,
-                        color = TextSecondary,
-                        lineHeight = 18.sp
-                    )
+            // Sinema bileti: solda Düello (Tinder), sağda koçanda Karar Çarkı
+            com.example.ui.components.HomeTicketHero(
+                duelPosters = ticketPosters.take(3),
+                wheelPosters = ticketPosters.drop(3).take(8),
+                onDuelClick = onCompareClick,
+                onWheelClick = onSoloClick
+            )
 
-                    Spacer(modifier = Modifier.height(14.dp))
-
-                    Row(
-                        modifier = Modifier
-                            .background(CinemaSurface.copy(alpha = 0.72f), RoundedCornerShape(10.dp))
-                            .padding(horizontal = 12.dp, vertical = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Kurtarılan Zaman: ",
-                            fontSize = 12.sp,
-                            color = TextMuted
-                        )
-                        Text(
-                            text = "$totalMinutesSaved+ Dakika 🎉",
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = PopcornGold
-                        )
+            if (smartWheelLists.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(14.dp))
+                Text(
+                    text = "Hazır Çarklar",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Black,
+                    color = TextPrimary,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                androidx.compose.foundation.lazy.LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    modifier = Modifier.fillMaxWidth().testTag("home_smart_wheels_row")
+                ) {
+                    items(smartWheelLists.size) { idx ->
+                        val list = smartWheelLists[idx]
+                        val accent = Color(list.accentColorHex)
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(14.dp))
+                                .background(accent.copy(alpha = 0.12f))
+                                .border(1.dp, accent.copy(alpha = 0.6f), RoundedCornerShape(14.dp))
+                                .clickable { onSpinSmartList(list.id) }
+                                .padding(horizontal = 12.dp, vertical = 10.dp)
+                                .testTag("home_smart_wheel_${list.id}")
+                        ) {
+                            Text(text = list.emoji, fontSize = 18.sp)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Column {
+                                Text(list.name, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                                Text("Çarkı çevir", fontSize = 10.sp, color = accent, fontWeight = FontWeight.SemiBold)
+                            }
+                        }
                     }
                 }
             }

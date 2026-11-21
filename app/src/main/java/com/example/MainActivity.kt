@@ -262,6 +262,14 @@ fun DecisionApp(
                         onToggleTheme = { viewModel.toggleTheme() },
                         onSettingsClick = { viewModel.navigateTo(Screen.SETTINGS) },
                         personalPicks = personalPicks,
+                        ticketPosters = remember(dailyNewReleases) {
+                            (com.example.data.repository.HighlightsRepository.popularMovies() + dailyNewReleases)
+                                .filter { it.posterPath.isNotBlank() }
+                                .distinctBy { it.id }
+                                .take(11)
+                        },
+                        smartWheelLists = smartWheelLists,
+                        onSpinSmartList = { id -> viewModel.spinCustomWheelList(id) },
                         onSoloClick = { viewModel.startSoloFlow() },
                         onCompareClick = { viewModel.openCompareMode() },
                         onCustomListsClick = { viewModel.openCustomLists() },
