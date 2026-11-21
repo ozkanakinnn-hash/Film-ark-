@@ -17,12 +17,12 @@ import re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SOURCES = [
-    os.path.join(ROOT, "app/src/main/java/com/example/data/repository/GeneratedMovies.kt"),
-    os.path.join(ROOT, "app/src/main/java/com/example/data/repository/GeneratedSeries.kt"),
+    os.path.join(ROOT, "shared/src/commonMain/kotlin/com/example/data/repository/GeneratedMovies.kt"),
+    os.path.join(ROOT, "shared/src/commonMain/kotlin/com/example/data/repository/GeneratedSeries.kt"),
 ]
 OUT = os.path.join(ROOT, "catalog/catalog.json")
 HIGHLIGHTS = os.path.join(ROOT, "tools/highlights.json")
-HIGHLIGHTS_KT = os.path.join(ROOT, "app/src/main/java/com/example/data/repository/GeneratedHighlights.kt")
+HIGHLIGHTS_KT = os.path.join(ROOT, "shared/src/commonMain/kotlin/com/example/data/repository/GeneratedHighlights.kt")
 
 
 def kstr(s):
@@ -55,7 +55,7 @@ def write_highlights_kotlin(hl):
         "import com.example.data.model.UpcomingRelease", "",
         "// BU DOSYA OTOMATİK ÜRETİLMİŞTİR: python3 tools/export_catalog_json.py (kaynak: tools/highlights.json)",
         "// Elle düzenlemeyin. Bilgiler ve posterler: TMDB.",
-        "internal object GeneratedHighlights {",
+        "object GeneratedHighlights {",
         f"    const val GENERATED_AT = {kstr(hl.get('generatedAt'))}",
         f"    val popularMovieTmdbIds: List<Int> = listOf({ints(hl.get('popularMovies', []))})",
         f"    val popularSeriesTmdbIds: List<Int> = listOf({ints(hl.get('popularSeries', []))})",

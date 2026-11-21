@@ -97,6 +97,7 @@ googleServices { missingGoogleServicesStrategy = MissingGoogleServicesStrategy.W
 // Some unused dependencies are commented out below instead of being removed.
 // This makes it easy to add them back in the future if needed.
 dependencies {
+  implementation(project(":shared"))
   implementation(platform(libs.androidx.compose.bom))
   // Firebase şu an kullanılmıyor (google-services.json yok); gizlilik ve APK boyutu için kapalı.
   // implementation(platform(libs.firebase.bom))

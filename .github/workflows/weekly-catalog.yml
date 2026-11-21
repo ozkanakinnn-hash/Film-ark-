@@ -63,9 +63,9 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add catalog/catalog.json tools/highlights.json \
-            app/src/main/java/com/example/data/repository/GeneratedHighlights.kt \
-            app/src/main/java/com/example/data/repository/GeneratedMovies.kt \
-            app/src/main/java/com/example/data/repository/GeneratedSeries.kt \
+            shared/src/commonMain/kotlin/com/example/data/repository/GeneratedHighlights.kt \
+            shared/src/commonMain/kotlin/com/example/data/repository/GeneratedMovies.kt \
+            shared/src/commonMain/kotlin/com/example/data/repository/GeneratedSeries.kt \
             app/src/main/java/com/example/data/repository/MovieRepository.kt
           if git diff --cached --quiet; then
             echo "Katalogda değişiklik yok."

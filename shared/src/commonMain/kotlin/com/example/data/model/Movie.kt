@@ -4,11 +4,17 @@ object TmdbImageConfig {
     const val IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500"
 
     /**
+     * TMDB afişleri açık mı? Android'de `NeIzlesekApp` açılışta BuildConfig.TMDB_POSTERS_ENABLED ile ayarlar
+     * (katalog ilk kez okunmadan önce). iOS'ta uygulama başlatılırken ayarlanır.
+     */
+    var postersEnabled: Boolean = true
+
+    /**
      * Builds the full TMDb poster URL for a given [posterPath].
      * Returns null when [posterPath] is null or blank so UI components render the bundled default placeholder.
      */
     fun getPosterUrl(posterPath: String?): String? {
-        if (!com.example.BuildConfig.TMDB_POSTERS_ENABLED) return null
+        if (!postersEnabled) return null
         val trimmed = posterPath?.trim().orEmpty()
         if (trimmed.isEmpty()) return null
         if (trimmed.startsWith("http://", ignoreCase = true) ||

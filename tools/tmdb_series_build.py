@@ -3,7 +3,7 @@
 TMDB dizi kataloğu üreticisi (derleme zamanı aracı).
 
 TMDB'den Türkiye'de izlenebilen, puanı ve oy sayısı yüksek dizileri seçer ve
-app/src/main/java/com/example/data/repository/GeneratedSeries.kt dosyasını üretir
+shared/src/commonMain/kotlin/com/example/data/repository/GeneratedSeries.kt dosyasını üretir
 (Türkçe ad, özet, sezon sayısı, bölüm süresi, puan, Türkiye platformları, resmi fragman).
 
 Kullanım:
@@ -22,7 +22,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from tmdb_poster_sync import ROOT, api_get  # noqa: E402
 from tmdb_catalog_build import PLATFORM_MAP, GENRE_COLORS, first_sentences, pick_trailer, kotlin_str  # noqa: E402
 
-GENERATED = os.path.join(ROOT, "app/src/main/java/com/example/data/repository/GeneratedSeries.kt")
+GENERATED = os.path.join(ROOT, "shared/src/commonMain/kotlin/com/example/data/repository/GeneratedSeries.kt")
 CHUNK = 25
 
 TV_GENRE_TR = {
@@ -131,7 +131,7 @@ def write_generated(items):
            "// BU DOSYA OTOMATİK ÜRETİLMİŞTİR: python3 tools/tmdb_series_build.py",
            "// Elle düzenlemeyin; değişiklikler bir sonraki üretimde kaybolur.",
            "// Dizi bilgileri ve posterler: TMDB. Platform bilgileri: JustWatch (TMDB üzerinden).",
-           "internal object GeneratedSeries {",
+           "object GeneratedSeries {",
            "    val series: List<Movie> by lazy {",
            "        " + (" + ".join(f"part{i + 1}()" for i in range(len(parts))) or "emptyList()"),
            "    }", ""]

@@ -24,7 +24,7 @@ import time
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from tmdb_poster_sync import CATALOG, ROOT, api_get, parse_catalog  # noqa: E402
 
-GENERATED = os.path.join(ROOT, "app/src/main/java/com/example/data/repository/GeneratedMovies.kt")
+GENERATED = os.path.join(ROOT, "shared/src/commonMain/kotlin/com/example/data/repository/GeneratedMovies.kt")
 CHUNK = 25  # JVM metot boyutu sınırına takılmamak için parça başına film
 
 GENRE_TR = {
@@ -184,7 +184,7 @@ def write_generated(movies):
            "// BU DOSYA OTOMATİK ÜRETİLMİŞTİR: python3 tools/tmdb_catalog_build.py",
            "// Elle düzenlemeyin; değişiklikler bir sonraki üretimde kaybolur.",
            "// Film bilgileri ve posterler: TMDB. Platform bilgileri: JustWatch (TMDB üzerinden).",
-           "internal object GeneratedMovies {",
+           "object GeneratedMovies {",
            "    val movies: List<Movie> by lazy {",
            "        " + " + ".join(f"part{i + 1}()" for i in range(len(parts))),
            "    }", ""]

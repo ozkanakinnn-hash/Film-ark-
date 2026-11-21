@@ -84,7 +84,19 @@ temaları" sorusuna "Seyrek" cevabı verilmesi uygundur (beklenen derece 12+).
 | 4.2 Asgari işlev | "Web sitesinin kopyası" sayılmak | Çark, filtreler, geçmiş, düello gibi yerel özellikler yeterli |
 | 2.1 Uygulama bütünlüğü | Çalışmayan forum düğmesi | Forum ekranında "Yakında açılıyor" açıkça yazıyor; sahte içerik yok |
 
-## 7. Sonraki adım
+## 7. İlerleme (A seçeneği)
+
+- [x] **Adım 1 — Ortak çekirdek (`shared` modülü):** veri modeli, 600 film/dizilik katalog, popüler/en kötü/yakında listeleri,
+      çark havuzu örnekleyici ve Türkçe arama artık Android ile iOS arasında ortak. Android testleri yeşil.
+- [x] **iOS derleme hattı:** `.github/workflows/ios-build.yml` her değişiklikte GitHub'ın macOS sunucusunda ortak kodu iOS için
+      derler ve testleri iPhone simülatöründe çalıştırır (Mac gerekmez; herkese açık depoda ücretsiz).
+- [ ] Adım 2 — Kalan mantık: filtreler, çark kararı, zevk profili, geçmiş (Room KMP), ayarlar (multiplatform-settings), haftalık katalog (Ktor).
+- [ ] Adım 3 — Ekranlar Compose Multiplatform'a: ana sayfa, filtre, çark, sonuç, düello, profil, alt menü.
+- [ ] Adım 4 — iOS'a özel parçalar: titreşim, ses, sallayarak çevirme, paylaşım, fragman (WKWebView, resmî YouTube oynatıcı), yedek dosyası.
+- [ ] Adım 5 — `iosApp` Xcode kabuğu (SwiftUI giriş noktası), ikon, açılış ekranı, `Info.plist`.
+- [ ] Adım 6 — İmzalama + TestFlight: GitHub Actions'ta App Store Connect API anahtarıyla otomatik yükleme.
+
+## 8. Sonraki adım (eski not)
 
 Hangi yaklaşımla ilerleyeceğimize siz karar verin (A önerilir). A seçilirse ilk iş Android kodunu
 bozmadan `shared` (ortak) modüle ayırmak olacak; her adımda Android testleri yeşil kalacak şekilde

@@ -7,6 +7,8 @@ import com.example.crash.CrashReporter
 class NeIzlesekApp : Application() {
     override fun onCreate() {
         super.onCreate()
+        // Ortak modüldeki katalog ilk kez okunmadan önce poster kaynağını ayarla (B planı: posterMode=cards)
+        com.example.data.model.TmdbImageConfig.postersEnabled = BuildConfig.TMDB_POSTERS_ENABLED
         CrashReporter.install(this)
     }
 }

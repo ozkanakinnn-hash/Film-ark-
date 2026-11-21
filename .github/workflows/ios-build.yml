@@ -1,0 +1,54 @@
+# iOS derlemesi: ortak (shared) Kotlin çekirdeğini iOS için derler ve testlerini iPhone simülatöründe çalıştırır.
+# iOS yalnızca macOS'ta derlenebildiği için GitHub'ın macOS sunucuları kullanılır (herkese açık depoda ücretsiz).
+name: iOS derlemesi
+
+on:
+  push:
+    paths:
+      - "shared/**"
+      - "iosApp/**"
+      - "gradle/**"
+      - "*.gradle.kts"
+      - ".github/workflows/ios-build.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  shared-ios:
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Kotlin/Native önbelleği
+        uses: actions/cache@v4
+        with:
+          path: ~/.konan
+          key: konan-${{ runner.os }}-${{ hashFiles('gradle/libs.versions.toml') }}
+
+      - name: Ortak testler (iPhone simülatörü)
+        run: ./gradlew --no-configuration-cache :shared:iosSimulatorArm64Test
+
+      - name: iOS framework (cihaz + simülatör)
+        run: ./gradlew --no-configuration-cache :shared:linkReleaseFrameworkIosArm64 :shared:linkDebugFrameworkIosSimulatorArm64
+
+      - name: Test raporu
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shared-ios-test-results
+          path: shared/build/test-results/
+          if-no-files-found: ignore

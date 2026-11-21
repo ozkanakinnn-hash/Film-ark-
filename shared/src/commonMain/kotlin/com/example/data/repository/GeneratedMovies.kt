@@ -6,7 +6,7 @@ import com.example.data.model.Movie
 // BU DOSYA OTOMATİK ÜRETİLMİŞTİR: python3 tools/tmdb_catalog_build.py
 // Elle düzenlemeyin; değişiklikler bir sonraki üretimde kaybolur.
 // Film bilgileri ve posterler: TMDB. Platform bilgileri: JustWatch (TMDB üzerinden).
-internal object GeneratedMovies {
+object GeneratedMovies {
     val movies: List<Movie> by lazy {
         part1() + part2() + part3() + part4() + part5() + part6() + part7() + part8() + part9() + part10() + part11() + part12() + part13() + part14() + part15() + part16()
     }

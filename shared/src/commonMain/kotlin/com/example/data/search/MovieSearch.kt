@@ -1,27 +1,27 @@
 package com.example.data.search
 
 import com.example.data.model.Movie
-import java.text.Normalizer
-import java.util.Locale
 
 /**
  * Katalog içinde Türkçe karakterlere duyarsız arama.
  * "yuzuklerin" -> "Yüzüklerin Efendisi", "inception" -> özgün ada göre eşleşir.
  */
 object MovieSearch {
-    private val TR = Locale.forLanguageTag("tr")
-    private val COMBINING = Regex("\\p{Mn}+")
+    // Türkçe ve sık görülen Latin aksanlı harfler (platformdan bağımsız; java.text.Normalizer iOS'ta yok)
+    private val FOLD = mapOf(
+        'ı' to 'i', 'i' to 'i', 'ğ' to 'g', 'ş' to 's', 'ç' to 'c', 'ö' to 'o', 'ü' to 'u',
+        'â' to 'a', 'à' to 'a', 'á' to 'a', 'ä' to 'a', 'ã' to 'a', 'å' to 'a', 'ā' to 'a',
+        'ê' to 'e', 'è' to 'e', 'é' to 'e', 'ë' to 'e', 'ē' to 'e',
+        'î' to 'i', 'ì' to 'i', 'í' to 'i', 'ï' to 'i', 'ī' to 'i',
+        'ô' to 'o', 'ò' to 'o', 'ó' to 'o', 'õ' to 'o', 'ø' to 'o', 'ō' to 'o',
+        'û' to 'u', 'ù' to 'u', 'ú' to 'u', 'ū' to 'u',
+        'ñ' to 'n', 'ý' to 'y', 'ÿ' to 'y', 'ž' to 'z', 'š' to 's', 'č' to 'c', 'ć' to 'c', 'ł' to 'l', 'ß' to 's'
+    )
 
     fun normalize(text: String): String {
-        val lower = text.lowercase(TR)
-            .replace('ı', 'i')
-            .replace('ğ', 'g')
-            .replace('ş', 's')
-            .replace('ç', 'c')
-            .replace('ö', 'o')
-            .replace('ü', 'u')
-        return Normalizer.normalize(lower, Normalizer.Form.NFD)
-            .replace(COMBINING, "")
+        // Türkçe büyük harfler: "I" → "ı", "İ" → "i" (lowercase() yerel ayardan bağımsızdır)
+        val lower = text.replace('I', 'ı').replace('İ', 'i').lowercase()
+        return buildString(lower.length) { for (c in lower) append(FOLD[c] ?: c) }
             .replace(Regex("[^a-z0-9 ]"), " ")
             .replace(Regex("\\s+"), " ")
             .trim()

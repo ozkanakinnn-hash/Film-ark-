@@ -4,7 +4,7 @@ import com.example.data.model.UpcomingRelease
 
 // BU DOSYA OTOMATİK ÜRETİLMİŞTİR: python3 tools/export_catalog_json.py (kaynak: tools/highlights.json)
 // Elle düzenlemeyin. Bilgiler ve posterler: TMDB.
-internal object GeneratedHighlights {
+object GeneratedHighlights {
     const val GENERATED_AT = "2026-11-21"
     val popularMovieTmdbIds: List<Int> = listOf(1726, 1813355, 687163, 1507696, 1294189, 1543469, 1596275, 299534, 755898, 940721, 1101383, 354912, 157336, 1366, 693134, 27205, 155, 101299, 2034, 1571955, 695721, 299536, 131631, 129, 238, 83533, 533535, 24428, 438631, 496243, 671, 1311031, 120, 603, 634649, 453, 70160, 414906, 1780005, 131634, 550, 122, 99861, 4935, 1084242, 1561726, 1236045, 597)
     val popularSeriesTmdbIds: List<Int> = listOf(1434, 1622, 76331, 18347, 5920, 1413, 84773, 60735, 1100, 1400, 2734, 1421, 83631, 1877, 18165, 2316, 4057, 1408, 456, 60572, 1416, 42009, 1411, 2691, 1420, 4588, 1438, 41727, 247718, 37854, 61923, 48866, 253376, 387, 153312, 279246, 4614, 549, 63333, 46648, 1668, 291507, 213375, 108978, 1433, 65494, 79744, 44006)
