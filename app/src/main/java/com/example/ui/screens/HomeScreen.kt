@@ -101,6 +101,8 @@ fun HomeScreen(
     onSettingsClick: () -> Unit = {},
     personalPicks: List<Movie> = emptyList(),
     ticketPosters: List<Movie> = emptyList(),
+    homeWheelMovies: List<Movie> = emptyList(),
+    onHomeWheelStopped: ((Movie) -> Unit)? = null,
     smartWheelLists: List<com.example.data.model.CustomWheelList> = emptyList(),
     customWheelLists: List<com.example.data.model.CustomWheelList> = emptyList(),
     popularMovieBackdrops: List<String> = com.example.data.repository.HighlightsRepository.popularMovieBackdrops().take(1),
@@ -283,10 +285,11 @@ fun HomeScreen(
             // Dikey sinema bileti: üstte sinemaskop perdede Karar Çarkı, altta Film Karşılaştır (Tinder) kuponu
             com.example.ui.components.HomeTicketHero(
                 duelPosters = ticketPosters.take(3),
-                wheelPosters = ticketPosters.drop(3).take(8),
+                wheelPosters = homeWheelMovies.ifEmpty { ticketPosters.drop(3).take(8) },
                 onDuelClick = onCompareClick,
                 onWheelClick = onSoloClick,
-                wheelBackdropPath = popularMovieBackdrops.firstOrNull()
+                wheelBackdropPath = popularMovieBackdrops.firstOrNull(),
+                onWheelSpinFinished = onHomeWheelStopped
             )
 
             if (personalPicks.isNotEmpty()) {
@@ -320,7 +323,7 @@ fun HomeScreen(
                 val smartById = smartWheelLists.associateBy { it.id }
                 com.example.ui.components.CinemaScopeWheelCard(
                     title = "Popüler Filmler",
-                    subtitle = "Türkiye'de bu hafta en çok izlenenlerden 12 dilimlik çark",
+                    subtitle = "Türkiye'de bu hafta en çok izlenenlerden 12 dilim",
                     label = "FİLM",
                     backdropPath = popularMovieBackdrops.firstOrNull(),
                     posters = smartById[com.example.data.repository.SmartWheelLists.POPULAR_MOVIES]?.movies.orEmpty(),
@@ -329,7 +332,7 @@ fun HomeScreen(
                 )
                 com.example.ui.components.CinemaScopeWheelCard(
                     title = "Popüler Diziler",
-                    subtitle = "Türkiye'de bu hafta en çok izlenenlerden 12 dilimlik çark",
+                    subtitle = "Türkiye'de bu hafta en çok izlenenlerden 12 dilim",
                     label = "DİZİ",
                     backdropPath = popularSeriesBackdrops.firstOrNull(),
                     posters = smartById[com.example.data.repository.SmartWheelLists.POPULAR_SERIES]?.movies.orEmpty(),
@@ -339,7 +342,8 @@ fun HomeScreen(
             }
             Spacer(modifier = Modifier.height(16.dp))
             com.example.ui.components.WorstWheelCard(
-                onClick = { onSpinSmartList(com.example.data.repository.SmartWheelLists.WORST) }
+                onClick = { onSpinSmartList(com.example.data.repository.SmartWheelLists.WORST) },
+                posters = smartWheelLists.firstOrNull { it.id == com.example.data.repository.SmartWheelLists.WORST }?.movies.orEmpty()
             )
 
             Spacer(modifier = Modifier.height(22.dp))

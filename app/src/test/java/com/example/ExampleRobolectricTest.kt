@@ -95,6 +95,16 @@ class ExampleRobolectricTest {
     assertEquals("Ne İzlesek?", appName)
   }
 
+  /** Çark sonucu ekranı artık kendiliğinden kapanmıyor: testlerde varsa kapat. */
+  private fun closeRevealIfShown() {
+    val close = composeTestRule.onAllNodesWithTag("reveal_close_button").fetchSemanticsNodes()
+    if (close.isNotEmpty()) {
+      composeTestRule.onNodeWithTag("reveal_close_button").performClick()
+      composeTestRule.mainClock.advanceTimeBy(600L)
+      composeTestRule.waitForIdle()
+    }
+  }
+
   @Test
   fun `solo flow opens wheel, spins, vetoes, and opens flex screen without crashing`() {
     composeTestRule.onNodeWithTag("solo_mode_button").performScrollTo().performClick()
@@ -108,6 +118,7 @@ class ExampleRobolectricTest {
     composeTestRule.onNodeWithTag("spin_wheel_button").performScrollTo().performClick()
     composeTestRule.mainClock.advanceTimeBy(5000L)
     composeTestRule.waitForIdle()
+    closeRevealIfShown()
 
     composeTestRule.onNodeWithTag("wheel_screen_list")
       .performScrollToNode(hasTestTag("veto_action_button"))
@@ -115,6 +126,7 @@ class ExampleRobolectricTest {
     // Veto mührü (~1,5 sn) + yeniden dönüş + tür açılış sahnesi
     composeTestRule.mainClock.advanceTimeBy(9000L)
     composeTestRule.waitForIdle()
+    closeRevealIfShown()
 
     composeTestRule.onNodeWithTag("wheel_screen_list")
       .performScrollToNode(hasTestTag("wheel_movie_poster"))
@@ -144,6 +156,7 @@ class ExampleRobolectricTest {
     composeTestRule.onNodeWithTag("wheel_canvas_box").performClick()
     composeTestRule.mainClock.advanceTimeBy(5000L)
     composeTestRule.waitForIdle()
+    closeRevealIfShown()
 
     composeTestRule.onNodeWithTag("wheel_screen_list")
       .performScrollToNode(hasTestTag("wheel_direct_share_button"))
@@ -173,6 +186,7 @@ class ExampleRobolectricTest {
     composeTestRule.onNodeWithTag("spin_wheel_button").performScrollTo().performClick()
     composeTestRule.mainClock.advanceTimeBy(5000L)
     composeTestRule.waitForIdle()
+    closeRevealIfShown()
 
     composeTestRule.onNodeWithTag("wheel_screen_list")
       .performScrollToNode(hasTestTag("wheel_direct_share_button"))
@@ -194,6 +208,7 @@ class ExampleRobolectricTest {
     composeTestRule.onNodeWithTag("quick_narrow_filters_card").performClick()
     composeTestRule.mainClock.advanceTimeBy(400L)
     composeTestRule.waitForIdle()
+    closeRevealIfShown()
 
     composeTestRule.onNodeWithTag("rating_chip_8.0_plus").performScrollTo().performClick()
     composeTestRule.waitForIdle()
@@ -217,6 +232,7 @@ class ExampleRobolectricTest {
     composeTestRule.onNodeWithTag("spin_wheel_button").performScrollTo().performClick()
     composeTestRule.mainClock.advanceTimeBy(5000L)
     composeTestRule.waitForIdle()
+    closeRevealIfShown()
 
     composeTestRule.onNodeWithTag("wheel_screen_list")
       .performScrollToNode(hasTestTag("mark_watched_button"))
@@ -263,6 +279,7 @@ class ExampleRobolectricTest {
     composeTestRule.onNodeWithTag("note_button_$watchedId").performScrollTo().performClick()
     composeTestRule.mainClock.advanceTimeBy(400L)
     composeTestRule.waitForIdle()
+    closeRevealIfShown()
 
     composeTestRule.onNodeWithTag("note_input_$watchedId").performScrollTo().performTextInput("Koltukta çok güldük")
     composeTestRule.onNodeWithTag("save_note_button_$watchedId").performScrollTo().performClick()
@@ -298,6 +315,7 @@ class ExampleRobolectricTest {
     composeTestRule.onNodeWithTag("spin_wheel_button").performScrollTo().performClick()
     composeTestRule.mainClock.advanceTimeBy(5000L)
     composeTestRule.waitForIdle()
+    closeRevealIfShown()
 
     val spunMovie = RoomRepository.currentRoom.value?.selectedMovie
     assertTrue("A movie should be selected after spin", spunMovie != null)
@@ -399,6 +417,7 @@ class ExampleRobolectricTest {
     composeTestRule.onNodeWithTag("spin_wheel_button").performScrollTo().performClick()
     composeTestRule.mainClock.advanceTimeBy(5000L)
     composeTestRule.waitForIdle()
+    closeRevealIfShown()
 
     composeTestRule.onNodeWithTag("wheel_screen_list")
       .performScrollToNode(hasTestTag("horror_reveal_animation"))
@@ -423,6 +442,7 @@ class ExampleRobolectricTest {
     composeTestRule.onNodeWithTag("spin_wheel_button").performScrollTo().performClick()
     composeTestRule.mainClock.advanceTimeBy(5000L)
     composeTestRule.waitForIdle()
+    closeRevealIfShown()
 
     composeTestRule.onNodeWithTag("wheel_screen_list")
       .performScrollToNode(hasTestTag("cinematic_reveal_animation"))
@@ -455,6 +475,7 @@ class ExampleRobolectricTest {
     composeTestRule.onNodeWithTag("spin_wheel_button").performScrollTo().performClick()
     composeTestRule.mainClock.advanceTimeBy(5000L)
     composeTestRule.waitForIdle()
+    closeRevealIfShown()
 
     composeTestRule.onNodeWithTag("wheel_screen_list")
       .performScrollToNode(hasTestTag("wheel_favorite_button"))
@@ -556,6 +577,7 @@ class ExampleRobolectricTest {
     shadowSensorManager.sendSensorEventToListeners(event2)
     composeTestRule.mainClock.advanceTimeBy(5000L)
     composeTestRule.waitForIdle()
+    closeRevealIfShown()
 
     assertTrue(
       "Shaking the device must trigger spin and reveal a selected movie",
@@ -634,6 +656,7 @@ class ExampleRobolectricTest {
     composeTestRule.onNodeWithTag("spin_wheel_button").performClick()
     composeTestRule.mainClock.advanceTimeBy(5000L)
     composeTestRule.waitForIdle()
+    closeRevealIfShown()
 
     assertTrue(
       "Spinning and stopping the wheel must activate hardware vibrator",
@@ -890,6 +913,7 @@ class ExampleRobolectricTest {
     composeTestRule.onNodeWithTag("wheel_theme_toggle_button").performClick()
     composeTestRule.mainClock.advanceTimeBy(450L)
     composeTestRule.waitForIdle()
+    closeRevealIfShown()
 
     assertFalse("Theme toggle on WheelScreen must switch to light theme", ThemePreferences.isDarkMode.value)
     composeTestRule.onNodeWithTag("wheel_screen_list")
@@ -903,6 +927,7 @@ class ExampleRobolectricTest {
     composeTestRule.onNodeWithTag("wheel_theme_toggle_button").performClick()
     composeTestRule.mainClock.advanceTimeBy(450L)
     composeTestRule.waitForIdle()
+    closeRevealIfShown()
 
     assertTrue("Second toggle must restore dark theme", ThemePreferences.isDarkMode.value)
     composeTestRule.onNodeWithTag("wheel_screen_list")
@@ -1006,6 +1031,7 @@ class ExampleRobolectricTest {
     composeTestRule.mainClock.autoAdvance = true
     composeTestRule.mainClock.advanceTimeBy(4800L)
     composeTestRule.waitForIdle()
+    closeRevealIfShown()
 
     composeTestRule.onNodeWithTag("wheel_screen_list")
       .performScrollToNode(hasTestTag("wheel_winner_highlight_badge"))
@@ -1028,6 +1054,7 @@ class ExampleRobolectricTest {
     }
     composeTestRule.mainClock.advanceTimeBy(300L)
     composeTestRule.waitForIdle()
+    closeRevealIfShown()
 
     composeTestRule.onNodeWithTag("compare_round_label")
       .assertTextContains("Tur 2", substring = true)
@@ -1038,6 +1065,7 @@ class ExampleRobolectricTest {
     }
     composeTestRule.mainClock.advanceTimeBy(300L)
     composeTestRule.waitForIdle()
+    closeRevealIfShown()
 
     composeTestRule.onNodeWithTag("compare_round_label")
       .assertTextContains("Tur 3", substring = true)
@@ -1091,6 +1119,7 @@ class ExampleRobolectricTest {
     composeTestRule.onNodeWithTag("spin_wheel_button").performScrollTo().performClick()
     composeTestRule.mainClock.advanceTimeBy(4800L)
     composeTestRule.waitForIdle()
+    closeRevealIfShown()
 
     composeTestRule.onNodeWithTag("wheel_screen_list")
       .performScrollToNode(hasTestTag("wheel_winner_highlight_badge"))
@@ -1174,6 +1203,7 @@ class ExampleRobolectricTest {
     composeTestRule.onNodeWithTag("spin_wheel_button").performScrollTo().performClick()
     composeTestRule.mainClock.advanceTimeBy(4800L)
     composeTestRule.waitForIdle()
+    closeRevealIfShown()
 
     val recorded = RoomRepository.savedDecisions.value.first()
 
@@ -1273,6 +1303,7 @@ class ExampleRobolectricTest {
     composeTestRule.onNodeWithTag("spin_wheel_button").performScrollTo().performClick()
     composeTestRule.mainClock.advanceTimeBy(5000L)
     composeTestRule.waitForIdle()
+    closeRevealIfShown()
 
     composeTestRule.onNodeWithTag("wheel_screen_list")
       .performScrollToNode(hasTestTag("genre_reveal_animation"))
@@ -1303,6 +1334,7 @@ class ExampleRobolectricTest {
     composeTestRule.onNodeWithTag("spin_wheel_button").performScrollTo().performClick()
     composeTestRule.mainClock.advanceTimeBy(5000L)
     composeTestRule.waitForIdle()
+    closeRevealIfShown()
 
     composeTestRule.onNodeWithTag("wheel_screen_list")
       .performScrollToNode(hasTestTag("genre_reveal_scifi"))
@@ -1631,6 +1663,7 @@ class ExampleRobolectricTest {
     composeTestRule.onNodeWithTag("spin_wheel_button").performScrollTo().performClick()
     composeTestRule.mainClock.advanceTimeBy(6000L)
     composeTestRule.waitForIdle()
+    closeRevealIfShown()
     composeTestRule.onNodeWithTag("wheel_screen_list")
       .performScrollToNode(hasTestTag("wheel_winner_highlight_badge"))
     composeTestRule.onNodeWithTag("wheel_winner_highlight_badge").assertExists()
@@ -1717,5 +1750,33 @@ class ExampleRobolectricTest {
     composeTestRule.onNodeWithTag("home_ready_lists_toggle").performClick()
     composeTestRule.waitForIdle()
     assertTrue(composeTestRule.onAllNodesWithTag("home_list_tile_preset_korku_gecesi").fetchSemanticsNodes().isEmpty())
+  }
+
+  @Test
+  fun `home ticket wheel spins in place and watch later stamp moves the film to profile`() {
+    com.example.data.repository.WatchLaterRepository.clearForTests()
+    composeTestRule.onNodeWithTag("home_screen_list").performScrollToNode(hasTestTag("home_ticket_spin_button"))
+    composeTestRule.onNodeWithTag("home_ticket_spin_button").performClick()
+    composeTestRule.mainClock.advanceTimeBy(9000L)
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("genre_reveal_overlay").assertIsDisplayed()
+    val vm = androidx.lifecycle.ViewModelProvider(composeTestRule.activity)[com.example.ui.viewmodel.DecisionViewModel::class.java]
+    val winner = vm.homeRevealMovie.value!!
+    assertTrue("Çarktaki filmlerden biri kazanmalı", vm.homeWheelMovies.value.any { it.id == winner.id })
+    composeTestRule.onNodeWithTag("reveal_watch_button").performScrollTo().performClick()
+    composeTestRule.mainClock.advanceTimeBy(2500L)
+    composeTestRule.waitForIdle()
+    assertTrue(com.example.data.repository.WatchLaterRepository.contains(winner.id))
+    assertTrue(composeTestRule.onAllNodesWithTag("genre_reveal_overlay").fetchSemanticsNodes().isEmpty())
+
+    // Profil: İzlenecekler → İzlendi
+    composeTestRule.onNodeWithTag("home_screen_list").performScrollToNode(hasTestTag("profile_icon_button"))
+    composeTestRule.onNodeWithTag("profile_icon_button").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("profile_screen_list").performScrollToNode(hasTestTag("profile_watch_later_section"))
+    composeTestRule.onNodeWithTag("watch_later_mark_watched_${winner.id}").performClick()
+    composeTestRule.waitForIdle()
+    assertTrue(!com.example.data.repository.WatchLaterRepository.contains(winner.id))
+    assertTrue(com.example.data.repository.WatchedMovieRepository.excludedWheelMovieIds.value.contains(winner.id))
   }
 }

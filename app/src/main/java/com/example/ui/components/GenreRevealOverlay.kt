@@ -9,6 +9,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
@@ -29,6 +31,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
@@ -67,6 +71,23 @@ import kotlin.random.Random
 
 private const val REVEAL_DURATION_MS = 3800
 private const val SKIP_FROM = 0.88f
+/** Eylemli sonuç ekranında sahnenin durduğu nokta (çıkış solması başlamadan önce). */
+private const val HOLD_AT = 0.86f
+private const val STAMP_MS = 1500
+
+/** Sonuç ekranındaki eylemler. Verilirse ekran kendiliğinden kapanmaz; kullanıcı seçim yapana kadar kalır. */
+class RevealActions(
+    val canVeto: Boolean,
+    val onVeto: () -> Unit,
+    val onWatchLater: () -> Unit,
+    val onShare: () -> Unit,
+    val onClose: () -> Unit
+)
+
+private enum class RevealStamp(val title: String, val sub: String, val color: Color) {
+    VETO("VETO", "NE İZLESEK? • REDDEDİLDİ", Color(0xFFE8283C)),
+    WATCH("İZLENECEK", "NE İZLESEK? • LİSTEYE EKLENDİ", Color(0xFFE9B949))
+}
 
 /**
  * Çark durduktan sonra açılan tam ekran sinematik tür sahnesi.
@@ -80,20 +101,55 @@ fun GenreRevealOverlay(
     onFinished: () -> Unit,
     modifier: Modifier = Modifier,
     /** Verilirse tür başlığının yerine büyük, sallanan bir "damga" olarak gösterilir (ör. "Bunu sen istedin!"). */
-    stampText: String? = null
+    stampText: String? = null,
+    /** Verilirse sahne sonunda durur ve VETO / İZLENECEK / Paylaş / Kapat düğmeleri çıkar. */
+    actions: RevealActions? = null
 ) {
+    val reduceMotion = com.example.data.local.LocalReduceMotion.current
     val style = remember(movie.id) { movie.resolveGenreRevealStyle() }
     val particles = remember(movie.id) { buildParticles(movie.id.hashCode()) }
     val timeline = remember(movie.id) { Animatable(0f) }
     val scope = rememberCoroutineScope()
     val latestOnFinished by rememberUpdatedState(onFinished)
 
+    val latestActions by rememberUpdatedState(actions)
+    // Mühür (VETO / İZLENECEK) zaman çizelgesi: 0 → 1, bitince ilgili eylem çağrılır
+    var stamp by remember(movie.id) { mutableStateOf<RevealStamp?>(null) }
+    val stampT = remember(movie.id) { Animatable(0f) }
+
     LaunchedEffect(movie.id) {
+        if (actions != null) {
+            // Sonuç ekranı: sahne oynar ve durur; kullanıcı seçim yapana kadar açık kalır
+            if (reduceMotion) timeline.snapTo(HOLD_AT)
+            else timeline.animateTo(HOLD_AT, tween((REVEAL_DURATION_MS * HOLD_AT).toInt(), easing = LinearEasing))
+            return@LaunchedEffect
+        }
         timeline.animateTo(1f, tween(REVEAL_DURATION_MS, easing = LinearEasing))
         latestOnFinished()
     }
 
+    fun playStamp(kind: RevealStamp) {
+        if (stamp != null) return
+        stamp = kind
+        scope.launch {
+            if (timeline.value < HOLD_AT) timeline.snapTo(HOLD_AT)
+            if (reduceMotion) {
+                // Animasyonsuz: mühür basılı halde görünür, kısa süre sonra eylem uygulanır
+                stampT.snapTo(0.6f)
+                stampT.animateTo(1f, tween(700, easing = LinearEasing))
+            } else {
+                stampT.animateTo(1f, tween(STAMP_MS, easing = LinearEasing))
+            }
+            val a = latestActions ?: return@launch
+            if (kind == RevealStamp.VETO) a.onVeto() else a.onWatchLater()
+        }
+    }
+
     fun skip() {
+        if (actions != null) {
+            if (timeline.value < HOLD_AT && stamp == null) scope.launch { timeline.snapTo(HOLD_AT) }
+            return
+        }
         if (timeline.value >= SKIP_FROM) return
         scope.launch {
             timeline.snapTo(SKIP_FROM)
@@ -137,11 +193,15 @@ fun GenreRevealOverlay(
             drawBackgroundFx(style, t, particles)
         }
 
-        // Orta sahne: afiş + bilgiler
+        // Orta sahne: afiş + bilgiler. Afiş boyu ekran yüksekliğine göre ayarlanır; küçük ekranlarda içerik kayar.
+        androidx.compose.foundation.layout.BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val posterH = if (actions != null) (maxHeight * 0.42f).coerceIn(170.dp, 330.dp) else 260.dp
+        val posterW = if (actions != null) posterH * 0.68f else 176.dp
         Column(
             modifier = Modifier
                 .align(Alignment.Center)
-                .padding(horizontal = 28.dp)
+                .then(if (actions != null) Modifier.verticalScroll(androidx.compose.foundation.rememberScrollState()) else Modifier)
+                .padding(horizontal = 28.dp, vertical = if (actions != null) 56.dp else 0.dp)
                 .graphicsLayer {
                     translationX = shake.x * density
                     translationY = shake.y * density
@@ -178,6 +238,17 @@ fun GenreRevealOverlay(
 
             val posterIn = segment(t, 0.12f, 0.42f)
             val posterEase = EaseOutBack.transform(posterIn)
+            // Mühür vuruşu: sarsıntı + kararma (afiş kutusunun tamamına uygulanır)
+            val sv = stampT.value
+            val landPhase = ((sv * STAMP_MS - 260f) / 300f).coerceIn(0f, 1f)
+            val stampShake = if (landPhase in 0.01f..0.99f) sin(landPhase * 30f) * (1f - landPhase) else 0f
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.graphicsLayer {
+                    translationX = stampShake * 10.dp.toPx()
+                    translationY = stampShake * 5.dp.toPx()
+                }
+            ) {
             MoviePosterImage(
                 title = movie.title,
                 posterPath = movie.posterPath,
@@ -188,8 +259,8 @@ fun GenreRevealOverlay(
                 cornerRadius = 18.dp,
                 testTag = "genre_reveal_overlay_poster",
                 modifier = Modifier
-                    .width(176.dp)
-                    .height(260.dp)
+                    .width(posterW)
+                    .height(posterH)
                     .graphicsLayer {
                         alpha = segment(t, 0.12f, 0.22f)
                         val s = 0.55f + 0.45f * posterEase
@@ -206,6 +277,51 @@ fun GenreRevealOverlay(
                     )
                     .border(1.5.dp, style.secondaryColor.copy(alpha = 0.8f), RoundedCornerShape(18.dp))
             )
+            // Işık süzmesi: afiş yerine oturunca soldan sağa geçen parlama
+            val shine = segment(t, 0.44f, 0.66f)
+            if (shine in 0.001f..0.999f) {
+                Canvas(
+                    modifier = Modifier
+                        .width(posterW)
+                        .height(posterH)
+                ) {
+                    val x = -size.width * 0.6f + size.width * 2.2f * shine
+                    drawRect(
+                        Brush.linearGradient(
+                            listOf(Color.Transparent, Color.White.copy(alpha = 0.32f), Color.Transparent),
+                            start = Offset(x, 0f),
+                            end = Offset(x + size.width * 0.5f, size.height)
+                        )
+                    )
+                }
+            }
+            stamp?.let { kind ->
+                val drop = androidx.compose.animation.core.FastOutSlowInEasing.transform(((sv * STAMP_MS - 260f) / 260f).coerceIn(0f, 1f))
+                Box(
+                    Modifier
+                        .width(posterW)
+                        .height(posterH)
+                        .background(Color.Black.copy(alpha = 0.5f * landPhase), RoundedCornerShape(18.dp))
+                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .graphicsLayer {
+                            val sc = 2.6f - 1.6f * drop
+                            scaleX = sc; scaleY = sc
+                            alpha = (drop * 1.4f).coerceAtMost(1f)
+                            rotationZ = -14f
+                        }
+                        .border(5.dp, kind.color, RoundedCornerShape(14.dp))
+                        .background(kind.color.copy(alpha = 0.08f), RoundedCornerShape(14.dp))
+                        .padding(horizontal = 16.dp, vertical = 7.dp)
+                        .testTag(if (kind == RevealStamp.VETO) "reveal_veto_stamp" else "reveal_watch_stamp")
+                ) {
+                    Text(kind.title, fontSize = if (kind == RevealStamp.VETO) 46.sp else 34.sp, letterSpacing = 6.sp, fontWeight = FontWeight.Black, color = kind.color)
+                    Text(kind.sub, fontSize = 9.sp, letterSpacing = 1.6.sp, fontWeight = FontWeight.Black, color = kind.color)
+                }
+            }
+            }
 
             Spacer(Modifier.height(24.dp))
 
@@ -298,6 +414,22 @@ fun GenreRevealOverlay(
                     scaleY = s
                 }
             )
+            if (actions != null) {
+                val actionsIn = if (reduceMotion) 1f else segment(t, 0.6f, 0.8f)
+                Spacer(Modifier.height(20.dp))
+                RevealActionRow(
+                    actions = actions,
+                    enabled = stamp == null && actionsIn > 0.5f,
+                    onVeto = { playStamp(RevealStamp.VETO) },
+                    onWatch = { playStamp(RevealStamp.WATCH) },
+                    modifier = Modifier.graphicsLayer {
+                        alpha = actionsIn
+                        translationY = (1f - CinemaMotion.EmphasizedDecelerate.transform(actionsIn)) * 24.dp.toPx()
+                    }
+                )
+            }
+        }
+
         }
 
         // Ön katman: perde, parlama, karartma gibi sahneyi örten efektler
@@ -305,7 +437,23 @@ fun GenreRevealOverlay(
             drawForegroundFx(style, t)
         }
 
-        Text(
+        if (actions != null) {
+            Text(
+                "✕",
+                color = Color.White.copy(alpha = 0.8f),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = 40.dp, end = 18.dp)
+                    .size(40.dp)
+                    .background(Color.Black.copy(alpha = 0.35f), RoundedCornerShape(999.dp))
+                    .clickable(onClickLabel = "Sonucu kapat") { if (stamp == null) actions.onClose() }
+                    .padding(top = 7.dp)
+                    .testTag("reveal_close_button")
+            )
+        } else Text(
             text = "Geçmek için dokun",
             color = Color.White.copy(alpha = 0.45f * segment(t, 0.6f, 0.75f)),
             fontSize = 11.sp,
@@ -799,4 +947,62 @@ private fun DrawScope.drawCurtains(t: Float) {
         )
     }
     drawLine(Color(0xFFE9B949), Offset(0f, valanceH - 2.dp.toPx()), Offset(w, valanceH - 2.dp.toPx()), 2.dp.toPx())
+}
+
+
+/** Sonuç ekranı düğmeleri: VETO (tek hak), İZLENECEK, Paylaş. */
+@Composable
+private fun RevealActionRow(
+    actions: RevealActions,
+    enabled: Boolean,
+    onVeto: () -> Unit,
+    onWatch: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val pill = RoundedCornerShape(999.dp)
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+            if (actions.canVeto) {
+                Text(
+                    "✕  VETO",
+                    fontSize = 14.sp,
+                    letterSpacing = 1.5.sp,
+                    fontWeight = FontWeight.Black,
+                    color = Color(0xFFFF4D5E),
+                    modifier = Modifier
+                        .border(2.dp, Color(0xFFFF4D5E), pill)
+                        .background(Color(0x33E8283C), pill)
+                        .clickable(enabled = enabled, onClickLabel = "Bu filmi veto et") { onVeto() }
+                        .padding(horizontal = 20.dp, vertical = 12.dp)
+                        .testTag("reveal_veto_button")
+                )
+            }
+            Text(
+                "✓  İZLENECEK",
+                fontSize = 14.sp,
+                letterSpacing = 1.5.sp,
+                fontWeight = FontWeight.Black,
+                color = Color(0xFF1A1408),
+                modifier = Modifier
+                    .shadow(10.dp, pill)
+                    .background(Brush.verticalGradient(listOf(Color(0xFFF3CF74), Color(0xFFD9A23A))), pill)
+                    .clickable(enabled = enabled, onClickLabel = "İzleneceklere ekle") { onWatch() }
+                    .padding(horizontal = 20.dp, vertical = 12.dp)
+                    .testTag("reveal_watch_button")
+            )
+        }
+        Spacer(Modifier.height(12.dp))
+        Text(
+            "↗  Sosyal Medyada Paylaş",
+            fontSize = 13.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White.copy(alpha = 0.9f),
+            modifier = Modifier
+                .border(1.dp, Color.White.copy(alpha = 0.35f), pill)
+                .background(Color.Black.copy(alpha = 0.25f), pill)
+                .clickable(enabled = enabled, onClickLabel = "Sonucu paylaş") { actions.onShare() }
+                .padding(horizontal = 18.dp, vertical = 10.dp)
+                .testTag("reveal_share_button")
+        )
+    }
 }

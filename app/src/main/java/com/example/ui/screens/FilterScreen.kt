@@ -657,6 +657,28 @@ fun FilterScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // Seçimler bittiğinde hemen çevirmek için: kült bölümüne inmeden çarkı aç
+            Button(
+                onClick = onProceedToWheel,
+                enabled = eligibleMovies.isNotEmpty(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+                    .testTag("filter_spin_selected_button"),
+                colors = ButtonDefaults.buttonColors(containerColor = PopcornGold),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Text(
+                    text = "▶ Seçtiklerimle Çarkı Çevir • ${eligibleMovies.size} ${eligibleMovies.contentNoun()}",
+                    color = Color(0xFF1A1408),
+                    fontWeight = FontWeight.Black,
+                    fontSize = 15.sp,
+                    maxLines = 1
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             // Diğer: Kült & Çok İzlenen Filmler (Platformlarda Olmasa da Göster)
             Card(
                 modifier = Modifier

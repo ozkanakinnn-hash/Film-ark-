@@ -145,6 +145,7 @@ fun DecisionApp(
     val maxYear by viewModel.maxYear.collectAsState()
     val minRating by viewModel.minRating.collectAsState()
     val feedbackToast by viewModel.feedbackToast.collectAsState()
+    val homeWheelMovies by viewModel.homeWheelMovies.collectAsState()
     val compareState by viewModel.compareState.collectAsState()
     val isDarkTheme by viewModel.isDarkTheme.collectAsState()
     val favoriteMovieIds by viewModel.favoriteMovieIds.collectAsState()
@@ -273,6 +274,8 @@ fun DecisionApp(
                         onSpinSmartList = { id -> viewModel.spinCustomWheelList(id) },
                         onSoloClick = { viewModel.startSoloFlow() },
                         onCompareClick = { viewModel.openCompareMode() },
+                        homeWheelMovies = homeWheelMovies,
+                        onHomeWheelStopped = { movie -> viewModel.onHomeWheelStopped(movie) },
                         onCustomListsClick = { viewModel.openCustomLists() },
                         onHistoryClick = { viewModel.navigateTo(Screen.HISTORY) },
                         onProfileClick = { viewModel.navigateTo(Screen.PROFILE) },
@@ -357,6 +360,7 @@ fun DecisionApp(
                         onSpinClick = { viewModel.spinWheel() },
                         onSpinCompleted = { eventId -> viewModel.completeSpin(eventId) },
                         onVetoClick = { viewModel.applyVeto() },
+                        onAddToWatchLater = { movie -> viewModel.addToWatchLater(movie) },
                         onMarkAsWatched = { viewModel.markMovieAsWatched(it) },
                         onSelectAlternative = { viewModel.chooseAlternativeMovie(it) },
                         onOpenStoryModal = { viewModel.navigateTo(Screen.FLEX) },
@@ -411,6 +415,7 @@ fun DecisionApp(
                     ProfileScreen(
                         watchLaterMovies = remember(watchLaterIds) { watchLaterIds.mapNotNull { MovieRepository.getMovieById(it) } },
                         onToggleWatchLater = { movie -> viewModel.toggleWatchLater(movie) },
+                        onMarkWatchLaterWatched = { movie -> viewModel.moveWatchLaterToWatched(movie) },
                         onAddToWheel = { movie -> viewModel.openMovieInWheelFromShowcase(movie) },
                         watchedMovies = watchedMovies,
                         savedDecisions = savedDecisions,
@@ -504,6 +509,42 @@ fun DecisionApp(
             }
           }
         }
+    }
+    // Ana sayfa bilet çarkının sonucu: tüm uygulamanın üstünde, seçim yapılana kadar açık kalır
+    val homeReveal by viewModel.homeRevealMovie.collectAsState()
+    var homeShareMovie by remember { mutableStateOf<com.example.data.model.Movie?>(null) }
+    androidx.activity.compose.BackHandler(enabled = homeReveal != null) { viewModel.closeHomeReveal() }
+    androidx.compose.animation.AnimatedVisibility(
+        visible = homeReveal != null,
+        enter = androidx.compose.animation.fadeIn(),
+        exit = androidx.compose.animation.fadeOut()
+    ) {
+        val shown = remember { mutableStateOf<com.example.data.model.Movie?>(null) }
+        homeReveal?.let { shown.value = it }
+        shown.value?.let { movie ->
+            com.example.ui.components.GenreRevealOverlay(
+                movie = movie,
+                onFinished = { viewModel.closeHomeReveal() },
+                actions = com.example.ui.components.RevealActions(
+                    canVeto = true,
+                    onVeto = { viewModel.vetoHomeReveal() },
+                    onWatchLater = { viewModel.watchLaterHomeReveal() },
+                    onShare = { homeShareMovie = movie },
+                    onClose = { viewModel.closeHomeReveal() }
+                )
+            )
+        }
+    }
+    homeShareMovie?.let { movie ->
+        com.example.ui.components.SocialShareDialog(
+            movie = movie,
+            onOpenStoryCard = {
+                homeShareMovie = null
+                viewModel.closeHomeReveal()
+                viewModel.selectMovieForFlex(movie)
+            },
+            onDismiss = { homeShareMovie = null }
+        )
     }
     }
 }

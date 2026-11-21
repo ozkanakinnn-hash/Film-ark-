@@ -2,6 +2,9 @@ package com.example
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.assertTextContains
 import com.example.data.repository.HighlightsRepository
@@ -64,5 +67,62 @@ class RevealStampRobolectricTest {
         }
         rule.onNodeWithTag("worst_wheel_header").assertIsDisplayed()
         rule.onNodeWithTag("rezalet_meter").assertIsDisplayed()
+    }
+
+    @Test
+    fun resultScreen_staysOpen_andVetoStampThenCallback() {
+        val movie = HighlightsRepository.worstMovies().first()
+        var vetoed = false
+        var closed = false
+        rule.setContent {
+            GenreRevealOverlay(
+                movie = movie,
+                onFinished = { closed = true },
+                actions = com.example.ui.components.RevealActions(
+                    canVeto = true,
+                    onVeto = { vetoed = true },
+                    onWatchLater = {},
+                    onShare = {},
+                    onClose = { closed = true }
+                )
+            )
+        }
+        rule.mainClock.advanceTimeBy(8000L)
+        rule.waitForIdle()
+        assertTrue("Sonuç ekranı kendiliğinden kapanmamalı", !closed)
+        rule.onNodeWithTag("genre_reveal_overlay").assertIsDisplayed()
+        rule.onNodeWithTag("reveal_veto_button").performScrollTo().performClick()
+        rule.mainClock.advanceTimeBy(600L)
+        rule.onNodeWithTag("reveal_veto_stamp", useUnmergedTree = true).assertExists()
+        rule.mainClock.advanceTimeBy(1500L)
+        rule.waitForIdle()
+        assertTrue("Mühür bitince veto uygulanmalı", vetoed)
+    }
+
+    @Test
+    fun resultScreen_watchLaterStampThenCallback() {
+        val movie = HighlightsRepository.worstMovies().first()
+        var watch = false
+        rule.setContent {
+            GenreRevealOverlay(
+                movie = movie,
+                onFinished = {},
+                actions = com.example.ui.components.RevealActions(
+                    canVeto = false,
+                    onVeto = {},
+                    onWatchLater = { watch = true },
+                    onShare = {},
+                    onClose = {}
+                )
+            )
+        }
+        rule.mainClock.advanceTimeBy(5000L)
+        rule.waitForIdle()
+        assertTrue(rule.onAllNodesWithTag("reveal_veto_button").fetchSemanticsNodes().isEmpty())
+        rule.onNodeWithTag("reveal_share_button").assertExists()
+        rule.onNodeWithTag("reveal_watch_button").performScrollTo().performClick()
+        rule.mainClock.advanceTimeBy(2200L)
+        rule.waitForIdle()
+        assertTrue(watch)
     }
 }

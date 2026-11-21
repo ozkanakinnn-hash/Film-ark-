@@ -39,7 +39,7 @@ object BackupManager {
     ) {
         val total: Int get() = decisions + watched + customLists + favorites + watchLater
         fun summary(): String =
-            "$decisions karar, $watched izlenen, $favorites favori, $customLists liste, $watchLater daha sonra izle geri yüklendi"
+            "$decisions karar, $watched izlenen, $favorites favori, $customLists liste, $watchLater izlenecek geri yüklendi"
     }
 
     class InvalidBackupException(message: String) : Exception(message)

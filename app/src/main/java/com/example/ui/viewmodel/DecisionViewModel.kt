@@ -147,9 +147,59 @@ class DecisionViewModel(
     /** "Daha Sonra İzle" listesindeki film kimlikleri (en yeni başta). */
     val watchLaterIds: StateFlow<List<String>> = com.example.data.repository.WatchLaterRepository.ids
 
+    // ---------------- Ana sayfa bilet çarkı (rastgele filmler, yerinde döner) ----------------
+
+    private fun drawHomeWheel(): List<Movie> {
+        val excluded = WatchedMovieRepository.excludedWheelMovieIds.value
+        val pool = MovieRepository.allMovies.filter { !it.isSeries && it.posterPath.isNotBlank() && !excluded.contains(it.id) }
+        return WheelPoolSampler.sample(pool.ifEmpty { MovieRepository.allMovies }, maxSlices = 8)
+    }
+
+    private val _homeWheelMovies = MutableStateFlow<List<Movie>>(emptyList())
+    val homeWheelMovies: StateFlow<List<Movie>> = _homeWheelMovies.asStateFlow()
+    private val _homeRevealMovie = MutableStateFlow<Movie?>(null)
+    val homeRevealMovie: StateFlow<Movie?> = _homeRevealMovie.asStateFlow()
+
+    fun refreshHomeWheel() {
+        _homeWheelMovies.value = drawHomeWheel()
+    }
+
+    fun onHomeWheelStopped(movie: Movie) {
+        _homeRevealMovie.value = movie
+    }
+
+    /** Veto: mühür sonrası sonuç kapanır, tür zevk profiline işlenir, çark yeni filmlerle dolar. */
+    fun vetoHomeReveal() {
+        _homeRevealMovie.value?.let { com.example.data.repository.TasteProfileRepository.recordVeto(it) }
+        _homeRevealMovie.value = null
+        refreshHomeWheel()
+    }
+
+    /** İzlenecek: listeye eklenir, karar geçmişe kaydedilir, sonuç kapanır. */
+    fun watchLaterHomeReveal() {
+        val movie = _homeRevealMovie.value ?: return
+        addToWatchLater(movie)
+        RoomRepository.recordSavedDecision(movie, "Karar Çarkı")
+        _homeRevealMovie.value = null
+        refreshHomeWheel()
+    }
+
+    fun closeHomeReveal() {
+        _homeRevealMovie.value?.let { RoomRepository.recordSavedDecision(it, "Karar Çarkı") }
+        _homeRevealMovie.value = null
+    }
+
+    /** Sonuç ekranındaki "İZLENECEK" mührü: listede yoksa ekler (zaten varsa dokunmaz). */
+    fun addToWatchLater(movie: Movie) {
+        if (!com.example.data.repository.WatchLaterRepository.contains(movie.id)) {
+            com.example.data.repository.WatchLaterRepository.toggle(movie.id)
+        }
+        _feedbackToast.value = "✓ '${movie.title}' izleneceklere eklendi"
+    }
+
     fun toggleWatchLater(movie: Movie) {
         val added = com.example.data.repository.WatchLaterRepository.toggle(movie.id)
-        _feedbackToast.value = if (added) "🔖 '${movie.title}' daha sonra izle listesine eklendi"
+        _feedbackToast.value = if (added) "🔖 '${movie.title}' izleneceklere eklendi"
         else "'${movie.title}' listeden çıkarıldı"
     }
 
@@ -636,6 +686,14 @@ class DecisionViewModel(
         _feedbackToast.value = "✓ '${movie.title}' izlenenlere eklendi, bir daha çarkta çıkmayacak!"
     }
 
+    /** İzlenecekler listesindeki filmi "İzlendi" yap: izlenenlere taşınır, izleneceklerden çıkar. */
+    fun moveWatchLaterToWatched(movie: Movie) {
+        if (com.example.data.repository.WatchLaterRepository.contains(movie.id)) {
+            com.example.data.repository.WatchLaterRepository.toggle(movie.id)
+        }
+        markMovieAsWatched(movie)
+    }
+
     fun updateWatchedMovieNote(movieId: String, note: String) {
         WatchedMovieRepository.updateNote(movieId, note)
         _feedbackToast.value = if (note.isBlank()) {
@@ -696,6 +754,7 @@ class DecisionViewModel(
     val personalPicks: StateFlow<List<Movie>> = _personalPicks.asStateFlow()
 
     init {
+        refreshHomeWheel()
         // İzlenenler, favoriler ya da katalog değişince "Sana Özel" listesi yenilenir
         viewModelScope.launch {
             kotlinx.coroutines.flow.combine(

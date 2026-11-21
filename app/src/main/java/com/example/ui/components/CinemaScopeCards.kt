@@ -151,39 +151,39 @@ fun CinemaScopeWheelCard(
         topLabel = "NE İZLESEK? • $label",
         modifier = modifier
             .fillMaxWidth()
-            .height(186.dp)
+            .height(224.dp)
             .shadow(12.dp, shape)
             .clip(shape)
             .border(1.dp, Color.White.copy(alpha = 0.06f), shape)
             .clickable(role = Role.Button, onClickLabel = "$title çarkını çevir", onClick = onClick)
             .testTag(testTag)
     ) {
-        Column(modifier = Modifier.padding(start = 16.dp, top = 38.dp, end = 142.dp)) {
-            Text(
-                title,
-                fontFamily = FontFamily.Serif,
-                fontStyle = FontStyle.Italic,
-                fontWeight = FontWeight.Bold,
-                fontSize = 26.sp,
-                lineHeight = 28.sp,
-                color = SIvory,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.testTag("${testTag}_title")
-            )
-            Spacer(Modifier.height(6.dp))
+        // Başlık tek başına tam genişlikte: hiçbir telefonda kesilmez
+        Text(
+            title,
+            fontFamily = FontFamily.Serif,
+            fontStyle = FontStyle.Italic,
+            fontWeight = FontWeight.Bold,
+            fontSize = 28.sp,
+            lineHeight = 30.sp,
+            color = SIvory,
+            maxLines = 1,
+            softWrap = false,
+            modifier = Modifier.padding(start = 16.dp, top = 36.dp, end = 12.dp).testTag("${testTag}_title")
+        )
+        Column(modifier = Modifier.align(Alignment.BottomStart).padding(start = 16.dp, bottom = 36.dp, end = 176.dp)) {
             Text(
                 subtitle,
-                fontSize = 11.sp,
-                lineHeight = 14.sp,
-                color = SIvory.copy(alpha = 0.7f),
-                maxLines = 2
+                fontSize = 11.5.sp,
+                lineHeight = 15.sp,
+                color = SIvory.copy(alpha = 0.75f),
+                maxLines = 3
             )
             Spacer(Modifier.height(12.dp))
             GoldPill("▶ ÇARKI ÇEVİR")
         }
         // Sağ altta üst üste küçük afişler
-        Row(modifier = Modifier.align(Alignment.BottomEnd).padding(end = 12.dp, bottom = 30.dp)) {
+        Row(modifier = Modifier.align(Alignment.BottomEnd).padding(end = 14.dp, bottom = 36.dp)) {
             posters.take(4).forEachIndexed { i, movie ->
                 MoviePosterImage(
                     title = movie.title,
@@ -195,8 +195,8 @@ fun CinemaScopeWheelCard(
                     genre = movie.genre,
                     year = movie.year,
                     modifier = Modifier
-                        .offset(x = (-12 * i).dp)
-                        .size(width = 40.dp, height = 60.dp)
+                        .offset(x = (-14 * i).dp)
+                        .size(width = 48.dp, height = 72.dp)
                         .shadow(6.dp, RoundedCornerShape(6.dp))
                         .border(1.5.dp, SNoir, RoundedCornerShape(6.dp))
                 )

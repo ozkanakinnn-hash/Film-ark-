@@ -118,6 +118,7 @@ private val QuickNoteChips = listOf(
 fun ProfileScreen(
     watchLaterMovies: List<Movie> = emptyList(),
     onToggleWatchLater: (Movie) -> Unit = {},
+    onMarkWatchLaterWatched: (Movie) -> Unit = {},
     onAddToWheel: (Movie) -> Unit = {},
     watchedMovies: List<WatchedMovieEntity>,
     savedDecisions: List<SavedDecision>,
@@ -568,13 +569,13 @@ fun ProfileScreen(
                         .testTag("profile_watch_later_section")
                 ) {
                     Text(
-                        text = "🔖 Daha Sonra İzle (${watchLaterMovies.size})",
+                        text = "🎟️ İzlenecekler (${watchLaterMovies.size})",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Black,
                         color = TextPrimary
                     )
                     Text(
-                        text = "Bir afişe dokun: fragmanı izle ya da çarka ekle",
+                        text = "İzlediğinde \"İzlendi\"ye bas, izlenenlere taşınsın. Afişe dokun: fragman ya da çarka ekle",
                         fontSize = 12.sp,
                         color = TextSecondary
                     )
@@ -608,6 +609,21 @@ fun ProfileScreen(
                                     color = TextPrimary,
                                     maxLines = 2,
                                     overflow = TextOverflow.Ellipsis
+                                )
+                                Spacer(modifier = Modifier.height(6.dp))
+                                Text(
+                                    text = "✓ İzlendi",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Black,
+                                    color = Color(0xFF1A1408),
+                                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(999.dp))
+                                        .background(Color(0xFFE9B949))
+                                        .clickable(onClickLabel = "${movie.title} izlendi olarak işaretle") { onMarkWatchLaterWatched(movie) }
+                                        .padding(vertical = 6.dp)
+                                        .testTag("watch_later_mark_watched_${movie.id}")
                                 )
                             }
                         }

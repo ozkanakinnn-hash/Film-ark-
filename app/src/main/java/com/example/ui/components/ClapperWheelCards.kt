@@ -66,54 +66,83 @@ private val CEdge = Color(0xFF2A2530)
 
 /** "Bunu Niye İzledim?" kartı: logo + kesik çizgili çerçeve + eğik "BUNU SEN İSTEDİN" damgası. */
 @Composable
-fun WorstWheelCard(onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun WorstWheelCard(onClick: () -> Unit, modifier: Modifier = Modifier, posters: List<com.example.data.model.Movie> = emptyList()) {
     val shape = RoundedCornerShape(18.dp)
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
+    // Sinemaskop çerçeve (Popüler kutularıyla aynı dil): siyah bantlar, koyu kırmızı perde, logo + damga
+    CinemaScopeBackdrop(
+        backdropUrl = null,
+        topLabel = "NE İZLESEK? • REZALET GECESİ",
         modifier = modifier
             .fillMaxWidth()
+            .height(176.dp)
+            .shadow(12.dp, shape)
             .clip(shape)
-            .background(Brush.horizontalGradient(listOf(Color(0xFF1F1A22), Color(0xFF151218))))
-            .drawWithContent {
-                drawContent()
-                drawRoundRect(
-                    color = Color(0x8094A3B8),
-                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(18.dp.toPx()),
-                    style = androidx.compose.ui.graphics.drawscope.Stroke(
-                        width = 1.5.dp.toPx(),
-                        pathEffect = androidx.compose.ui.graphics.PathEffect.dashPathEffect(floatArrayOf(8.dp.toPx(), 5.dp.toPx()))
-                    )
-                )
-            }
+            .border(1.dp, Color(0x33FF4D5E), shape)
             .clickable(role = Role.Button, onClickLabel = "Bunu Niye İzledim çarkını çevir", onClick = onClick)
-            .padding(14.dp)
             .testTag("home_worst_wheel_card")
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.brand_mark),
-            contentDescription = null,
-            modifier = Modifier
-                .size(46.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(Brush.radialGradient(listOf(Color(0xFF1B1822), CNoir)))
-                .padding(7.dp)
-        )
-        Spacer(Modifier.width(12.dp))
-        Column(modifier = Modifier.weight(1f)) {
-            Text("Bunu Niye İzledim?", fontSize = 16.sp, fontWeight = FontWeight.Black, color = CIvory)
-            Text("En düşük puanlı filmler çarkı", fontSize = 11.5.sp, color = CIvory.copy(alpha = 0.6f))
+        // Sağda solgun, eğik "kötü film" afişleri
+        Row(modifier = Modifier.align(Alignment.CenterEnd).padding(end = 12.dp, top = 6.dp)) {
+            posters.take(2).forEachIndexed { i, movie ->
+                MoviePosterImage(
+                    title = movie.title,
+                    posterPath = movie.posterPath,
+                    posterUrl = movie.posterUrl,
+                    accentColorHex = movie.colorHex,
+                    cornerRadius = 6.dp,
+                    showFallbackTitleBadge = false,
+                    genre = movie.genre,
+                    year = movie.year,
+                    modifier = Modifier
+                        .offset(x = (-16 * i).dp)
+                        .size(width = 46.dp, height = 69.dp)
+                        .rotate(-8f + i * 8f)
+                        .graphicsLayer { alpha = 0.75f }
+                        .border(1.5.dp, CNoir, RoundedCornerShape(6.dp))
+                )
+            }
         }
-        Text(
-            "BUNU SEN İSTEDİN",
-            fontSize = 10.sp,
-            fontWeight = FontWeight.Black,
-            color = Color(0xFFFF4D5E),
-            maxLines = 1,
-            modifier = Modifier
-                .rotate(-6f)
-                .border(1.5.dp, Color(0xFFFF4D5E), RoundedCornerShape(8.dp))
-                .padding(horizontal = 8.dp, vertical = 4.dp)
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.align(Alignment.CenterStart).padding(start = 14.dp, end = 92.dp)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.brand_mark),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(44.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Brush.radialGradient(listOf(Color(0xFF1B1822), CNoir)))
+                    .border(1.dp, CGold.copy(alpha = 0.45f), RoundedCornerShape(12.dp))
+                    .padding(7.dp)
+            )
+            Spacer(Modifier.width(12.dp))
+            Column {
+                Text(
+                    "Bunu Niye İzledim?",
+                    fontFamily = androidx.compose.ui.text.font.FontFamily.Serif,
+                    fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 21.sp,
+                    lineHeight = 23.sp,
+                    color = CIvory,
+                    maxLines = 2
+                )
+                Text("Çok izlenen, en düşük puanlı filmler", fontSize = 11.sp, color = CIvory.copy(alpha = 0.65f))
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    "BUNU SEN İSTEDİN",
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Black,
+                    color = Color(0xFFFF4D5E),
+                    maxLines = 1,
+                    modifier = Modifier
+                        .rotate(-6f)
+                        .border(1.5.dp, Color(0xFFFF4D5E), RoundedCornerShape(8.dp))
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                )
+            }
+        }
     }
 }
 

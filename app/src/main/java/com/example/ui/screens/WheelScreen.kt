@@ -154,6 +154,7 @@ fun WheelScreen(
     onSpinCompleted: (Long) -> Unit,
     onVetoClick: () -> Unit,
     onMarkAsWatched: (Movie) -> Unit = {},
+    onAddToWatchLater: (Movie) -> Unit = {},
     onSelectAlternative: (Movie) -> Unit = {},
     onOpenStoryModal: () -> Unit,
     onBack: () -> Unit
@@ -258,8 +259,8 @@ fun WheelScreen(
         }
         onSpinCompleted(event.id)
         lastRevealMovie = event.winner
-        // "Animasyonları azalt" açıksa tam ekran tür sahnesi atlanır
-        revealMovie = if (reduceMotion) null else event.winner
+        // Sonuç ekranı her zaman açılır (animasyonları azalt açıksa animasyonsuz); seçim yapılana kadar kalır
+        revealMovie = event.winner
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -1155,6 +1156,19 @@ fun WheelScreen(
                 GenreRevealOverlay(
                     movie = movieForReveal,
                     onFinished = { revealMovie = null },
+                    actions = com.example.ui.components.RevealActions(
+                        canVeto = !isVetoedOnce && !isDecisionLocked,
+                        onVeto = {
+                            revealMovie = null
+                            onVetoClick()
+                        },
+                        onWatchLater = {
+                            onAddToWatchLater(movieForReveal)
+                            revealMovie = null
+                        },
+                        onShare = { showDirectShareSheet = true },
+                        onClose = { revealMovie = null }
+                    ),
                     stampText = if (activeCustomList?.id == com.example.data.repository.SmartWheelLists.WORST) {
                         "Bunu sen istedin! 🤷"
                     } else {

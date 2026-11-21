@@ -213,7 +213,7 @@ fun MovieDetailSheet(
                                 )
                                 Spacer(Modifier.width(6.dp))
                                 Text(
-                                    if (isInWatchLater) "Listende" else "Daha Sonra İzle",
+                                    if (isInWatchLater) "İzleneceklerde" else "İzlenecek",
                                     color = TextPrimary,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 13.sp,

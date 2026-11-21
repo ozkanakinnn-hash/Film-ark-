@@ -118,7 +118,7 @@ fun ProfileSettingsSection(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(16.dp))
             Text("Yedekle ve geri yükle", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
             Text(
-                "Geçmiş, izlediklerin, notların, favorilerin, özel listelerin ve \"Daha Sonra İzle\" " +
+                "Geçmiş, izlediklerin, notların, favorilerin, özel listelerin ve \"İzlenecekler\" " +
                     "senin seçtiğin bir dosyaya kaydedilir. Hiçbir sunucuya gönderilmez.",
                 fontSize = 11.sp, color = TextSecondary, lineHeight = 15.sp
             )

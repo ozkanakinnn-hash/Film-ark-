@@ -1,6 +1,14 @@
 package com.example.ui.components
 
 import androidx.compose.foundation.Canvas
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -104,7 +112,9 @@ fun HomeTicketHero(
     onDuelClick: () -> Unit,
     onWheelClick: () -> Unit,
     modifier: Modifier = Modifier,
-    wheelBackdropPath: String? = null
+    wheelBackdropPath: String? = null,
+    /** Verilirse ÇEVİR çarkı yerinde döndürür; çark durunca kazanan film bildirilir. */
+    onWheelSpinFinished: ((Movie) -> Unit)? = null
 ) {
     val total = WheelPartHeight + CouponHeight
     val shape = verticalTicketShape(WheelPartHeight.value, total.value)
@@ -130,6 +140,7 @@ fun HomeTicketHero(
                     posters = wheelPosters,
                     backdropPath = wheelBackdropPath,
                     onClick = onWheelClick,
+                    onSpinFinished = onWheelSpinFinished,
                     modifier = Modifier.fillMaxWidth().height(WheelPartHeight)
                 )
                 CompareCoupon(
@@ -154,15 +165,45 @@ fun HomeTicketHero(
 }
 
 @Composable
-private fun WheelPart(posters: List<Movie>, backdropPath: String?, onClick: () -> Unit, modifier: Modifier) {
+private fun WheelPart(
+    posters: List<Movie>,
+    backdropPath: String?,
+    onClick: () -> Unit,
+    onSpinFinished: ((Movie) -> Unit)?,
+    modifier: Modifier
+) {
+    val reduceMotion = com.example.data.local.LocalReduceMotion.current
+    val scope = rememberCoroutineScope()
+    val rotation = remember { Animatable(0f) }
+    var spinning by remember { mutableStateOf(false) }
+    val slices = posters.take(8)
+    fun spin() {
+        if (spinning || slices.isEmpty() || onSpinFinished == null) return
+        spinning = true
+        val sweep = 360f / slices.size
+        val winner = kotlin.random.Random.nextInt(slices.size)
+        // Dilim i'nin ortası çarkın tepesinden i*sweep derece ileride; ibreye (tepeye) getirmek için -i*sweep
+        val current = rotation.value
+        val targetMod = ((360f - winner * sweep) % 360f + 360f) % 360f
+        val currentMod = ((current % 360f) + 360f) % 360f
+        val delta = ((targetMod - currentMod) + 360f) % 360f
+        val turns = if (reduceMotion) 1 else 5
+        scope.launch {
+            rotation.animateTo(
+                current + turns * 360f + delta,
+                tween(if (reduceMotion) 1200 else 4200, easing = androidx.compose.animation.core.CubicBezierEasing(0.12f, 0.8f, 0.18f, 1f))
+            )
+            spinning = false
+            onSpinFinished(slices[winner])
+        }
+    }
     CinemaScopeBackdrop(
         backdropUrl = cinemaBackdropUrl(backdropPath),
         topLabel = "KARAR ÇARKI • SIRA 7 • KOLTUK 12",
         barHeight = 24.dp,
         modifier = modifier
-            .clickable(role = Role.Button, onClickLabel = "Hazır çarkları ve hızlı seçimi aç", onClick = onClick)
-            .semantics { contentDescription = "Karar çarkı: hazır çarklar ve hızlı seçim" }
-            .testTag("home_ticket_wheel")
+            .semantics { contentDescription = "Karar çarkı: rastgele filmlerden oluşan çark" }
+            .testTag("home_ticket_wheel_part")
     ) {
         // Perdeyi biraz daha karart: çark ve yazı okunaklı kalsın
         Box(
@@ -173,17 +214,36 @@ private fun WheelPart(posters: List<Movie>, backdropPath: String?, onClick: () -
         )
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize().padding(top = 36.dp)
+            modifier = Modifier.fillMaxSize().padding(top = 34.dp)
         ) {
-            FilmReelWheel(posters = posters, size = 184.dp)
+            Box(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .clickable(role = Role.Button, onClickLabel = "Çarkı çevir") { spin() }
+                    .testTag("home_ticket_reel")
+            ) {
+                FilmReelWheel(posters = slices, size = 184.dp, rotation = rotation.value)
+            }
             Spacer(Modifier.height(8.dp))
             Text(
-                "Modunu seç, çark bu akşamki filmini belirlesin",
+                if (spinning) "Çark dönüyor…" else "Rastgele filmler • Filtreli çark için dokun →",
                 fontSize = 12.sp,
-                color = Ivory.copy(alpha = 0.75f)
+                color = Ivory.copy(alpha = 0.78f),
+                modifier = Modifier
+                    .clip(RoundedCornerShape(999.dp))
+                    .clickable(role = Role.Button, onClickLabel = "Filtreleri seç ve hazır çarkları aç", onClick = onClick)
+                    .padding(horizontal = 10.dp, vertical = 3.dp)
+                    .testTag("home_ticket_wheel")
             )
-            Spacer(Modifier.height(10.dp))
-            GoldPill("▶ ÇEVİR", modifier = Modifier.padding(bottom = 4.dp))
+            Spacer(Modifier.height(8.dp))
+            GoldPill(
+                if (spinning) "● ● ●" else "▶ ÇEVİR",
+                modifier = Modifier
+                    .padding(bottom = 4.dp)
+                    .clip(RoundedCornerShape(999.dp))
+                    .clickable(role = Role.Button, onClickLabel = "Çarkı çevir") { if (onSpinFinished != null) spin() else onClick() }
+                    .testTag("home_ticket_spin_button")
+            )
         }
     }
 }
@@ -288,13 +348,15 @@ private fun wedgeShape(sweepDeg: Float, radiusFraction: Float) = GenericShape { 
 
 /** Film makarası çarkı: film şeridi dış halka, afişli dilimler, logolu göbek ve kırmızı ibre. */
 @Composable
-fun FilmReelWheel(posters: List<Movie>, size: Dp) {
+fun FilmReelWheel(posters: List<Movie>, size: Dp, rotation: Float = 0f) {
     val slices = posters.take(8)
     val n = slices.size.coerceAtLeast(1)
     val sweep = 360f / n
     val wedgeFraction = 72f / 100f
     val tints = listOf(Crimson, Noir, Gold, Noir)
     Box(modifier = Modifier.size(size), contentAlignment = Alignment.Center) {
+      // Dönen kısım: afişli dilimler + halkalar (ibre ve logo sabit kalır)
+      Box(modifier = Modifier.fillMaxSize().graphicsLayer { rotationZ = rotation }) {
         // Afişli dilimler
         slices.forEachIndexed { i, movie ->
             Box(
@@ -335,11 +397,6 @@ fun FilmReelWheel(posters: List<Movie>, size: Dp) {
                 val r = 72f * unit
                 drawLine(Gold, c, Offset(c.x + (r * cos(a)).toFloat(), c.y + (r * sin(a)).toFloat()), strokeWidth = 1.6f * unit)
             }
-            // Parlaklık
-            drawCircle(
-                Brush.radialGradient(listOf(Color.White.copy(alpha = 0.2f), Color.Transparent), center = Offset(c.x - 20 * unit, c.y - 28 * unit), radius = 60 * unit),
-                radius = 72f * unit, center = c
-            )
             // İç altın halka
             drawCircle(gold, radius = 77f * unit, center = c, style = Stroke(width = 5f * unit))
             // Film şeridi halkası
@@ -361,6 +418,17 @@ fun FilmReelWheel(posters: List<Movie>, size: Dp) {
             drawCircle(
                 Brush.radialGradient(listOf(Color(0xFF2A2430), Noir), center = Offset(c.x - 6 * unit, c.y - 8 * unit), radius = 30 * unit),
                 radius = 26.5f * unit, center = c
+            )
+        }
+      }
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val c = center
+            val outer = this.size.minDimension / 2f
+            val unit = outer / 100f
+            // Parlaklık (sabit ışık)
+            drawCircle(
+                Brush.radialGradient(listOf(Color.White.copy(alpha = 0.18f), Color.Transparent), center = Offset(c.x - 20 * unit, c.y - 28 * unit), radius = 60 * unit),
+                radius = 72f * unit, center = c
             )
             // Kırmızı ibre
             val needle = Path().apply {

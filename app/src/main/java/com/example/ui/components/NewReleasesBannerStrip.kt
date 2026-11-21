@@ -110,100 +110,51 @@ fun NewReleasesBannerStrip(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(22.dp))
-            .background(
-                Brush.linearGradient(
-                    listOf(
-                        CinemaTheme.colors.heroGradientStart.copy(alpha = 0.72f),
-                        CinemaSurface
-                    )
-                )
-            )
-            .border(
-                1.2.dp,
-                Brush.horizontalGradient(listOf(NeonPink.copy(alpha = 0.75f), PopcornGold.copy(alpha = 0.75f))),
-                RoundedCornerShape(22.dp)
-            )
-            .padding(vertical = 14.dp)
+            .padding(vertical = 4.dp)
             .testTag("new_releases_strip_section")
     ) {
-        // Header Row
+        // Başlık (Sinemaskop konsepti): küçük aralıklı etiket + italik serif başlık + tarih
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 14.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
+            verticalAlignment = Alignment.Bottom
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(32.dp)
-                        .background(
-                            Brush.linearGradient(listOf(NeonPink, PopcornGold)),
-                            CircleShape
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.LocalFireDepartment,
-                        contentDescription = "Öne çıkan filmler",
-                        tint = Color.White,
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.width(10.dp))
-                Column {
-                    Text(
-                        text = "🔥 Öne Çıkanlar • Haftalık Güncel",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = PopcornGold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        Text(
-                            text = "Platformlarda öne çıkan yeni filmler",
-                            fontSize = 11.sp,
-                            color = TextSecondary,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.weight(1f, fill = false)
-                        )
-                        Surface(
-                            color = CinemaSurfaceVariant,
-                            shape = RoundedCornerShape(6.dp)
-                        ) {
-                            Text(
-                                text = lastUpdatedDate,
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = ElectricCyan,
-                                modifier = Modifier
-                                    .padding(horizontal = 6.dp, vertical = 2.dp)
-                                    .testTag("new_releases_date_badge")
-                            )
-                        }
-                    }
-                }
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "NE İZLESEK? • HAFTALIK GÜNCEL",
+                    fontSize = 9.sp,
+                    letterSpacing = 2.5.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextSecondary,
+                    maxLines = 1
+                )
+                Text(
+                    text = "Öne Çıkanlar",
+                    fontFamily = androidx.compose.ui.text.font.FontFamily.Serif,
+                    fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp,
+                    color = TextPrimary,
+                    maxLines = 1
+                )
             }
-
-            // Liste haftalık katalogla kendiliğinden güncellenir; elle "Güncelle" düğmesi yok
+            Text(
+                text = lastUpdatedDate,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.sp,
+                color = PopcornGold,
+                modifier = Modifier
+                    .padding(bottom = 6.dp)
+                    .testTag("new_releases_date_badge")
+            )
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         LazyRow(
             state = listState,
-            contentPadding = PaddingValues(horizontal = 14.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding = PaddingValues(horizontal = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 // Kenarlarda yumuşak solma: kartlar şeride "akarak" girip çıkar
@@ -253,20 +204,19 @@ private fun NewReleasePosterCard(
 
     Card(
         modifier = Modifier
-            .width(156.dp)
-            .clip(RoundedCornerShape(18.dp))
+            .width(118.dp)
+            .clip(RoundedCornerShape(14.dp))
             .clickable { onClick() }
-            .border(1.dp, CinemaBorder, RoundedCornerShape(18.dp))
             .semantics(mergeDescendants = true) {}
             .testTag("new_release_card_${movie.id}"),
-        shape = RoundedCornerShape(18.dp),
-        colors = CardDefaults.cardColors(containerColor = CinemaSurface)
+        shape = RoundedCornerShape(14.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(190.dp)
+                    .height(168.dp)
             ) {
                 MoviePosterImage(
                     title = movie.title,
@@ -275,10 +225,10 @@ private fun NewReleasePosterCard(
                     accentColorHex = movie.colorHex,
                     genre = movie.genre,
                     year = movie.year,
-                    cornerRadius = 14.dp,
+                    cornerRadius = 12.dp,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(190.dp)
+                        .height(168.dp)
                 )
 
                 // Top status pill
@@ -355,11 +305,11 @@ private fun NewReleasePosterCard(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 10.dp, vertical = 8.dp)
+                    .padding(horizontal = 2.dp, vertical = 6.dp)
             ) {
                 Text(
                     text = movie.title,
-                    fontSize = 13.sp,
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     color = TextPrimary,
                     maxLines = 1,
@@ -373,21 +323,6 @@ private fun NewReleasePosterCard(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                Spacer(modifier = Modifier.height(5.dp))
-                Surface(
-                    color = NeonPurple.copy(alpha = 0.16f),
-                    shape = RoundedCornerShape(6.dp)
-                ) {
-                    Text(
-                        text = movie.audioBadgesText(),
-                        fontSize = 9.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = ElectricCyan,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                    )
-                }
             }
         }
     }
