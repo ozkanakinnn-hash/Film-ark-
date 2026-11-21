@@ -185,7 +185,7 @@ fun CompareScreen(
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = "Bir tür seç: düello tam ekran başlasın. Kartları kaydırarak seç!",
+                    text = "Bir tür seç: karşılaştırma tam ekran başlasın. Kartları kaydırarak seç!",
                     fontSize = 12.sp,
                     color = TextSecondary,
                     textAlign = TextAlign.Center,
@@ -360,7 +360,7 @@ private fun ImmersiveTopBar(genreLabel: String, onExitImmersive: () -> Unit, onR
                 .size(44.dp)
                 .background(CinemaSurface.copy(alpha = 0.8f), CircleShape)
         ) {
-            Icon(Icons.Default.Refresh, contentDescription = "Yeni düello", tint = PopcornGold)
+            Icon(Icons.Default.Refresh, contentDescription = "Yeni karşılaştırma", tint = PopcornGold)
         }
     }
     Spacer(modifier = Modifier.height(10.dp))
@@ -846,7 +846,7 @@ private fun ChampionStorySection(
             ) {
                 Icon(Icons.Default.Refresh, contentDescription = null, tint = TextPrimary, modifier = Modifier.size(16.dp))
                 Spacer(modifier = Modifier.width(6.dp))
-                Text(text = "Yeni Düello", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                Text(text = "Yeni Karşılaştırma", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
             }
         }
 
@@ -933,7 +933,7 @@ private fun ChampionStoryCard(champion: Movie, roundsWon: Int, modifier: Modifie
             Spacer(modifier = Modifier.width(9.dp))
             Column {
                 Text(text = "Ne İzlesek?", fontSize = 17.sp, fontWeight = FontWeight.Black, color = BrandIvory, letterSpacing = (-0.3).sp)
-                Text(text = "VS DÜELLO", fontSize = 9.sp, fontWeight = FontWeight.Black, color = BrandGold, letterSpacing = 2.sp)
+                Text(text = "FİLM KARŞILAŞTIR", fontSize = 9.sp, fontWeight = FontWeight.Black, color = BrandGold, letterSpacing = 2.sp)
             }
         }
 
@@ -981,7 +981,7 @@ private fun ChampionStoryCard(champion: Movie, roundsWon: Int, modifier: Modifie
                 Spacer(modifier = Modifier.width(3.dp))
                 Text(text = "${champion.imdb}", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = BrandGold)
                 Text(
-                    text = if (roundsWon > 0) "  •  $roundsWon turda rakiplerini eledi" else "  •  Düellonun galibi",
+                    text = if (roundsWon > 0) "  •  $roundsWon turda rakiplerini eledi" else "  •  Karşılaştırmanın galibi",
                     fontSize = 12.sp,
                     color = BrandIvory.copy(alpha = 0.8f)
                 )

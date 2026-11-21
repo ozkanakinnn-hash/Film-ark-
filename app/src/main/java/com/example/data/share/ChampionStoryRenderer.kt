@@ -50,7 +50,7 @@ object ChampionStoryRenderer {
             }
             putExtra(
                 Intent.EXTRA_TEXT,
-                "🏆 VS düellosunun kazananı: ${movie.title} (${movie.year}) • Ne İzlesek? ile seçtik!"
+                "🏆 Film karşılaştırmasının kazananı: ${movie.title} (${movie.year}) • Ne İzlesek? ile seçtik!"
             )
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
@@ -108,7 +108,7 @@ object ChampionStoryRenderer {
             letterSpacing = -0.02f
         }
         c.drawText("Ne İzlesek?", 236f, 176f, brandPaint)
-        c.drawText("VS DÜELLO", 238f, 222f, Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        c.drawText("FİLM KARŞILAŞTIR", 238f, 222f, Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = GOLD; textSize = 30f; typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
             letterSpacing = 0.25f
         })
@@ -150,7 +150,7 @@ object ChampionStoryRenderer {
         c.drawText("★ ${movie.imdb}", 72f, y, Paint(metaPaint).apply {
             color = GOLD; typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
         })
-        val rounds = if (roundsWon > 0) "$roundsWon turda rakiplerini eledi" else "Düellonun tartışmasız galibi"
+        val rounds = if (roundsWon > 0) "$roundsWon turda rakiplerini eledi" else "Karşılaştırmanın tartışmasız galibi"
         c.drawText(rounds, 72f + metaPaint.measureText("★ ${movie.imdb}") + 40f, y, metaPaint)
 
         // 6) Alt şerit

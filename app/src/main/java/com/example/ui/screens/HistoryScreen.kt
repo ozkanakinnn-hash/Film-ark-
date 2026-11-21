@@ -92,7 +92,7 @@ private enum class HistoryModeFilter(val id: String, val label: String, val tag:
     ALL("all", "Tümü", "history_filter_all"),
     SOLO("solo", "Karar Çarkı", "history_filter_solo"),
     CUSTOM("custom", "Özel Çark", "history_filter_custom"),
-    COMPARE("compare", "VS Düello", "history_filter_compare")
+    COMPARE("compare", "Film Karşılaştır", "history_filter_compare")
 }
 
 @Composable
@@ -484,7 +484,7 @@ fun HistoryScreen(
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
                             text = if (savedDecisions.isEmpty()) {
-                                "Çarkı çevir veya VS düellosu tamamla; seçilen tüm filmler burada saklanacak."
+                                "Çarkı çevir veya film karşılaştır; seçilen tüm filmler burada saklanacak."
                             } else {
                                 "Farklı bir film adı, tür veya mod filtresi deneyebilirsin."
                             },

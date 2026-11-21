@@ -66,7 +66,7 @@ fun normalizeSelectionModeCategory(rawMode: String): String {
     return when {
         rawMode.contains("Özel Çark", ignoreCase = true) -> "Özel Çark"
         rawMode.contains("Karşılaştır", ignoreCase = true) ||
-            rawMode.contains("VS", ignoreCase = true) -> "VS Düello"
+            rawMode.contains("VS", ignoreCase = true) -> "Film Karşılaştır"
         rawMode.contains("Kült", ignoreCase = true) ||
             rawMode.contains("Diğer", ignoreCase = true) -> "Kült & Diğer"
         // "Tek Başına" ve eski "Ortak Oda" kayıtları da çark kararıdır
@@ -89,7 +89,7 @@ fun analyzeDecisionHistory(
             topGenres = emptyList(),
             topMovies = emptyList(),
             modeBreakdown = emptyList(),
-            insightText = "Çarkı çevirdikçe veya VS düellosu tamamladıkça yerel veritabanındaki en sık seçilen tür ve filmler burada analiz edilecek."
+            insightText = "Çarkı çevirdikçe veya film karşılaştırdıkça yerel veritabanındaki en sık seçilen tür ve filmler burada analiz edilecek."
         )
     }
 
