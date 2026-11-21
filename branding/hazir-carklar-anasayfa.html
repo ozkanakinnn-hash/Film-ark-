@@ -25,7 +25,7 @@ h2{font-size:17px;font-weight:900;margin:0 4px 4px} .sub{font-size:12px;color:rg
 .worst{display:flex;align-items:center;gap:12px;border-radius:18px;padding:14px;margin-top:18px;background:linear-gradient(90deg,#1f1a22,#151218);border:1.5px dashed rgba(148,163,184,.5)}
 .worst .e{width:46px;height:46px;border-radius:12px;background:rgba(148,163,184,.15);display:flex;align-items:center;justify-content:center;font-size:24px;flex:none}
 .worst .tt{font-weight:900;font-size:16px}.worst .ss{font-size:11.5px;color:rgba(245,239,230,.6);margin-top:2px}
-.worst .go2{margin-left:auto;white-space:nowrap;font-size:10px;font-weight:900;color:#ff4d5e;border:1.5px solid #ff4d5e;border-radius:8px;padding:4px 8px;transform:rotate(-6deg);flex:none}
+.worst .go2{font-size:15px!important;letter-spacing:3px;padding:4px 12px!important;border-width:2.5px!important;margin-left:auto;white-space:nowrap;font-size:10px;font-weight:900;color:#ff4d5e;border:1.5px solid #ff4d5e;border-radius:8px;padding:4px 8px;transform:rotate(-6deg);flex:none}
 .ctx{font-size:10px;letter-spacing:1.5px;color:rgba(245,239,230,.35);font-weight:800;margin:4px 4px 0;text-align:center}
 .dash{display:flex;align-items:center;gap:12px;border-radius:18px;padding:14px;background:#17141b;border:1.5px solid rgba(45,212,191,.45)}
 .dash .e{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#2dd4bf,#d63447);display:flex;align-items:center;justify-content:center;font-size:20px;flex:none}
@@ -41,7 +41,7 @@ h2{font-size:17px;font-weight:900;margin:0 4px 4px} .sub{font-size:12px;color:rg
 .bgshade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,10,15,.55) 0%,rgba(11,10,15,.35) 35%,rgba(11,10,15,.88) 75%,rgba(11,10,15,.96) 100%)}
 .slate > *:not(.bgp):not(.bgshade){position:relative;z-index:2}
 .rowh{color:rgba(245,239,230,.75)!important;text-shadow:0 1px 3px #000}
-.neon{margin-top:34px;font-size:15.5px;font-weight:900;line-height:1.15;color:#fff;letter-spacing:.3px}
+.neon{display:flex;align-items:center;gap:7px;margin-top:58px;font-size:15.5px;font-weight:900;line-height:1.15;color:#fff;letter-spacing:.3px}
 .neon.on{text-shadow:0 0 4px #fff,0 0 10px var(--acc),0 0 20px var(--acc),0 2px 4px #000}
 .neon.off{text-shadow:0 2px 4px #000;color:rgba(255,255,255,.82)}
 .live{display:inline-flex;align-items:center;gap:5px;font-size:9px;font-weight:900;letter-spacing:1.4px;color:var(--acc);background:rgba(5,4,6,.78);border:1px solid var(--acc);border-radius:5px;padding:2px 6px;margin-top:6px}
@@ -49,6 +49,7 @@ h2{font-size:17px;font-weight:900;margin:0 4px 4px} .sub{font-size:12px;color:rg
 .live.off i{opacity:.25;box-shadow:none}
 .slate > .go{position:absolute!important;left:10px;bottom:12px;z-index:3}
 .clap{height:206px!important}
+.lg{width:24px;height:24px;border-radius:6px;flex:none;box-shadow:0 0 0 1px rgba(233,185,73,.5)}
 </style></head><body>
 <h2>Hazır Çarklar</h2><div class="sub">Haftalık katalogdan otomatik oluşur • dokun ve çevir</div>
 <div class="grid"><div class="clap" style="--acc:#E9B949">
@@ -56,9 +57,9 @@ h2{font-size:17px;font-weight:900;margin:0 4px 4px} .sub{font-size:12px;color:rg
   <div class="stick low"><div class="stripes"></div></div>
   <div class="slate">
     <div class="bgp"><img src="p/bd_7RyHsO4yDXtBv1zUU3mTpHeQ0d5.jpg"><img src="p/bd_oHBhHoNe59VH6bUMazDtJmWOFSS.jpg"><img src="p/bd_o3XwuDUj0n8qnK91p6q8LKfr6rj.jpg"></div><div class="bgshade"></div>
-    <div class="rowh"><span>SAHNE</span><span>ÇEKİM</span><span>ROLL</span></div>
-    <div class="neon on">🔥 Popüler Filmler</div>
-    <div class="live on"><i></i>BU HAFTA</div>
+    
+    <div class="neon on"><img class="lg" src="logo.svg">Popüler Filmler</div>
+    
     <div class="go">▶ ÇEVİR</div>
   </div>
 </div><div class="clap" style="--acc:#2DD4BF">
@@ -66,13 +67,13 @@ h2{font-size:17px;font-weight:900;margin:0 4px 4px} .sub{font-size:12px;color:rg
   <div class="stick low"><div class="stripes"></div></div>
   <div class="slate">
     <div class="bgp"><img src="p/bd_d87JXX3DLkRJMfm5StCmmnmhHuX.jpg"><img src="p/bd_jbTqU6BJMufoMnPSlO4ThrcXs3Y.jpg"><img src="p/bd_nO7EzksrBzlNpAg5rgv8HzaBIkx.jpg"></div><div class="bgshade"></div>
-    <div class="rowh"><span>SAHNE</span><span>ÇEKİM</span><span>ROLL</span></div>
-    <div class="neon on">📺 Popüler Diziler</div>
-    <div class="live on"><i></i>BU HAFTA</div>
+    
+    <div class="neon on"><img class="lg" src="logo.svg">Popüler Diziler</div>
+    
     <div class="go">▶ ÇEVİR</div>
   </div>
 </div></div>
-<div class="worst"><div class="e">🤦</div><div><div class="tt">Bunu Niye İzledim?</div><div class="ss">En düşük puanlı filmler çarkı</div></div><div class="go2">BUNU SEN İSTEDİN</div></div>
+<div class="worst"><div class="e"><img src="logo.svg" style="width:46px;height:46px;border-radius:12px"></div><div><div class="tt">Bunu Niye İzledim?</div><div class="ss">En düşük puanlı filmler çarkı</div></div><div class="go2">VETO</div></div>
 
 <div class="cap">Ana sayfa • Hazır Çarklar önizlemesi (yazılar yanıp söner)</div>
 </body></html>
