@@ -63,41 +63,39 @@ private val Crimson = Color(0xFFD63447)
 private val Noir = Color(0xFF0B0A0F)
 private val Ivory = Color(0xFFF5EFE6)
 
-private val TicketHeight = 206.dp
-private val StubWidth = 162.dp
-private val NotchRadius = 13.dp
+private val WheelPartHeight = 318.dp
+private val CouponHeight = 168.dp
+private val NotchRadius = 14.dp
 
 /**
- * Sinema bileti şekli: köşeleri yuvarlak, perforasyon hizasında üstte ve altta yarım daire çentik,
- * sol kenarda küçük tırtıllar. Çentikler gerçekten kesilir (arka plan görünür).
+ * Dikey sinema bileti şekli: köşeler yuvarlak; üst (çark) ile alt kupon arasındaki perforasyon hizasında
+ * sol ve sağ kenarda yarım daire çentik, kupon kenarlarında küçük tırtıllar. Çentikler gerçekten kesilir.
  */
-private fun ticketShape(stubWidthPx: (Float) -> Float, notchPx: (Float) -> Float, cornerPx: (Float) -> Float) =
-    GenericShape { size, _ ->
-        val density = size.height / 206f // 206dp yükseklik referansı
-        val corner = cornerPx(density)
-        val notch = notchPx(density)
-        val perfX = size.width - stubWidthPx(density)
-        val base = Path().apply {
-            addRoundRect(RoundRect(Rect(Offset.Zero, size), CornerRadius(corner, corner)))
+private fun verticalTicketShape(perfYdp: Float, totalHdp: Float) = GenericShape { size, _ ->
+    val d = size.height / totalHdp
+    val corner = 20f * d
+    val notch = 14f * d
+    val perfY = perfYdp * d
+    val base = Path().apply { addRoundRect(RoundRect(Rect(Offset.Zero, size), CornerRadius(corner, corner))) }
+    val cuts = Path().apply {
+        addOval(Rect(Offset(0f, perfY), notch))
+        addOval(Rect(Offset(size.width, perfY), notch))
+        val step = 14f * d
+        var y = perfY + 26f * d
+        while (y < size.height - 18f * d) {
+            addOval(Rect(Offset(0f, y), 3.6f * d))
+            addOval(Rect(Offset(size.width, y), 3.6f * d))
+            y += step
         }
-        val cuts = Path().apply {
-            addOval(Rect(Offset(perfX, 0f), notch))
-            addOval(Rect(Offset(perfX, size.height), notch))
-            // Sol kenarda bilet tırtılları
-            val step = 14f * density
-            var y = 22f * density
-            while (y < size.height - 18f * density) {
-                addOval(Rect(Offset(0f, y), 3.6f * density))
-                y += step
-            }
-        }
-        addPath(Path.combine(PathOperation.Difference, base, cuts))
     }
+    addPath(Path.combine(PathOperation.Difference, base, cuts))
+}
 
 /**
- * Ana sayfa bilet kartı.
- * - Gövde (sol): arka planda güncel popüler film afişleri, "DÜELLO" + "TINDER" → Film Düellosu.
- * - Koçan (sağ): film şeridi halkalı, dilimlerinde afiş olan Karar Çarkı → Hazır çarklar + Hızlı seçim ekranı.
+ * Ana sayfa bilet kartı (dikey, tek bilet).
+ * - Üst bölüm: Sinemaskop perdede popüler bir filmin sahnesi, önünde film makarası Karar Çarkı + ÇEVİR
+ *   → Hazır çarklar + Hızlı seçim ekranı.
+ * - Perforasyondan sonra koparılan kupon: "Film Karşılaştır" + TINDER → kaydırmalı karşılaştırma.
  */
 @Composable
 fun HomeTicketHero(
@@ -105,13 +103,11 @@ fun HomeTicketHero(
     wheelPosters: List<Movie>,
     onDuelClick: () -> Unit,
     onWheelClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    wheelBackdropPath: String? = null
 ) {
-    val shape = ticketShape(
-        stubWidthPx = { d -> 162f * d },
-        notchPx = { d -> 13f * d },
-        cornerPx = { d -> 18f * d }
-    )
+    val total = WheelPartHeight + CouponHeight
+    val shape = verticalTicketShape(WheelPartHeight.value, total.value)
     Column(modifier = modifier.fillMaxWidth().testTag("home_ticket_hero")) {
         Text(
             "BU AKŞAM NE İZLESEK?",
@@ -124,30 +120,31 @@ fun HomeTicketHero(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(TicketHeight)
+                .height(total)
                 .shadow(14.dp, shape, ambientColor = Color.Black, spotColor = Color.Black)
                 .clip(shape)
                 .background(Color(0xFF141117))
         ) {
-            Row(modifier = Modifier.fillMaxSize()) {
-                DuelBody(
+            Column(modifier = Modifier.fillMaxSize()) {
+                WheelPart(
+                    posters = wheelPosters,
+                    backdropPath = wheelBackdropPath,
+                    onClick = onWheelClick,
+                    modifier = Modifier.fillMaxWidth().height(WheelPartHeight)
+                )
+                CompareCoupon(
                     posters = duelPosters,
                     onClick = onDuelClick,
-                    modifier = Modifier.weight(1f).fillMaxHeight()
-                )
-                WheelStub(
-                    posters = wheelPosters,
-                    onClick = onWheelClick,
-                    modifier = Modifier.width(StubWidth).fillMaxHeight()
+                    modifier = Modifier.fillMaxWidth().height(CouponHeight)
                 )
             }
-            // Perforasyon (kesik çizgi)
+            // Perforasyon (yatay kesik çizgi)
             Canvas(modifier = Modifier.fillMaxSize()) {
-                val x = size.width - StubWidth.toPx()
+                val y = WheelPartHeight.toPx()
                 drawLine(
-                    color = Gold.copy(alpha = 0.55f),
-                    start = Offset(x, NotchRadius.toPx() + 6.dp.toPx()),
-                    end = Offset(x, size.height - NotchRadius.toPx() - 6.dp.toPx()),
+                    color = Gold.copy(alpha = 0.6f),
+                    start = Offset(NotchRadius.toPx() + 8.dp.toPx(), y),
+                    end = Offset(size.width - NotchRadius.toPx() - 8.dp.toPx(), y),
                     strokeWidth = 2.5.dp.toPx(),
                     pathEffect = PathEffect.dashPathEffect(floatArrayOf(7.dp.toPx(), 5.dp.toPx()))
                 )
@@ -157,83 +154,111 @@ fun HomeTicketHero(
 }
 
 @Composable
-private fun DuelBody(posters: List<Movie>, onClick: () -> Unit, modifier: Modifier) {
+private fun WheelPart(posters: List<Movie>, backdropPath: String?, onClick: () -> Unit, modifier: Modifier) {
+    CinemaScopeBackdrop(
+        backdropUrl = cinemaBackdropUrl(backdropPath),
+        topLabel = "KARAR ÇARKI • SIRA 7 • KOLTUK 12",
+        barHeight = 24.dp,
+        modifier = modifier
+            .clickable(role = Role.Button, onClickLabel = "Hazır çarkları ve hızlı seçimi aç", onClick = onClick)
+            .semantics { contentDescription = "Karar çarkı: hazır çarklar ve hızlı seçim" }
+            .testTag("home_ticket_wheel")
+    ) {
+        // Perdeyi biraz daha karart: çark ve yazı okunaklı kalsın
+        Box(
+            Modifier
+                .fillMaxSize()
+                .padding(vertical = 24.dp)
+                .background(Brush.radialGradient(listOf(Color.Black.copy(alpha = 0.55f), Color.Transparent)))
+        )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxSize().padding(top = 36.dp)
+        ) {
+            FilmReelWheel(posters = posters, size = 184.dp)
+            Spacer(Modifier.height(8.dp))
+            Text(
+                "Modunu seç, çark bu akşamki filmini belirlesin",
+                fontSize = 12.sp,
+                color = Ivory.copy(alpha = 0.75f)
+            )
+            Spacer(Modifier.height(10.dp))
+            GoldPill("▶ ÇEVİR", modifier = Modifier.padding(bottom = 4.dp))
+        }
+    }
+}
+
+@Composable
+private fun CompareCoupon(posters: List<Movie>, onClick: () -> Unit, modifier: Modifier) {
     Box(
         modifier = modifier
-            .clickable(role = Role.Button, onClickLabel = "Film düellosunu aç", onClick = onClick)
-            .semantics { contentDescription = "Düello: iki film arasından kaydırarak seç" }
+            .clickable(role = Role.Button, onClickLabel = "Film karşılaştırmayı aç", onClick = onClick)
+            .semantics { contentDescription = "Film Karşılaştır: iki film arasından kaydırarak seç" }
             .testTag("home_ticket_duel")
     ) {
-        // Arka plandaki afişler
-        val placements = listOf(
-            Triple((-9f), 44.dp, 12.dp),
-            Triple(7f, 104.dp, 8.dp),
-            Triple(-2f, 74.dp, 40.dp)
-        )
-        posters.take(3).forEachIndexed { i, movie ->
-            val (rot, x, y) = placements[i]
-            MoviePosterImage(
-                title = movie.title,
-                posterPath = movie.posterPath,
-                posterUrl = movie.posterUrl,
-                accentColorHex = movie.colorHex,
-                cornerRadius = 10.dp,
-                showFallbackTitleBadge = false,
-                genre = movie.genre,
-                year = movie.year,
+        // Sağda iki eğik afiş + VS
+        val placements = listOf(Pair(-8f, 0.dp), Pair(8f, 64.dp))
+        Box(modifier = Modifier.align(Alignment.CenterEnd).padding(end = 22.dp).size(width = 150.dp, height = 140.dp)) {
+            posters.take(2).forEachIndexed { i, movie ->
+                val (rot, x) = placements[i]
+                MoviePosterImage(
+                    title = movie.title,
+                    posterPath = movie.posterPath,
+                    posterUrl = movie.posterUrl,
+                    accentColorHex = movie.colorHex,
+                    cornerRadius = 10.dp,
+                    showFallbackTitleBadge = false,
+                    genre = movie.genre,
+                    year = movie.year,
+                    modifier = Modifier
+                        .offset(x = x, y = 10.dp)
+                        .size(width = 84.dp, height = 124.dp)
+                        .rotate(rot)
+                        .border(1.5.dp, Ivory.copy(alpha = 0.18f), RoundedCornerShape(10.dp))
+                )
+            }
+            Box(
+                contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .offset(x = x, y = y)
-                    .size(width = 74.dp, height = 110.dp)
-                    .rotate(rot)
-                    .border(1.5.dp, Ivory.copy(alpha = 0.18f), RoundedCornerShape(10.dp))
-            )
+                    .align(Alignment.Center)
+                    .offset(x = 4.dp, y = 6.dp)
+                    .size(42.dp)
+                    .border(2.dp, Gold, CircleShape)
+                    .padding(3.dp)
+                    .background(Crimson, CircleShape)
+            ) {
+                Text("VS", color = Color.White, fontWeight = FontWeight.Black, fontSize = 14.sp)
+            }
         }
-        // Okunabilirlik için karartma
+        // Okunabilirlik için soldan karartma
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(
                     Brush.horizontalGradient(
-                        0f to Noir.copy(alpha = 0.95f),
-                        0.45f to Noir.copy(alpha = 0.6f),
-                        1f to Noir.copy(alpha = 0.35f)
-                    )
-                )
-                .background(
-                    Brush.verticalGradient(
-                        0.4f to Color.Transparent,
-                        1f to Noir.copy(alpha = 0.95f)
+                        0f to Noir.copy(alpha = 0.97f),
+                        0.5f to Noir.copy(alpha = 0.7f),
+                        1f to Noir.copy(alpha = 0.0f)
                     )
                 )
         )
-        Text(
-            "GİRİŞ BİLETİ • 2 FİLM",
-            fontSize = 9.5.sp,
-            letterSpacing = 2.sp,
-            fontWeight = FontWeight.ExtraBold,
-            color = Ivory.copy(alpha = 0.72f),
-            modifier = Modifier.padding(start = 20.dp, top = 16.dp)
-        )
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .offset(x = 92.dp, y = 56.dp)
-                .size(40.dp)
-                .border(2.dp, Gold, CircleShape)
-                .padding(3.dp)
-                .background(Crimson, CircleShape)
-        ) {
-            Text("VS", color = Color.White, fontWeight = FontWeight.Black, fontSize = 14.sp)
-        }
-        Column(modifier = Modifier.align(Alignment.BottomStart).padding(start = 20.dp, bottom = 14.dp)) {
+        Column(modifier = Modifier.align(Alignment.CenterStart).padding(start = 22.dp, end = 150.dp)) {
             Text(
-                "DÜELLO",
-                fontSize = 33.sp,
-                letterSpacing = 3.sp,
+                "KUPON • 2 FİLM",
+                fontSize = 9.5.sp,
+                letterSpacing = 2.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = Ivory.copy(alpha = 0.72f)
+            )
+            Spacer(Modifier.height(6.dp))
+            Text(
+                "Film\nKarşılaştır",
+                fontSize = 27.sp,
+                lineHeight = 28.sp,
                 fontWeight = FontWeight.Black,
                 color = Gold
             )
-            Spacer(Modifier.height(4.dp))
+            Spacer(Modifier.height(8.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     "TINDER",
@@ -248,36 +273,6 @@ private fun DuelBody(posters: List<Movie>, onClick: () -> Unit, modifier: Modifi
                 Spacer(Modifier.width(8.dp))
                 Text("Kaydır & seç", fontSize = 11.sp, color = Ivory.copy(alpha = 0.65f), fontWeight = FontWeight.Bold)
             }
-        }
-    }
-}
-
-@Composable
-private fun WheelStub(posters: List<Movie>, onClick: () -> Unit, modifier: Modifier) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .background(
-                Brush.linearGradient(listOf(Color(0xFF2A1218), Color(0xFF1A0D12), Color(0xFF140A0E)))
-            )
-            .clickable(role = Role.Button, onClickLabel = "Hazır çarkları ve hızlı seçimi aç", onClick = onClick)
-            .semantics { contentDescription = "Karar çarkı: hazır çarklar ve hızlı seçim" }
-            .testTag("home_ticket_wheel")
-            .padding(top = 12.dp)
-    ) {
-        Text("KARAR ÇARKI", fontSize = 9.5.sp, letterSpacing = 2.5.sp, fontWeight = FontWeight.Black, color = Gold)
-        Spacer(Modifier.height(8.dp))
-        FilmReelWheel(posters = posters, size = 112.dp)
-        Spacer(Modifier.height(10.dp))
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .shadow(6.dp, RoundedCornerShape(999.dp))
-                .background(Brush.verticalGradient(listOf(Color(0xFFF3CF74), Color(0xFFD9A23A))), RoundedCornerShape(999.dp))
-                .padding(horizontal = 12.dp, vertical = 5.dp)
-        ) {
-            Text("▶ ÇEVİR", fontSize = 10.5.sp, letterSpacing = 1.5.sp, fontWeight = FontWeight.Black, color = Color(0xFF1A1408))
         }
     }
 }

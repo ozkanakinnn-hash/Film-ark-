@@ -280,12 +280,13 @@ fun HomeScreen(
             }
 
 
-            // Sinema bileti: solda Düello (Tinder), sağda koçanda Karar Çarkı
+            // Dikey sinema bileti: üstte sinemaskop perdede Karar Çarkı, altta Film Karşılaştır (Tinder) kuponu
             com.example.ui.components.HomeTicketHero(
                 duelPosters = ticketPosters.take(3),
                 wheelPosters = ticketPosters.drop(3).take(8),
                 onDuelClick = onCompareClick,
-                onWheelClick = onSoloClick
+                onWheelClick = onSoloClick,
+                wheelBackdropPath = popularMovieBackdrops.firstOrNull()
             )
 
             if (personalPicks.isNotEmpty()) {
@@ -296,7 +297,7 @@ fun HomeScreen(
                 )
             }
 
-            // Hazır Çarklar: iki eşit klaket kutusu + "Bunu Niye İzledim?" kartı
+            // Hazır Çarklar: iki sinemaskop kutu (alt alta) + "Bunu Niye İzledim?" kartı
             Spacer(modifier = Modifier.height(18.dp))
             Text(
                 text = "Hazır Çarklar",
@@ -311,30 +312,29 @@ fun HomeScreen(
                 color = TextSecondary,
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)
             )
-            Spacer(modifier = Modifier.height(22.dp))
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            Spacer(modifier = Modifier.height(14.dp))
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxWidth().testTag("home_smart_wheels_row")
             ) {
-                com.example.ui.components.ClapperWheelCard(
+                val smartById = smartWheelLists.associateBy { it.id }
+                com.example.ui.components.CinemaScopeWheelCard(
                     title = "Popüler Filmler",
-                    subtitle = "En çok izlenen",
-                    backdropPaths = popularMovieBackdrops,
-                    accent = Color(0xFFE9B949),
-                    redButton = false,
+                    subtitle = "Türkiye'de bu hafta en çok izlenenlerden 12 dilimlik çark",
+                    label = "FİLM",
+                    backdropPath = popularMovieBackdrops.firstOrNull(),
+                    posters = smartById[com.example.data.repository.SmartWheelLists.POPULAR_MOVIES]?.movies.orEmpty(),
                     onClick = { onSpinSmartList(com.example.data.repository.SmartWheelLists.POPULAR_MOVIES) },
-                    testTag = "home_smart_wheel_${com.example.data.repository.SmartWheelLists.POPULAR_MOVIES}",
-                    modifier = Modifier.weight(1f)
+                    testTag = "home_smart_wheel_${com.example.data.repository.SmartWheelLists.POPULAR_MOVIES}"
                 )
-                com.example.ui.components.ClapperWheelCard(
+                com.example.ui.components.CinemaScopeWheelCard(
                     title = "Popüler Diziler",
-                    subtitle = "Gündemdekiler",
-                    backdropPaths = popularSeriesBackdrops,
-                    accent = Color(0xFFD63447),
-                    redButton = true,
+                    subtitle = "Türkiye'de bu hafta en çok izlenenlerden 12 dilimlik çark",
+                    label = "DİZİ",
+                    backdropPath = popularSeriesBackdrops.firstOrNull(),
+                    posters = smartById[com.example.data.repository.SmartWheelLists.POPULAR_SERIES]?.movies.orEmpty(),
                     onClick = { onSpinSmartList(com.example.data.repository.SmartWheelLists.POPULAR_SERIES) },
-                    testTag = "home_smart_wheel_${com.example.data.repository.SmartWheelLists.POPULAR_SERIES}",
-                    modifier = Modifier.weight(1f)
+                    testTag = "home_smart_wheel_${com.example.data.repository.SmartWheelLists.POPULAR_SERIES}"
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
