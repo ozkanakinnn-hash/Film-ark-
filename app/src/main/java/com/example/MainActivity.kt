@@ -402,7 +402,7 @@ fun DecisionApp(
                         onMovieFlexClick = { viewModel.selectMovieForFlex(it) },
                         onDeleteDecision = { viewModel.deleteSavedDecision(it) },
                         onClearHistory = { viewModel.clearSavedHistory() },
-                        onBack = { viewModel.navigateTo(Screen.HOME) }
+                        onBack = { viewModel.navigateTo(Screen.PROFILE) }
                     )
                 }
 
@@ -422,6 +422,7 @@ fun DecisionApp(
                         onRemoveWatched = { viewModel.removeWatchedMovie(it) },
                         onMovieFlexClick = { viewModel.selectMovieForFlex(it) },
                         onStatsClick = { viewModel.navigateTo(Screen.STATS) },
+                        onHistoryClick = { viewModel.navigateTo(Screen.HISTORY) },
                         onBack = { viewModel.navigateTo(Screen.HOME) }
                     )
                 }

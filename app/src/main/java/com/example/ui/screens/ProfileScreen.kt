@@ -130,6 +130,7 @@ fun ProfileScreen(
     onRemoveWatched: (String) -> Unit,
     onMovieFlexClick: (Movie) -> Unit,
     onStatsClick: () -> Unit = {},
+    onHistoryClick: () -> Unit = {},
     onBack: () -> Unit
 ) {
     BackHandler { onBack() }
@@ -354,6 +355,64 @@ fun ProfileScreen(
                     )
                 }
                 Icon(Icons.Default.PlayArrow, contentDescription = null, tint = PopcornGold, modifier = Modifier.size(20.dp))
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // "Geçmişte Ne Seçtik?" (ana sayfadan buraya taşındı): son 5 karar + Tümünü Gör
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("Geçmişte Ne Seçtik?", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                    Text("${savedDecisions.size} karar cihazında kayıtlı", fontSize = 11.sp, color = TextSecondary)
+                }
+                Text(
+                    "Tümünü Gör →",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = PopcornGold,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(CinemaSurface)
+                        .clickable { onHistoryClick() }
+                        .padding(horizontal = 10.dp, vertical = 6.dp)
+                        .testTag("home_open_history_button")
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            if (savedDecisions.isEmpty()) {
+                Text(
+                    "Henüz bir karar yok. Çarkı çevirdiğinde seçimlerin burada görünür.",
+                    fontSize = 12.sp,
+                    color = TextSecondary,
+                    modifier = Modifier.padding(vertical = 6.dp)
+                )
+            }
+            savedDecisions.take(5).forEach { decision ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(CinemaSurface)
+                        .clickable { onMovieFlexClick(decision.movie) }
+                        .padding(12.dp)
+                        .testTag("home_saved_decision_${decision.id}")
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(decision.movie.title, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = TextPrimary, maxLines = 1)
+                        Text("${decision.dateText} • ${decision.mode}", fontSize = 11.sp, color = TextSecondary, maxLines = 1)
+                    }
+                    IconButton(
+                        onClick = { shareTargetMovie = decision.movie },
+                        modifier = Modifier.size(40.dp).testTag("home_decision_share_${decision.id}")
+                    ) {
+                        Icon(Icons.Default.Share, contentDescription = "Seçilen filmi paylaş", tint = PopcornGold, modifier = Modifier.size(18.dp))
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.height(14.dp))

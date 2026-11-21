@@ -957,7 +957,9 @@ class ExampleRobolectricTest {
 
     // 1. Saved decision quick poster share directly from HomeScreen
     val firstDecision = RoomRepository.savedDecisions.value.first()
-    composeTestRule.onNodeWithTag("home_screen_list")
+    composeTestRule.onNodeWithTag("profile_icon_button").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("profile_screen_list")
       .performScrollToNode(hasTestTag("home_decision_share_${firstDecision.id}"))
     composeTestRule.onNodeWithTag("home_decision_share_${firstDecision.id}").performClick()
     composeTestRule.waitForIdle()
@@ -967,11 +969,7 @@ class ExampleRobolectricTest {
     composeTestRule.onNodeWithTag("social_share_close_button").performClick()
     composeTestRule.waitForIdle()
 
-    // 2. Favorites list collage share dialog from ProfileScreen
-    composeTestRule.onNodeWithTag("home_screen_list")
-      .performScrollToNode(hasTestTag("profile_icon_button"))
-    composeTestRule.onNodeWithTag("profile_icon_button").performClick()
-    composeTestRule.waitForIdle()
+    // 2. Favorites list collage share dialog from ProfileScreen (zaten profildeyiz)
 
     composeTestRule.onNodeWithTag("profile_screen_list")
       .performScrollToNode(hasTestTag("share_favorites_list_button"))
@@ -1189,7 +1187,9 @@ class ExampleRobolectricTest {
     composeTestRule.onNodeWithTag("filter_back_button").performClick()
     composeTestRule.waitForIdle()
 
-    composeTestRule.onNodeWithTag("home_screen_list")
+    composeTestRule.onNodeWithTag("profile_icon_button").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("profile_screen_list")
       .performScrollToNode(hasTestTag("home_open_history_button"))
     composeTestRule.onNodeWithTag("home_open_history_button").performClick()
     composeTestRule.waitForIdle()
@@ -1224,7 +1224,9 @@ class ExampleRobolectricTest {
   @Test
   fun `home open history button navigates to Geçmişte Ne Seçtik and clear all empties list`() {
     seedSampleDecisions()
-    composeTestRule.onNodeWithTag("home_screen_list")
+    composeTestRule.onNodeWithTag("profile_icon_button").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("profile_screen_list")
       .performScrollToNode(hasTestTag("home_open_history_button"))
     composeTestRule.onNodeWithTag("home_open_history_button").performClick()
     composeTestRule.waitForIdle()
@@ -1437,7 +1439,9 @@ class ExampleRobolectricTest {
     RoomRepository.recordSavedDecision(topMovie, "Film Karşılaştır (VS)", minutesSaved = 45)
 
     // Open History -> jump straight to DB Dashboard via history_open_dashboard_button
-    composeTestRule.onNodeWithTag("home_screen_list")
+    composeTestRule.onNodeWithTag("profile_icon_button").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("profile_screen_list")
       .performScrollToNode(hasTestTag("home_open_history_button"))
     composeTestRule.onNodeWithTag("home_open_history_button").performClick()
     composeTestRule.waitForIdle()
