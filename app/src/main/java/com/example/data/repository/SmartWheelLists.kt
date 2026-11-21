@@ -20,7 +20,7 @@ object SmartWheelLists {
                 name = "Şu An Popüler",
                 emoji = "🔥",
                 description = "Türkiye'de platformlarda bu hafta en çok izlenen filmler",
-                movies = it,
+                movies = it.sortedWith(compareByDescending<com.example.data.model.Movie> { m -> m.year }.thenByDescending { m -> m.imdb }),
                 accentColorHex = 0xFFE9B949,
                 isPreset = true
             )
@@ -31,7 +31,7 @@ object SmartWheelLists {
                 name = "Popüler Diziler",
                 emoji = "📺",
                 description = "Türkiye'de platformlarda bu hafta en çok izlenen diziler",
-                movies = it,
+                movies = it.sortedWith(compareByDescending<com.example.data.model.Movie> { m -> m.year }.thenByDescending { m -> m.imdb }),
                 accentColorHex = 0xFF2DD4BF,
                 isPreset = true
             )
@@ -42,7 +42,7 @@ object SmartWheelLists {
                 name = "Bunu Niye İzledim?",
                 emoji = "🤦",
                 description = "Çok izlenmiş ama en düşük puanlı filmler. Kendi isteğinle çeviriyorsun!",
-                movies = it,
+                movies = it.sortedWith(compareByDescending<com.example.data.model.Movie> { m -> m.year }.thenByDescending { m -> m.imdb }),
                 accentColorHex = 0xFF94A3B8,
                 isPreset = true
             )

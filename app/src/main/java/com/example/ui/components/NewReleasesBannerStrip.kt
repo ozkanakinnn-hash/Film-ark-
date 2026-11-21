@@ -195,38 +195,7 @@ fun NewReleasesBannerStrip(
                 }
             }
 
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Surface(
-                color = CinemaSurfaceVariant,
-                shape = RoundedCornerShape(10.dp),
-                border = BorderStroke(1.dp, ElectricCyan.copy(alpha = 0.5f)),
-                modifier = Modifier
-                    .minimumInteractiveComponentSize()
-                    .clip(RoundedCornerShape(10.dp))
-                    .clickable { onRefreshClick() }
-                    .semantics(mergeDescendants = true) {}
-                    .testTag("new_releases_refresh_button")
-            ) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = "Günlük listeyi güncelle",
-                        tint = ElectricCyan,
-                        modifier = Modifier.size(14.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "Güncelle",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = ElectricCyan
-                    )
-                }
-            }
+            // Liste haftalık katalogla kendiliğinden güncellenir; elle "Güncelle" düğmesi yok
         }
 
         Spacer(modifier = Modifier.height(12.dp))

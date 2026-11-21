@@ -1140,6 +1140,7 @@ object MovieRepository {
         val extras = _dailyExtraMovies.value
         // Öne Çıkanlar: Türkiye'de platformlarda şu an popüler filmler (haftalık katalogdan)
         val popular = runCatching { HighlightsRepository.popularMovies() }.getOrDefault(emptyList())
+            .sortedWith(compareByDescending<Movie> { it.year }.thenByDescending { it.imdb })
         val newerBase = popular.ifEmpty {
             baseMovies
                 .filter { it.isNewRelease || it.year >= 2024 }

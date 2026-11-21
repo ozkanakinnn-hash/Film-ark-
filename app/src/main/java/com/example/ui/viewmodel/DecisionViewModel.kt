@@ -27,6 +27,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+/** Güncelden eskiye: önce yıl, aynı yılda puan. */
+fun List<Movie>.newestFirst(): List<Movie> =
+    sortedWith(compareByDescending<Movie> { it.year }.thenByDescending { it.imdb })
+
 enum class Screen {
     HOME,
     FILTERING,
@@ -159,7 +163,8 @@ class DecisionViewModel(
         fullWheelPool = pool
         _wheelPoolTotal.value = pool.distinctBy { it.id }.size
         val profile = com.example.data.repository.TasteProfileRepository.snapshot()
-        return WheelPoolSampler.sample(pool, mustInclude, weightOf = profile::weightOf)
+        // Dilimler güncelden eskiye dizilir (kazanan yine dilimlerin arasından eşit şansla seçilir)
+        return WheelPoolSampler.sample(pool, mustInclude, weightOf = profile::weightOf).newestFirst()
     }
 
     // Wheel spin state (animated in Compose UI with MonotonicFrameClock)
@@ -537,7 +542,7 @@ class DecisionViewModel(
             val freshPool = fullWheelPool.filterNot { excludedIds.contains(it.id) }
             if (freshPool.size > WheelPoolSampler.MAX_SLICES) {
                 val profile = com.example.data.repository.TasteProfileRepository.snapshot()
-                _activeWheelMovies.value = WheelPoolSampler.sample(freshPool, weightOf = profile::weightOf)
+                _activeWheelMovies.value = WheelPoolSampler.sample(freshPool, weightOf = profile::weightOf).newestFirst()
             }
         }
         val unwatchedActive = _activeWheelMovies.value.filterNot { excludedIds.contains(it.id) }
@@ -782,7 +787,9 @@ class DecisionViewModel(
             genreMatchingAll.size >= 2 -> genreMatchingAll
             else -> MovieRepository.allMovies.filterNot { excludedIds.contains(it.id) }
                 .ifEmpty { MovieRepository.allMovies }
-        }.shuffled().take(6)
+        }.newestFirst()
+            // Güncel yapımlar öncelikli: en yeni 60 yapım arasından 6'sı seçilir, düello yeniden eskiye ilerler
+            .take(60).shuffled().take(6).newestFirst()
 
         val left = pool.getOrNull(0)
         val right = pool.getOrNull(1)

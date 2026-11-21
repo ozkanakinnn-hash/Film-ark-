@@ -1312,8 +1312,7 @@ class ExampleRobolectricTest {
     composeTestRule.onNodeWithTag("new_releases_strip_section").assertIsDisplayed()
     composeTestRule.onNodeWithTag("new_releases_carousel").assertIsDisplayed()
     composeTestRule.onNodeWithTag("new_releases_date_badge").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("new_releases_refresh_button").performClick()
-    composeTestRule.waitForIdle()
+    composeTestRule.onAllNodesWithTag("new_releases_refresh_button").assertCountEquals(0)
 
     val firstNewMovie = MovieRepository.dailyUpdatedMovies.value.first()
     composeTestRule.onNodeWithTag("new_releases_carousel")
