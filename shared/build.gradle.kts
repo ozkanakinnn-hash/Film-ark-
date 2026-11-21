@@ -6,7 +6,7 @@ plugins {
 }
 
 kotlin {
-  androidLibrary {
+  android {
     namespace = "com.example.shared"
     compileSdk = 36
     minSdk = 24

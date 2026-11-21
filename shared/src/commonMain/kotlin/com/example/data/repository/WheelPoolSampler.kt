@@ -1,6 +1,7 @@
 package com.example.data.repository
 
 import com.example.data.model.Movie
+import kotlin.math.pow
 import kotlin.random.Random
 
 /**
@@ -56,7 +57,7 @@ object WheelPoolSampler {
             .map { movie ->
                 val w = weightOf(movie).coerceAtLeast(0.01)
                 val u = random.nextDouble().coerceAtLeast(1e-12)
-                movie to Math.pow(u, 1.0 / w)
+                movie to u.pow(1.0 / w)
             }
             .sortedByDescending { it.second }
             .take(count)
