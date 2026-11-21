@@ -30,8 +30,11 @@ Bu dosya bizim sunucularımıza gönderilmez.
   JSON dosyası) GitHub'dan (`raw.githubusercontent.com`) indirir. Bu istekte sizinle ilgili hiçbir bilgi
   gönderilmez; GitHub, her internet isteğinde olduğu gibi IP adresinizi görebilir. İndirme başarısız olursa
   uygulamanın içindeki katalog kullanılır.
-- **Fragmanlar** yalnızca "Resmi Fragmanı İzle" düğmesine dokunduğunuzda YouTube uygulamasında
-  veya tarayıcıda açılır. Bu durumda YouTube'un kendi gizlilik politikası geçerlidir.
+- **Fragmanlar** yalnızca "Resmi Fragmanı İzle" düğmesine dokunduğunuzda, uygulama içindeki bir pencerede
+  YouTube'un resmi gömülü oynatıcısıyla (gizlilik dostu `youtube-nocookie.com` modu) oynatılır; istersen
+  YouTube uygulamasında da açabilirsin. Oynatıcı YouTube (Google) tarafından sağlanır ve YouTube Hizmet
+  Şartları ile Google Gizlilik Politikası (https://policies.google.com/privacy) geçerlidir; YouTube oynatma
+  sırasında cihaz ve izleme bilgisi toplayabilir ve reklam gösterebilir. Bu bilgiler bize ulaşmaz.
 - **Paylaşım** yalnızca siz "Paylaş" düğmesine dokunduğunuzda, seçtiğiniz uygulama üzerinden yapılır.
 
 ## Çökme raporları
@@ -75,8 +78,10 @@ Uygulamaya reklam ya da yeni bir özellik eklenirse bu politika güncellenir ve 
 - Once a week at most, the app downloads the public film/series catalog JSON from GitHub
   (`raw.githubusercontent.com`); no personal data is sent.
 - Movie posters are loaded from TMDB's image server (`image.tmdb.org`), which can see your IP address like
-  any web request. Trailers open in YouTube only when you tap the trailer button (YouTube's privacy policy
-  applies). Sharing happens only when you tap "Share", through the app you choose.
+  any web request. Trailers play only when you tap the trailer button, in an in-app window using YouTube's official
+  embedded player (privacy-enhanced youtube-nocookie.com mode) or in the YouTube app. YouTube's Terms of Service
+  and the Google Privacy Policy (https://policies.google.com/privacy) apply to the player; YouTube may collect
+  playback/device data and show ads. We do not receive that data. Sharing happens only when you tap "Share", through the app you choose.
 - Crash reports (stack trace, app version, phone model, Android version) are stored only on your device and
   are sent nowhere unless you tap "Share report"; they contain no personal data.
 - Permissions: Internet (posters), Vibrate (haptic feedback).

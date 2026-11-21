@@ -62,8 +62,11 @@ ayarlar), 3) ekranlar, 4) platforma özel parçalar, 5) iOS kabuk projesi (Xcode
 - [ ] TestFlight ile iç test, sonra incelemeye gönderim
 
 ### Gizlilik etiketi ("App Privacy") cevapları
-- **Veri toplanıyor mu?** Hayır ("Data Not Collected"). Hesap yok, analiz/reklam SDK'sı yok; geçmiş, izlenenler,
+- **Veri toplanıyor mu?** Uygulamanın kendisi toplamaz. Hesap yok, analiz/reklam SDK'sı yok; geçmiş, izlenenler,
   notlar cihazda kalır. Posterler TMDB'den, haftalık katalog GitHub'dan indirilir; kişisel veri gönderilmez.
+- **Not (fragman oynatıcı):** Fragmanlar YouTube'un gömülü oynatıcısıyla oynatıldığı için YouTube kullanım
+  verisi toplayabilir. App Store gizlilik etiketinde üçüncü taraf olarak "Kullanım Verileri → Ürün Etkileşimi"
+  ve "Tanımlayıcılar" (YouTube tarafından) beyan etmek en güvenli yoldur; iOS'ta WKWebView ile aynı oynatıcı kullanılır.
 - **Takip (ATT)?** Hayır — App Tracking Transparency izni gerekmez.
 - **Şifreleme:** Yalnızca standart HTTPS → `Info.plist` içinde `ITSAppUsesNonExemptEncryption = NO`.
 
