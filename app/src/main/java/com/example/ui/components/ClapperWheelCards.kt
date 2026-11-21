@@ -254,10 +254,11 @@ fun ClapperWheelCard(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         subtitle,
-                        fontSize = 10.5.sp,
+                        fontSize = 10.sp,
                         color = CIvory.copy(alpha = 0.65f),
                         maxLines = 1,
-                        modifier = Modifier.weight(1f)
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f).padding(end = 6.dp)
                     )
                     Text(
                         "▶ ÇEVİR",
@@ -273,7 +274,7 @@ fun ClapperWheelCard(
                                 ),
                                 RoundedCornerShape(999.dp)
                             )
-                            .padding(horizontal = 11.dp, vertical = 5.dp)
+                            .padding(horizontal = 9.dp, vertical = 5.dp)
                     )
                 }
             }

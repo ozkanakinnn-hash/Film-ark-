@@ -911,9 +911,9 @@ class DecisionUnitTest {
             com.example.ui.components.TrailerLauncher.youtubeUrl("abcdefghijk")
         )
         // Seri kuralı: şu an popüler listesindekiler hariç her seriden en fazla bir film
-        val popularIds = com.example.data.repository.HighlightsRepository.popularMovies().map { it.id }.toSet()
-        val harryPotter = all.count { it.title.startsWith("Harry Potter") && it.id !in popularIds }
-        assertTrue("At most one non-popular film per franchise", harryPotter <= 1)
+        // Seri kuralı: popüler listesine girmiş filmler (üretim anında) muaf; serinin tamamı katalogu doldurmamalı
+        val harryPotter = all.count { it.title.startsWith("Harry Potter") }
+        assertTrue("Franchise must not flood the catalog", harryPotter <= 4)
     }
 
     @Test

@@ -309,14 +309,14 @@ fun HomeScreen(
                 color = TextSecondary,
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(22.dp))
             Row(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxWidth().testTag("home_smart_wheels_row")
             ) {
                 com.example.ui.components.ClapperWheelCard(
                     title = "Popüler Filmler",
-                    subtitle = "En çok izlenenler",
+                    subtitle = "En çok izlenen",
                     backdropPaths = popularMovieBackdrops,
                     accent = Color(0xFFE9B949),
                     redButton = false,
@@ -326,7 +326,7 @@ fun HomeScreen(
                 )
                 com.example.ui.components.ClapperWheelCard(
                     title = "Popüler Diziler",
-                    subtitle = "Gündemdeki diziler",
+                    subtitle = "Gündemdekiler",
                     backdropPaths = popularSeriesBackdrops,
                     accent = Color(0xFFD63447),
                     redButton = true,
