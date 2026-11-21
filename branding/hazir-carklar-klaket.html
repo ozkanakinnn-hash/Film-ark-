@@ -1,0 +1,108 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:430px;background:#0e0c11;font-family:Roboto,"Noto Sans",Arial,sans-serif;color:#f5efe6;padding:22px 16px 26px}
+h2{font-size:17px;font-weight:900;margin:0 4px 4px} .sub{font-size:12px;color:rgba(245,239,230,.55);margin:0 4px 14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:30px 12px;margin-top:44px}
+.clap{position:relative;height:178px}
+.stick{position:absolute;left:0;right:0;height:22px;border-radius:4px;overflow:hidden;background:#0b0a0f;border:1.5px solid #2a2530}
+.stick.low{top:30px}
+.stick.top{top:4px;transform-origin:8px 26px;transform:rotate(-11deg);z-index:2;box-shadow:0 4px 8px rgba(0,0,0,.5)}
+.stripes{position:absolute;inset:0;background:repeating-linear-gradient(-55deg,#e9b949 0 14px,#0b0a0f 14px 28px,#d63447 28px 42px,#0b0a0f 42px 56px,#f5efe6 56px 70px,#0b0a0f 70px 84px)}
+.stick.low .stripes{background:repeating-linear-gradient(55deg,#e9b949 0 14px,#0b0a0f 14px 28px,#d63447 28px 42px,#0b0a0f 42px 56px,#f5efe6 56px 70px,#0b0a0f 70px 84px)}
+.hinge{position:absolute;left:3px;top:3px;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#f6d98c,#9c6d1c);box-shadow:0 0 0 2px #0b0a0f}
+.slate{position:absolute;left:0;right:0;top:52px;bottom:0;border-radius:0 0 12px 12px;background:linear-gradient(170deg,#1c1820,#121015);border:1.5px solid #2a2530;border-top:none;padding:7px 10px 9px;box-shadow:0 10px 18px rgba(0,0,0,.55)}
+.rowh{display:flex;justify-content:space-between;font-size:7.5px;letter-spacing:1.4px;color:rgba(245,239,230,.38);font-weight:800;border-bottom:1px solid rgba(245,239,230,.14);padding-bottom:3px}
+.lcd{margin-top:6px;background:#050406;border-radius:5px;padding:2px 8px;font-family:"DejaVu Sans Mono",monospace;font-size:11px;font-weight:700;letter-spacing:1px;display:inline-block}
+.lcd b{font-size:17px}
+.name{margin-top:6px;font-size:14.5px;font-weight:900;line-height:1.15;height:34px;display:flex;align-items:flex-start;gap:5px}
+.name i{font-style:normal;font-size:14px}
+.line{position:absolute;left:10px;right:10px;bottom:30px;font-size:9px;color:rgba(245,239,230,.55);border-top:1px solid rgba(245,239,230,.14);padding-top:4px;display:flex;align-items:center;gap:5px}
+.line span{font-size:7.5px;letter-spacing:1.2px;color:rgba(245,239,230,.35);font-weight:800}
+.line em{font-style:normal;margin-left:auto;font-size:8.5px;font-weight:900;border:1.3px solid;border-radius:5px;padding:1px 5px;letter-spacing:.5px}
+.go{position:absolute;left:10px;bottom:8px;font-size:10px;font-weight:900;letter-spacing:1.3px;color:#1a1408;background:linear-gradient(180deg,#f3cf74,#d9a23a);border-radius:999px;padding:3px 10px}
+.cap{font-size:11px;color:rgba(245,239,230,.4);text-align:center;margin-top:18px}
+</style></head><body>
+<h2>Hazır Çarklar</h2><div class="sub">Haftalık katalogdan otomatik oluşur • dokun ve çevir</div>
+<div class="grid"><div class="clap">
+  <div class="stick top"><div class="stripes"></div><div class="hinge"></div></div>
+  <div class="stick low"><div class="stripes"></div></div>
+  <div class="slate">
+    <div class="rowh"><span>SAHNE</span><span>ÇEKİM</span><span>ROLL</span></div>
+    <div class="lcd" style="color:#E9B949;text-shadow:0 0 6px #E9B949"><b>48</b> FİLM</div>
+    <div class="name"><i>🔥</i>Şu An En Popüler</div>
+    <div class="line"><span>YAPIM</span>Ne İzlesek?<em style="border-color:#E9B949;color:#E9B949">POPÜLER</em></div>
+    <div class="go">▶ ÇEVİR</div>
+  </div>
+</div><div class="clap">
+  <div class="stick top"><div class="stripes"></div><div class="hinge"></div></div>
+  <div class="stick low"><div class="stripes"></div></div>
+  <div class="slate">
+    <div class="rowh"><span>SAHNE</span><span>ÇEKİM</span><span>ROLL</span></div>
+    <div class="lcd" style="color:#2DD4BF;text-shadow:0 0 6px #2DD4BF"><b>48</b> DİZİ</div>
+    <div class="name"><i>📺</i>Popüler Diziler</div>
+    <div class="line"><span>YAPIM</span>Ne İzlesek?<em style="border-color:#2DD4BF;color:#2DD4BF">DİZİ</em></div>
+    <div class="go">▶ ÇEVİR</div>
+  </div>
+</div><div class="clap">
+  <div class="stick top"><div class="stripes"></div><div class="hinge"></div></div>
+  <div class="stick low"><div class="stripes"></div></div>
+  <div class="slate">
+    <div class="rowh"><span>SAHNE</span><span>ÇEKİM</span><span>ROLL</span></div>
+    <div class="lcd" style="color:#FF4D5E;text-shadow:0 0 6px #FF4D5E"><b>40</b> FİLM</div>
+    <div class="name"><i>🤦</i>Bunu Niye İzledim?</div>
+    <div class="line"><span>YAPIM</span>Ne İzlesek?<em style="border-color:#FF4D5E;color:#FF4D5E">EN KÖTÜ</em></div>
+    <div class="go">▶ ÇEVİR</div>
+  </div>
+</div><div class="clap">
+  <div class="stick top"><div class="stripes"></div><div class="hinge"></div></div>
+  <div class="stick low"><div class="stripes"></div></div>
+  <div class="slate">
+    <div class="rowh"><span>SAHNE</span><span>ÇEKİM</span><span>ROLL</span></div>
+    <div class="lcd" style="color:#E9B949;text-shadow:0 0 6px #E9B949"><b>62</b> FİLM</div>
+    <div class="name"><i>✨</i>Yeni Çıkanlar</div>
+    <div class="line"><span>YAPIM</span>Ne İzlesek?<em style="border-color:#E9B949;color:#E9B949">2025-26</em></div>
+    <div class="go">▶ ÇEVİR</div>
+  </div>
+</div><div class="clap">
+  <div class="stick top"><div class="stripes"></div><div class="hinge"></div></div>
+  <div class="stick low"><div class="stripes"></div></div>
+  <div class="slate">
+    <div class="rowh"><span>SAHNE</span><span>ÇEKİM</span><span>ROLL</span></div>
+    <div class="lcd" style="color:#E9B949;text-shadow:0 0 6px #E9B949"><b>85</b> FİLM</div>
+    <div class="name"><i>⏱️</i>Kısa & Öz</div>
+    <div class="line"><span>YAPIM</span>Ne İzlesek?<em style="border-color:#E9B949;color:#E9B949">< 100 DK</em></div>
+    <div class="go">▶ ÇEVİR</div>
+  </div>
+</div><div class="clap">
+  <div class="stick top"><div class="stripes"></div><div class="hinge"></div></div>
+  <div class="stick low"><div class="stripes"></div></div>
+  <div class="slate">
+    <div class="rowh"><span>SAHNE</span><span>ÇEKİM</span><span>ROLL</span></div>
+    <div class="lcd" style="color:#E9B949;text-shadow:0 0 6px #E9B949"><b>37</b> FİLM</div>
+    <div class="name"><i>🏆</i>Ödüllü Klasikler</div>
+    <div class="line"><span>YAPIM</span>Ne İzlesek?<em style="border-color:#E9B949;color:#E9B949">★ 8+</em></div>
+    <div class="go">▶ ÇEVİR</div>
+  </div>
+</div><div class="clap">
+  <div class="stick top"><div class="stripes"></div><div class="hinge"></div></div>
+  <div class="stick low"><div class="stripes"></div></div>
+  <div class="slate">
+    <div class="rowh"><span>SAHNE</span><span>ÇEKİM</span><span>ROLL</span></div>
+    <div class="lcd" style="color:#D63447;text-shadow:0 0 6px #D63447"><b>29</b> YAPIM</div>
+    <div class="name"><i>🇹🇷</i>Yerli Yapım</div>
+    <div class="line"><span>YAPIM</span>Ne İzlesek?<em style="border-color:#D63447;color:#D63447">TÜRK</em></div>
+    <div class="go">▶ ÇEVİR</div>
+  </div>
+</div><div class="clap">
+  <div class="stick top"><div class="stripes"></div><div class="hinge"></div></div>
+  <div class="stick low"><div class="stripes"></div></div>
+  <div class="slate">
+    <div class="rowh"><span>SAHNE</span><span>ÇEKİM</span><span>ROLL</span></div>
+    <div class="lcd" style="color:#2DD4BF;text-shadow:0 0 6px #2DD4BF"><b>54</b> DİZİ</div>
+    <div class="name"><i>🧩</i>Kısa Diziler</div>
+    <div class="line"><span>YAPIM</span>Ne İzlesek?<em style="border-color:#2DD4BF;color:#2DD4BF">1-2 SEZON</em></div>
+    <div class="go">▶ ÇEVİR</div>
+  </div>
+</div></div>
+<div class="cap">Tasarım önizlemesi • Klaket kartları (eşit boyut, 2 sütun)</div>
+</body></html>
