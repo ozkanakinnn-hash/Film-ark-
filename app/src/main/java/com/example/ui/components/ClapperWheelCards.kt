@@ -11,6 +11,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -342,5 +343,122 @@ fun WorstWheelCard(onClick: () -> Unit, modifier: Modifier = Modifier) {
                 .border(1.5.dp, Color(0xFFFF4D5E), RoundedCornerShape(8.dp))
                 .padding(horizontal = 8.dp, vertical = 4.dp)
         )
+    }
+}
+
+/** "Bunu Niye İzledim?" çark ekranı başlığı: logo + açıklama + damga. */
+@Composable
+fun WorstWheelHeader(modifier: Modifier = Modifier) {
+    val shape = RoundedCornerShape(16.dp)
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(Brush.linearGradient(listOf(Color(0xFF2A141B), Color(0xFF17121A))))
+            .drawWithContent {
+                drawContent()
+                drawRoundRect(
+                    color = Color(0x99FF4D5E),
+                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(16.dp.toPx()),
+                    style = androidx.compose.ui.graphics.drawscope.Stroke(
+                        width = 1.5.dp.toPx(),
+                        pathEffect = androidx.compose.ui.graphics.PathEffect.dashPathEffect(floatArrayOf(8.dp.toPx(), 5.dp.toPx()))
+                    )
+                )
+            }
+            .padding(14.dp)
+            .testTag("worst_wheel_header")
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.brand_mark),
+            contentDescription = null,
+            modifier = Modifier
+                .size(44.dp)
+                .clip(RoundedCornerShape(11.dp))
+                .background(CNoir)
+                .padding(6.dp)
+        )
+        Spacer(Modifier.width(12.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text("Bunu Niye İzledim?", fontSize = 17.sp, fontWeight = FontWeight.Black, color = CIvory)
+            Text("Çok izlenmiş ama puanı en düşük filmler", fontSize = 11.5.sp, color = CIvory.copy(alpha = 0.65f))
+        }
+        Text(
+            "BUNU SEN İSTEDİN",
+            fontSize = 9.5.sp,
+            fontWeight = FontWeight.Black,
+            color = Color(0xFFFF4D5E),
+            maxLines = 1,
+            modifier = Modifier
+                .rotate(-7f)
+                .border(1.5.dp, Color(0xFFFF4D5E), RoundedCornerShape(7.dp))
+                .padding(horizontal = 7.dp, vertical = 3.dp)
+        )
+    }
+}
+
+/** Rezalet Ölçer: çarktaki puan aralığı ve havuz bilgisi ("Minimum Puan" filtresinin yerine). */
+@Composable
+fun RezaletMeter(movies: List<com.example.data.model.Movie>, poolTotal: Int, modifier: Modifier = Modifier) {
+    val ratings = movies.map { it.imdb }.filter { it > 0 }
+    val lo = ratings.minOrNull() ?: 0.0
+    val hi = ratings.maxOrNull() ?: 0.0
+    val red = Color(0xFFFF4D5E)
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color(0xFF17141B))
+            .border(1.dp, CEdge, RoundedCornerShape(16.dp))
+            .padding(horizontal = 14.dp, vertical = 12.dp)
+            .testTag("rezalet_meter")
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text("Rezalet Ölçer", fontSize = 13.sp, fontWeight = FontWeight.Black, color = CIvory, modifier = Modifier.weight(1f))
+            Text(
+                String.format(java.util.Locale.US, "★ %.1f – %.1f", lo, hi),
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Black,
+                color = red
+            )
+        }
+        Spacer(Modifier.height(9.dp))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(10.dp)
+                .clip(RoundedCornerShape(6.dp))
+                .background(Brush.horizontalGradient(listOf(red, Color(0xFFD97706), Color(0xFF3A3340))))
+        ) {
+            Canvas(Modifier.fillMaxSize()) {
+                // 0–10 ölçeğinde çarktaki aralığı işaretle
+                listOf(lo, hi).forEach { v ->
+                    val x = (v / 10.0 * size.width).toFloat()
+                    drawRect(Color.White, topLeft = Offset(x - 1.5f, 0f), size = androidx.compose.ui.geometry.Size(3f, size.height))
+                }
+            }
+        }
+        Row(modifier = Modifier.fillMaxWidth().padding(top = 4.dp)) {
+            Text("Felaket", fontSize = 10.sp, color = CIvory.copy(alpha = 0.5f), modifier = Modifier.weight(1f))
+            Text("Kötü", fontSize = 10.sp, color = CIvory.copy(alpha = 0.5f), modifier = Modifier.weight(1f), textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+            Text("İdare eder", fontSize = 10.sp, color = CIvory.copy(alpha = 0.5f), modifier = Modifier.weight(1f), textAlign = androidx.compose.ui.text.style.TextAlign.End)
+        }
+        Spacer(Modifier.height(8.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            listOf("👥 Çok izlenen", "🎯 $poolTotal filmlik havuz", "🔄 Her çevirişte yeni").forEach { chip ->
+                Text(
+                    chip,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFFFFB3BB),
+                    maxLines = 1,
+                    modifier = Modifier
+                        .background(red.copy(alpha = 0.12f), RoundedCornerShape(999.dp))
+                        .border(1.dp, red.copy(alpha = 0.4f), RoundedCornerShape(999.dp))
+                        .padding(horizontal = 7.dp, vertical = 3.dp)
+                )
+            }
+        }
     }
 }

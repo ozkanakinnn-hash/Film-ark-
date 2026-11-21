@@ -269,6 +269,7 @@ fun DecisionApp(
                                 .take(11)
                         },
                         smartWheelLists = smartWheelLists,
+                        customWheelLists = customWheelLists,
                         onSpinSmartList = { id -> viewModel.spinCustomWheelList(id) },
                         onSoloClick = { viewModel.startSoloFlow() },
                         onCompareClick = { viewModel.openCompareMode() },

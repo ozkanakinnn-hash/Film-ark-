@@ -45,6 +45,8 @@ enum class FilmIcon(val label: String, val neon: Color, val paths: List<String>)
     BILIMKURGU("Bilim Kurgu", Color(0xFF06B6D4), listOf("M17 12A5 5 0 1 1 7 12A5 5 0 1 1 17 12Z", "M3.4 16A9.5 3 -25 1 0 20.6 8A9.5 3 -25 1 0 3.4 16")),
     MACERA("Macera", Color(0xFF22C55E), listOf("M20.5 12A8.5 8.5 0 1 1 3.5 12A8.5 8.5 0 1 1 20.5 12Z", "M15.2 8.8L13.3 13.3L8.8 15.2L10.7 10.7Z")),
     GIZEM("Gizem", Color(0xFF818CF8), listOf("M16 10.5A5.5 5.5 0 1 1 5 10.5A5.5 5.5 0 1 1 16 10.5Z", "M14.5 14.5L20 20")),
+    AILE("Aile", Color(0xFF34D399), listOf("M8.5 8.2A2.4 2.4 0 1 1 8.5 3.4A2.4 2.4 0 1 1 8.5 8.2Z", "M4.2 20.5V14.2A4.3 4.3 0 0 1 12.8 14.2V20.5", "M16.2 11.2A1.9 1.9 0 1 1 16.2 7.4A1.9 1.9 0 1 1 16.2 11.2Z", "M13.2 20.5V16.2A3 3 0 0 1 19.2 16.2V20.5")),
+    KLASIK("Klasik", Color(0xFFE9B949), listOf("M20.5 12A8.5 8.5 0 1 1 3.5 12A8.5 8.5 0 1 1 20.5 12Z", "M13.4 12A1.4 1.4 0 1 1 10.6 12A1.4 1.4 0 1 1 13.4 12Z", "M13.6 7.4A1.6 1.6 0 1 1 10.4 7.4A1.6 1.6 0 1 1 13.6 7.4Z", "M13.6 16.6A1.6 1.6 0 1 1 10.4 16.6A1.6 1.6 0 1 1 13.6 16.6Z", "M8.2 12A1.6 1.6 0 1 1 5 12A1.6 1.6 0 1 1 8.2 12Z", "M19 12A1.6 1.6 0 1 1 15.8 12A1.6 1.6 0 1 1 19 12Z")),
     SUC("Suç", Color(0xFF94A3B8), listOf("M7.2 7.9A7.9 7.9 0 0 1 19.9 12", "M5.6 16.6C6.1 15.4 6.3 14.1 6.3 12.7A5.7 5.7 0 0 1 17.7 12.7C17.7 14.3 17.6 15.8 17.3 17.3", "M8 19C8.8 17.4 9.2 15.6 9.2 13.7A2.8 2.8 0 0 1 14.8 13.7C14.8 16.1 14.4 18.3 13.6 20.3", "M12 13.7C12 16.3 11.4 18.7 10.3 20.8")),
 }
 
@@ -58,6 +60,26 @@ fun Mood.filmIcon(): FilmIcon = when (this) {
     Mood.CULT_AWARD -> FilmIcon.KULT
     Mood.HORROR -> FilmIcon.KORKU
     Mood.ANIMATION -> FilmIcon.ANIMASYON
+}
+
+/**
+ * Özel çark listesi → neon ikon. Hazır listeler sabit eşlenir; kullanıcı listeleri,
+ * içindeki filmlerin en sık görülen ilk türüne göre ikon alır (emoji yerine).
+ */
+fun filmIconForList(list: com.example.data.model.CustomWheelList): FilmIcon = when (list.id) {
+    "preset_korku_gecesi" -> FilmIcon.KORKU
+    "preset_aile_dostu" -> FilmIcon.AILE
+    "preset_klasikler" -> FilmIcon.KLASIK
+    "preset_romantik_aksam" -> FilmIcon.ROMANTIK
+    "preset_kafa_yakan" -> FilmIcon.AKIL
+    "preset_aksiyon_dolu" -> FilmIcon.AKSIYON
+    "preset_gerilim_gecesi" -> FilmIcon.GERILIM
+    "preset_animasyon_keyfi" -> FilmIcon.ANIMASYON
+    "preset_komedi_molasi" -> FilmIcon.KOMEDI
+    else -> list.movies
+        .mapNotNull { it.genre.split('/', ',').firstOrNull()?.trim()?.takeIf { g -> g.isNotEmpty() } }
+        .groupingBy { it }.eachCount().maxByOrNull { it.value }?.key
+        ?.let { filmIconForGenre(it) } ?: FilmIcon.CEREZLIK
 }
 
 /** Tür adı → ikon (gelişmiş filtre etiketleri). */

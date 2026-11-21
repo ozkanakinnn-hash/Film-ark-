@@ -102,6 +102,7 @@ fun HomeScreen(
     personalPicks: List<Movie> = emptyList(),
     ticketPosters: List<Movie> = emptyList(),
     smartWheelLists: List<com.example.data.model.CustomWheelList> = emptyList(),
+    customWheelLists: List<com.example.data.model.CustomWheelList> = emptyList(),
     popularMovieBackdrops: List<String> = com.example.data.repository.HighlightsRepository.popularMovieBackdrops().take(1),
     popularSeriesBackdrops: List<String> = com.example.data.repository.HighlightsRepository.popularSeriesBackdrops().take(1),
     onSpinSmartList: (String) -> Unit = {},
@@ -278,13 +279,6 @@ fun HomeScreen(
                 Spacer(modifier = Modifier.height(18.dp))
             }
 
-            if (personalPicks.isNotEmpty()) {
-                com.example.ui.components.PersonalPicksStrip(
-                    picks = personalPicks,
-                    onMovieClick = { movie -> detailMovie = movie }
-                )
-                Spacer(modifier = Modifier.height(18.dp))
-            }
 
             // Sinema bileti: solda Düello (Tinder), sağda koçanda Karar Çarkı
             com.example.ui.components.HomeTicketHero(
@@ -293,6 +287,14 @@ fun HomeScreen(
                 onDuelClick = onCompareClick,
                 onWheelClick = onSoloClick
             )
+
+            if (personalPicks.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(20.dp))
+                com.example.ui.components.PersonalPicksStrip(
+                    picks = personalPicks,
+                    onMovieClick = { movie -> detailMovie = movie }
+                )
+            }
 
             // Hazır Çarklar: iki eşit klaket kutusu + "Bunu Niye İzledim?" kartı
             Spacer(modifier = Modifier.height(18.dp))
@@ -355,65 +357,13 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(14.dp))
 
-            // 1. HERO ACTION BUTTON: KARAR ÇARKINI ÇEVİR
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(24.dp))
-                    .clickable { onSoloClick() }
-                    .border(1.dp, CinemaBorder, RoundedCornerShape(24.dp))
-                    .testTag("solo_mode_button"),
-                colors = CardDefaults.cardColors(containerColor = CinemaSurface)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(56.dp)
-                            .background(
-                                Brush.linearGradient(listOf(CinemaTheme.colors.filmTeal, ElectricCyan)),
-                                CircleShape
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(28.dp)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.width(16.dp))
-
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "Karar Çarkını Çevir",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = TextPrimary
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = "Modunu ve platformunu seç, çark bu akşamki filmini anında belirlesin.",
-                            fontSize = 13.sp,
-                            color = TextSecondary,
-                            lineHeight = 17.sp
-                        )
-                    }
-
-                    Icon(
-                        imageVector = Icons.Default.PlayArrow,
-                        contentDescription = null,
-                        tint = ElectricCyan,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            }
+            // Karar Çarkını Çevir + hazır (özel) listeler tek kartta
+            com.example.ui.components.WheelAndListsCard(
+                lists = customWheelLists,
+                onSpinClick = onSoloClick,
+                onSpinList = { id -> onSpinSmartList(id) },
+                onManageLists = onCustomListsClick
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -497,85 +447,6 @@ fun HomeScreen(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            // 4. HERO ACTION BUTTON: OZEL CARK LISTELERI (CUSTOM CATEGORIES)
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(24.dp))
-                    .clickable { onCustomListsClick() }
-                    .border(
-                        1.5.dp,
-                        Brush.horizontalGradient(listOf(PopcornGold, EmeraldGreen)),
-                        RoundedCornerShape(24.dp)
-                    )
-                    .testTag("custom_lists_mode_button"),
-                colors = CardDefaults.cardColors(containerColor = CinemaSurface)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(56.dp)
-                            .background(
-                                Brush.linearGradient(listOf(PopcornGold, EmeraldGreen)),
-                                CircleShape
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Category,
-                            contentDescription = "Özel çark kategorileri",
-                            tint = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier.size(28.dp)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.width(16.dp))
-
-                    Column(modifier = Modifier.weight(1f)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = "Özel Çark Listeleri",
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = PopcornGold
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Surface(
-                                color = EmeraldGreen.copy(alpha = 0.2f),
-                                shape = RoundedCornerShape(6.dp)
-                            ) {
-                                Text(
-                                    text = "$customWheelListsCount LİSTE",
-                                    fontSize = 9.sp,
-                                    fontWeight = FontWeight.Black,
-                                    color = EmeraldGreen,
-                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                                )
-                            }
-                        }
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = "Korku Gecesi, Aile Dostu, Klasikler veya tamamen kendi belirlediğin filmlerle özel çarkını oluştur!",
-                            fontSize = 13.sp,
-                            color = TextSecondary,
-                            lineHeight = 17.sp
-                        )
-                    }
-
-                    Icon(
-                        imageVector = Icons.Default.PlayArrow,
-                        contentDescription = null,
-                        tint = PopcornGold,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-            }
 
             Spacer(modifier = Modifier.height(12.dp))
         }

@@ -59,6 +59,8 @@ import kotlin.math.sin
 @Composable
 fun WheelCanvas(
     movies: List<Movie>,
+    /** true: dilim yazısına puan eklenir ("Bunu Niye İzledim?" çarkı). */
+    showRatings: Boolean = false,
     rotationProvider: () -> Float,
     needleDeflectionProvider: () -> Float = { 0f },
     isSpinning: Boolean = false,
@@ -336,7 +338,10 @@ fun WheelCanvas(
                     val isWinnerSlice = hasWinnerHighlight && i == winningIndex
                     val midAngle = (i * sweepAngle + sweepAngle / 2f) - 90f
                     val movieTitle = if (i < movies.size) movies[i].title else "Film #${i + 1}"
-                    val truncated = if (movieTitle.length > 16) movieTitle.take(14) + ".." else movieTitle
+                    val truncated = if (showRatings && i < movies.size) {
+                        val short = if (movieTitle.length > 11) movieTitle.take(10) + "…" else movieTitle
+                        "$short ★${movies[i].imdb}"
+                    } else if (movieTitle.length > 16) movieTitle.take(14) + ".." else movieTitle
                     val sliceColor = animatedSliceColors[i]
                     val contrastText = wheelTheme.sliceTextColorFor(sliceColor)
 

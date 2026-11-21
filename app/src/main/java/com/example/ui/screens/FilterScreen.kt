@@ -307,7 +307,14 @@ fun FilterScreen(
                                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(text = customList.emoji, fontSize = 14.sp)
+                                if (com.example.data.repository.SmartWheelLists.isSmart(customList.id)) {
+                                    Text(text = customList.emoji, fontSize = 14.sp)
+                                } else {
+                                    com.example.ui.components.FilmIconView(
+                                        icon = com.example.ui.components.filmIconForList(customList),
+                                        size = 24.dp
+                                    )
+                                }
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Column {
                                     Text(

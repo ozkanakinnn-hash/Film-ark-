@@ -195,30 +195,34 @@ fun UpcomingScreen(
         contentPadding = gridPadding,
         modifier = Modifier.fillMaxSize().testTag("upcoming_screen_grid")
     ) {
-        fullWidth { TabHeader("Yakında", "Türkiye'de sinemalarda vizyona girecek ve yeni giren filmler") }
+        fullWidth { TabHeader("Yakında", "Türkiye'de sinemalarda vizyona girecek filmler") }
         fullWidth { SectionTitle("🎟️ Yakında Vizyonda") }
         if (upcoming.isEmpty()) fullWidth { EmptyNote("Şu an duyurulmuş yeni vizyon tarihi yok.") }
-        items(upcoming, key = { "up_${it.id}" }) { item ->
-            SquareTile(
-                movie = item.asMovie(),
-                badge = formatTurkishDate(item.releaseDate),
-                badgeColor = PopcornGold,
-                subtitle = item.genre,
-                testTag = "upcoming_item_${item.id}",
-                onClick = { onItemClick(item) }
-            )
+        upcoming.forEachIndexed { index, item ->
+            item(key = "up_${item.id}", span = { GridItemSpan(maxLineSpan) }) {
+                UpcomingRow(
+                    item = item,
+                    badge = "🎟 " + formatTurkishDate(item.releaseDate),
+                    badgeColor = PopcornGold,
+                    posterOnRight = index % 2 == 0,
+                    testTag = "upcoming_item_${item.id}",
+                    onClick = { onItemClick(item) }
+                )
+            }
         }
         if (nowPlaying.isNotEmpty()) {
             fullWidth { SectionTitle("🍿 Bu Ay Vizyona Girenler") }
-            items(nowPlaying, key = { "np_${it.id}" }) { item ->
-                SquareTile(
-                    movie = item.asMovie(),
-                    badge = "VİZYONDA",
-                    badgeColor = ElectricCyan,
-                    subtitle = "${formatTurkishDate(item.releaseDate)} • ${item.genre}",
-                    testTag = "now_playing_item_${item.id}",
-                    onClick = { onItemClick(item) }
-                )
+            nowPlaying.forEachIndexed { index, item ->
+                item(key = "np_${item.id}", span = { GridItemSpan(maxLineSpan) }) {
+                    UpcomingRow(
+                        item = item,
+                        badge = "VİZYONDA • " + formatTurkishDate(item.releaseDate),
+                        badgeColor = ElectricCyan,
+                        posterOnRight = index % 2 == 0,
+                        testTag = "now_playing_item_${item.id}",
+                        onClick = { onItemClick(item) }
+                    )
+                }
             }
         }
         fullWidth {
@@ -229,6 +233,89 @@ fun UpcomingScreen(
                 modifier = Modifier.padding(top = 8.dp)
             )
         }
+    }
+}
+
+/** Yakında satırı: poster sırayla sağda / solda, yanında tarih, ad, tür • süre, özet ve fragman. */
+@Composable
+private fun UpcomingRow(
+    item: UpcomingRelease,
+    badge: String,
+    badgeColor: Color,
+    posterOnRight: Boolean,
+    testTag: String,
+    onClick: () -> Unit
+) {
+    val shape = RoundedCornerShape(18.dp)
+    val movie = item.asMovie()
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(14.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(CinemaSurface)
+            .border(1.dp, CinemaBorder, shape)
+            .clickable(onClickLabel = "${item.title} kartını aç", onClick = onClick)
+            .padding(12.dp)
+            .testTag(testTag)
+    ) {
+        val poster: @Composable () -> Unit = {
+            MoviePosterImage(
+                title = movie.title,
+                posterPath = movie.posterPath,
+                posterUrl = movie.posterUrl,
+                accentColorHex = movie.colorHex,
+                cornerRadius = 12.dp,
+                showFallbackTitleBadge = false,
+                genre = movie.genre,
+                year = movie.year,
+                modifier = Modifier
+                    .size(width = 118.dp, height = 177.dp)
+                    .border(1.dp, PopcornGold.copy(alpha = 0.35f), RoundedCornerShape(12.dp))
+            )
+        }
+        if (!posterOnRight) poster()
+        Column(modifier = Modifier.weight(1f).height(177.dp)) {
+            Text(
+                badge,
+                fontSize = 10.5.sp,
+                fontWeight = FontWeight.Black,
+                color = Color(0xFF1A1408),
+                modifier = Modifier
+                    .background(badgeColor, RoundedCornerShape(7.dp))
+                    .padding(horizontal = 8.dp, vertical = 3.dp)
+            )
+            Spacer(Modifier.height(7.dp))
+            Text(item.title, fontSize = 16.sp, fontWeight = FontWeight.Black, color = TextPrimary, maxLines = 2, overflow = TextOverflow.Ellipsis, lineHeight = 19.sp)
+            Text(
+                listOfNotNull(item.genre.ifBlank { null }, item.durationMins.takeIf { it > 0 }?.let { "$it dk" }).joinToString(" • "),
+                fontSize = 11.5.sp,
+                color = PopcornGold,
+                maxLines = 1
+            )
+            Spacer(Modifier.height(5.dp))
+            Text(
+                item.logline,
+                fontSize = 11.5.sp,
+                color = TextSecondary,
+                lineHeight = 16.sp,
+                maxLines = 4,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f)
+            )
+            if (item.trailerKey != null) {
+                Text(
+                    "▶ Fragmanı İzle",
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Black,
+                    color = Color(0xFFFF6B7A),
+                    modifier = Modifier
+                        .border(1.3.dp, Color(0xFFD63447), RoundedCornerShape(999.dp))
+                        .padding(horizontal = 10.dp, vertical = 4.dp)
+                )
+            }
+        }
+        if (posterOnRight) poster()
     }
 }
 

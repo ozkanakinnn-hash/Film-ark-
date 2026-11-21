@@ -389,15 +389,11 @@ private fun CustomWheelCategoryCard(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(46.dp)
-                        .background(accent.copy(alpha = 0.18f), CircleShape)
-                        .border(1.2.dp, accent, CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(text = customList.emoji, fontSize = 22.sp)
-                }
+                com.example.ui.components.FilmIconView(
+                    icon = com.example.ui.components.filmIconForList(customList),
+                    size = 50.dp,
+                    modifier = Modifier.testTag("custom_list_icon_${customList.id}")
+                )
 
                 Spacer(modifier = Modifier.width(12.dp))
 
@@ -532,7 +528,7 @@ private fun CustomWheelCategoryCard(
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        text = "Bu Listeyi Çevir 🎡",
+                        text = "Bu Listeyi Çevir",
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Black,
                         color = MaterialTheme.colorScheme.onPrimary

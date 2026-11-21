@@ -164,6 +164,8 @@ fun WheelScreen(
     var lastRevealMovie by remember { mutableStateOf<Movie?>(null) }
     BackHandler(enabled = revealMovie != null) { revealMovie = null }
     val reduceMotion = com.example.data.local.LocalReduceMotion.current
+    // Veto mührü animasyonu oynarken gösterilen film; bitince veto uygulanır
+    var vetoStampMovie by remember { mutableStateOf<Movie?>(null) }
     var showDirectShareSheet by remember { mutableStateOf(false) }
     var isShakeEnabled by remember { mutableStateOf(true) }
     var isHapticEnabled by remember { mutableStateOf(true) }
@@ -333,7 +335,10 @@ fun WheelScreen(
 
                 Spacer(modifier = Modifier.height(14.dp))
 
-                if (activeCustomList != null) {
+                val isWorstWheel = activeCustomList?.id == com.example.data.repository.SmartWheelLists.WORST
+                if (isWorstWheel) {
+                    com.example.ui.components.WorstWheelHeader(modifier = Modifier.padding(bottom = 12.dp))
+                } else if (activeCustomList != null) {
                     val listAccent = Color(activeCustomList.accentColorHex)
                     Surface(
                         color = listAccent.copy(alpha = 0.16f),
@@ -525,15 +530,20 @@ fun WheelScreen(
 
                 Spacer(modifier = Modifier.height(14.dp))
 
-                // MINIMUM IMDb PUANI FILTER BAR (Directly updates wheel pool)
-                WheelMinImdbFilterBar(
-                    currentMinRating = minRating,
-                    poolCount = movies.size,
-                    poolNoun = movies.contentNoun(),
-                    poolTotal = poolTotal,
-                    isSpinning = isSpinning,
-                    onSelectMinRating = onWheelMinRatingChange
-                )
+                if (isWorstWheel) {
+                    // Bu çarkta puan filtresi yok: Rezalet Ölçer bilgi kartı
+                    com.example.ui.components.RezaletMeter(movies = movies, poolTotal = poolTotal)
+                } else {
+                    // MINIMUM IMDb PUANI FILTER BAR (Directly updates wheel pool)
+                    WheelMinImdbFilterBar(
+                        currentMinRating = minRating,
+                        poolCount = movies.size,
+                        poolNoun = movies.contentNoun(),
+                        poolTotal = poolTotal,
+                        isSpinning = isSpinning,
+                        onSelectMinRating = onWheelMinRatingChange
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(14.dp))
 
@@ -542,6 +552,7 @@ fun WheelScreen(
                 // THE INTERACTIVE WHEEL CANVAS
                 WheelCanvas(
                     movies = movies,
+                    showRatings = isWorstWheel,
                     rotationProvider = { wheelRotation.value },
                     needleDeflectionProvider = { needleAngle.value },
                     isSpinning = isSpinning,
@@ -665,7 +676,7 @@ fun WheelScreen(
                             .height(56.dp)
                             .pressScale(spinPressSource)
                             .testTag("spin_wheel_button"),
-                        colors = ButtonDefaults.buttonColors(containerColor = PopcornGold),
+                        colors = ButtonDefaults.buttonColors(containerColor = if (isWorstWheel) Color(0xFFD63447) else PopcornGold),
                         shape = RoundedCornerShape(16.dp)
                     ) {
                         if (isSpinning) {
@@ -683,10 +694,10 @@ fun WheelScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Çarkı Çevir! 🍿",
+                                text = if (isWorstWheel) "Kendi İsteğinle Çevir" else "Çarkı Çevir! 🍿",
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Black,
-                                color = MaterialTheme.colorScheme.onPrimary
+                                color = if (isWorstWheel) Color.White else MaterialTheme.colorScheme.onPrimary
                             )
                         }
                     }
@@ -989,7 +1000,7 @@ fun WheelScreen(
                             // VETO ACTION: Elides the chosen movie and immediately re-spins the wheel
                             if (!isVetoedOnce && !isDecisionLocked && !isSelectedWatched) {
                                 OutlinedButton(
-                                    onClick = onVetoClick,
+                                    onClick = { vetoStampMovie = selectedMovie },
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .height(54.dp)
@@ -1151,6 +1162,17 @@ fun WheelScreen(
                     }
                 )
             }
+        }
+
+        // Veto mührü: afişe kırmızı VETO damgası vurulur, bitince çark yeniden döner
+        vetoStampMovie?.let { vetoed ->
+            com.example.ui.components.VetoStampOverlay(
+                movie = vetoed,
+                onFinished = {
+                    vetoStampMovie = null
+                    onVetoClick()
+                }
+            )
         }
     }
 

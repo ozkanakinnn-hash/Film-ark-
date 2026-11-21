@@ -112,7 +112,8 @@ class ExampleRobolectricTest {
     composeTestRule.onNodeWithTag("wheel_screen_list")
       .performScrollToNode(hasTestTag("veto_action_button"))
     composeTestRule.onNodeWithTag("veto_action_button").performClick()
-    composeTestRule.mainClock.advanceTimeBy(5000L)
+    // Veto mührü (~1,5 sn) + yeniden dönüş + tür açılış sahnesi
+    composeTestRule.mainClock.advanceTimeBy(9000L)
     composeTestRule.waitForIdle()
 
     composeTestRule.onNodeWithTag("wheel_screen_list")
