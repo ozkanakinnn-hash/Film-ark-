@@ -5,90 +5,15 @@ import com.example.data.model.UpcomingRelease
 // BU DOSYA OTOMATİK ÜRETİLMİŞTİR: python3 tools/export_catalog_json.py (kaynak: tools/highlights.json)
 // Elle düzenlemeyin. Bilgiler ve posterler: TMDB.
 internal object GeneratedHighlights {
-    const val GENERATED_AT = "2026-11-20"
-    val popularMovieTmdbIds: List<Int> = listOf(687163, 1813355, 1507696, 1294189, 1543469, 1596275, 299534, 755898, 940721, 354912, 157336, 1101383, 1366, 693134, 155, 27205, 129, 1571955, 299536, 101299, 2034, 1311031, 131631, 83533, 438631, 496243, 533535, 238, 671, 24428, 695721, 120, 1780005, 603, 634649, 550, 4935, 414906, 122, 70160, 372058, 1561726, 99861, 1084242, 453, 597, 674, 1236045)
-    val popularSeriesTmdbIds: List<Int> = listOf(5920, 1413, 1434, 1622, 76331, 60735, 84773, 2734, 1100, 1421, 18347, 18165, 1400, 2316, 1408, 4057, 1877, 83631, 456, 60572, 4588, 1416, 61923, 247718, 48866, 37854, 253376, 63333, 387, 1411, 279246, 153312, 4614, 549, 46648, 1668, 213375, 65494, 291507, 1433, 108978, 2004, 1695, 1399, 79744, 34307, 44006, 67744)
-    val worstMovieTmdbIds: List<Int> = listOf(14164, 9760, 205321, 17473, 7278, 10214, 447273, 351460, 439015, 71880, 415, 166424, 9607, 1639, 10196, 314, 87818, 11667, 74997, 4258, 11470, 980078, 5550, 329833, 241251, 20533, 433249, 17610, 71676, 14564, 407451, 9947, 42684, 9722, 11679, 2486, 242512, 440471, 12279, 440)
+    const val GENERATED_AT = "2026-11-21"
+    val popularMovieTmdbIds: List<Int> = listOf(1726, 1813355, 687163, 1507696, 1294189, 1543469, 1596275, 299534, 755898, 940721, 1101383, 354912, 157336, 1366, 693134, 27205, 155, 101299, 2034, 1571955, 695721, 299536, 131631, 129, 238, 83533, 533535, 24428, 438631, 496243, 671, 1311031, 120, 603, 634649, 453, 70160, 414906, 1780005, 131634, 550, 122, 99861, 4935, 1084242, 1561726, 1236045, 597)
+    val popularSeriesTmdbIds: List<Int> = listOf(1434, 1622, 76331, 18347, 5920, 1413, 84773, 60735, 1100, 1400, 2734, 1421, 83631, 1877, 18165, 2316, 4057, 1408, 456, 60572, 1416, 42009, 1411, 2691, 1420, 4588, 1438, 41727, 247718, 37854, 61923, 48866, 253376, 387, 153312, 279246, 4614, 549, 63333, 46648, 1668, 291507, 213375, 108978, 1433, 65494, 79744, 44006)
+    val worstMovieTmdbIds: List<Int> = listOf(14164, 9760, 205321, 17473, 7278, 10214, 447273, 351460, 439015, 71880, 415, 166424, 9607, 1639, 314, 10196, 87818, 11667, 74997, 4258, 11470, 980078, 5550, 329833, 241251, 20533, 433249, 17610, 71676, 14564, 407451, 9947, 42684, 9722, 11679, 2486, 242512, 440471, 12279, 440)
+    /** Hazır çark kutuları: son zamanlarda popüler yapımların yazısız sahne görüntüleri (TMDB yolları). */
+    val popularMovieBackdrops: List<String> = listOf("/z26LxXDMmAIzKr06FPDudCJyvsM.jpg", "/2I1OFQJ0L9T0dpU6FobKFWV2PxX.jpg", "/o3XwuDUj0n8qnK91p6q8LKfr6rj.jpg", "/bySCyjQXNPgsnLTlgJpSMnRazPD.jpg")
+    val popularSeriesBackdrops: List<String> = listOf("/jbTqU6BJMufoMnPSlO4ThrcXs3Y.jpg", "/5G4Bnc4Q0YUK1bwLEUYmIsmm2Ib.jpg", "/i1phX1JpaqSnHBBGta6LBFYVCZq.jpg", "/xhK9YCxNwnE0OB1SWvCY39heHQI.jpg")
     val upcoming: List<UpcomingRelease> by lazy {
         listOf(
-        UpcomingRelease(
-            id = "u1765072",
-            tmdbId = 1765072,
-            title = "Her Şey Ortada",
-            originalTitle = "You Can See Everything",
-            releaseDate = "2026-10-30",
-            durationMins = 175,
-            genre = "Dram",
-            logline = "Hapishaneye gönderilmesine otuz dört gün kala, kötü şöhretli Theranos'un kurucusu Elizabeth Holmes, şüpheci bir film ekibini her hareketini belgelemeye davet eder.",
-            posterPath = "/lsgXMiAd3r5rtCjzS09Aao8jXNJ.jpg",
-            trailerKey = "IEx8D1Wb__U",
-            colorHex = 0xFF8B5CF6
-        ),
-        UpcomingRelease(
-            id = "u1074074",
-            tmdbId = 1074074,
-            title = "En Sevdiğim",
-            originalTitle = "El ser querido",
-            releaseDate = "2026-10-30",
-            durationMins = 136,
-            genre = "Dram",
-            logline = "Ünlü bir İspanyol yönetmen, başarısız bir oyuncu olan ve uzun zamandır görüşmediği kızıyla bir film çekmek için yeniden bir araya gelir.",
-            posterPath = "/7QrpIrbfcHmeICNHLMcN8Jcffam.jpg",
-            trailerKey = "2I5LLG2XBco",
-            colorHex = 0xFF9F1239
-        ),
-        UpcomingRelease(
-            id = "u1461254",
-            tmdbId = 1461254,
-            title = "Salmokji: Karanlık Sular",
-            originalTitle = "살목지",
-            releaseDate = "2026-10-30",
-            durationMins = 95,
-            genre = "Korku / Gerilim",
-            logline = "Salmokji Baraj Gölü'nde çekilen görüntülerde gizemli bir silüetin ortaya çıkması üzerine Su-in ve ekibi, çekimleri yenilemek için bölgeye gider.",
-            posterPath = "/uVJyWlSPCWftRUXRM6lxTqOzPY6.jpg",
-            trailerKey = "eGRQn6woFW0",
-            colorHex = 0xFF7F1D1D
-        ),
-        UpcomingRelease(
-            id = "u1468846",
-            tmdbId = 1468846,
-            title = "Nöbet",
-            originalTitle = "Sanguine",
-            releaseDate = "2026-10-30",
-            durationMins = 113,
-            genre = "Bilim Kurgu / Korku",
-            logline = "Hayat kurtaran bir doktor olmayı hayal eden Margot, ülkenin en rekabetçi acil servislerinden birinde çalışmaya hak kazanır. Ancak stajın yoğun temposuna ayak uydurmakta zorlanır.",
-            posterPath = "/msUzgJPTG5T4v5TfjRSEMMoTRnT.jpg",
-            trailerKey = null,
-            colorHex = 0xFF1D4ED8
-        ),
-        UpcomingRelease(
-            id = "u1786633",
-            tmdbId = 1786633,
-            title = "Çatlı 2",
-            originalTitle = "Çatlı 2",
-            releaseDate = "2026-10-30",
-            durationMins = 118,
-            genre = "Suç / Dram",
-            logline = "Paris'teki bir saldırının ardından Fransa'da cezaevine giren Abdullah Çatlı, içeride tutulurken ailesinin hedef haline gelmesiyle zor bir duruma düşer.",
-            posterPath = "/sTUNCIwq8SJhhLPXt2pyHUDBDHS.jpg",
-            trailerKey = "48hvqsD7dPU",
-            colorHex = 0xFF334155
-        ),
-        UpcomingRelease(
-            id = "u1813073",
-            tmdbId = 1813073,
-            title = "Zikr-i Cin",
-            originalTitle = "Zikr-i Cin",
-            releaseDate = "2026-10-30",
-            durationMins = 75,
-            genre = "Korku",
-            logline = "Bir grup eski arkadaş, lüks bir villada bir araya gelirler. Gece telefonlarına gelen “Öldür ya da öl” talimatlarının ardından kendilerini geçmişlerindeki karanlık bir sırla bağlantılı olan ölümcül olayların hedefinde bulurlar.",
-            posterPath = "/eq6LvenzoU9ST3zzEkBpaSVJkhI.jpg",
-            trailerKey = "D0TPtItZwaw",
-            colorHex = 0xFF7F1D1D
-        ),
         UpcomingRelease(
             id = "u656908",
             tmdbId = 656908,
@@ -207,19 +132,6 @@ internal object GeneratedHighlights {
             colorHex = 0xFF7F1D1D
         ),
         UpcomingRelease(
-            id = "u1567605",
-            tmdbId = 1567605,
-            title = "Ebenezer: Bir Noel Şarkısı",
-            originalTitle = "Ebenezer",
-            releaseDate = "2026-11-13",
-            durationMins = 115,
-            genre = "Fantastik / Komedi",
-            logline = "Noel’den ve çevresindeki insanlardan uzak duran cimri Ebenezer Scrooge, Noel arifesinde hayatını değiştirecek doğaüstü ziyaretçilerle karşılaşır.",
-            posterPath = "/vUEIcdHPXJ0JTkKqaxpoHKmx4mI.jpg",
-            trailerKey = "F8yK9kKB9bk",
-            colorHex = 0xFF7C3AED
-        ),
-        UpcomingRelease(
             id = "u1381071",
             tmdbId = 1381071,
             title = "Godzilla Minus Zero",
@@ -231,6 +143,19 @@ internal object GeneratedHighlights {
             posterPath = "/zpcoFlZwyLnBt7bb5wmvGDCdg06.jpg",
             trailerKey = "Pu0pH5BuCPM",
             colorHex = 0xFF1D4ED8
+        ),
+        UpcomingRelease(
+            id = "u1567605",
+            tmdbId = 1567605,
+            title = "Ebenezer: Bir Noel Şarkısı",
+            originalTitle = "Ebenezer",
+            releaseDate = "2026-11-13",
+            durationMins = 115,
+            genre = "Fantastik / Komedi",
+            logline = "Noel’den ve çevresindeki insanlardan uzak duran cimri Ebenezer Scrooge, Noel arifesinde hayatını değiştirecek doğaüstü ziyaretçilerle karşılaşır.",
+            posterPath = "/vUEIcdHPXJ0JTkKqaxpoHKmx4mI.jpg",
+            trailerKey = "F8yK9kKB9bk",
+            colorHex = 0xFF7C3AED
         ),
         UpcomingRelease(
             id = "u1437511",
@@ -350,12 +275,25 @@ internal object GeneratedHighlights {
             colorHex = 0xFF1D4ED8
         ),
         UpcomingRelease(
+            id = "u1562642",
+            tmdbId = 1562642,
+            title = "Hayalet Asker",
+            originalTitle = "Ghost Soldier",
+            releaseDate = "2026-11-20",
+            durationMins = 90,
+            genre = "Aksiyon / Gerilim",
+            logline = "Henry ‘Fitz’ Fitzgerald, memleketinde gözlerden uzak, sessiz bir hayat sürer. Güçlü bir yabancı şirket, büyük bir kazanç elde etmek için Fitz’in ve komşularının topraklarını ele geçirmeye geldiğinde ise bu sessizlik sona erer.",
+            posterPath = "/9dVOCuzVIUkRYf3jFSEujbA9Z1I.jpg",
+            trailerKey = "UKaWzMf9Ybc",
+            colorHex = 0xFFC2410C
+        ),
+        UpcomingRelease(
             id = "u1608012",
             tmdbId = 1608012,
             title = "Aşk Tesadüfleri Sever 3",
             originalTitle = "Aşk Tesadüfleri Sever 3",
             releaseDate = "2026-11-20",
-            durationMins = 0,
+            durationMins = 123,
             genre = "Dram / Romantik",
             logline = "1960’ların Ankara’sında bir çocuğun annesinden kalan kutuyu bir kız çocuğuna vermesiyle başlayan bağ, kutunun yıllar boyunca el değiştirmesiyle farklı hayatlara uzanır.",
             posterPath = "/7yUyo0Z0DMuCDYn7Mrkug40UmuT.jpg",
@@ -376,6 +314,19 @@ internal object GeneratedHighlights {
             colorHex = 0xFF9F1239
         ),
         UpcomingRelease(
+            id = "u1827853",
+            tmdbId = 1827853,
+            title = "Direktör Oedipus",
+            originalTitle = "Direktör Oedipus",
+            releaseDate = "2026-11-20",
+            durationMins = 19,
+            genre = "Suç / Gizem",
+            logline = "Annesini etkilemek için Dünya'nın En Kötü Adamı'nın bir kalem kullanılarak vahşice katledildiğini çekmek isteyen bir yönetmen, bir türlü istediği sahneyi çekemez.",
+            posterPath = "/1zA5bM4bCW1HqDKuBXRYPSUaSNI.jpg",
+            trailerKey = null,
+            colorHex = 0xFF334155
+        ),
+        UpcomingRelease(
             id = "u1514026",
             tmdbId = 1514026,
             title = "Buddy",
@@ -387,19 +338,6 @@ internal object GeneratedHighlights {
             posterPath = "/1BdZbNvl1SfrrX8J9X5tQzN6Ivu.jpg",
             trailerKey = null,
             colorHex = 0xFF7F1D1D
-        ),
-        UpcomingRelease(
-            id = "u1195803",
-            tmdbId = 1195803,
-            title = "İdeal Koca",
-            originalTitle = "Wicker",
-            releaseDate = "2026-11-27",
-            durationMins = 105,
-            genre = "Romantik / Fantastik",
-            logline = "Deniz kıyısındaki bir köyün dış çeperinde, kötü kokan, bekâr ve sürekli alay konusu olan bir balıkçı kadın yaşar. Bir gün, dar görüşlü ve boğucu komşularından bıkınca, kendine hasır malzemeden bir koca yaptırır.",
-            posterPath = "/6FcBZOKvyrLCKGCyBG0ySCR4okt.jpg",
-            trailerKey = "kA9NfV4pM_Q",
-            colorHex = 0xFFBE185D
         ),
         UpcomingRelease(
             id = "u1538497",
@@ -415,10 +353,23 @@ internal object GeneratedHighlights {
             colorHex = 0xFF0F766E
         ),
         UpcomingRelease(
+            id = "u1195803",
+            tmdbId = 1195803,
+            title = "İdeal Koca",
+            originalTitle = "Wicker",
+            releaseDate = "2026-11-27",
+            durationMins = 105,
+            genre = "Romantik / Fantastik",
+            logline = "Deniz kıyısındaki bir köyün dış çeperinde, kötü kokan, bekâr ve sürekli alay konusu olan bir balıkçı kadın yaşar. Bir gün, dar görüşlü ve boğucu komşularından bıkınca, kendine hasır malzemeden bir koca yaptırır.",
+            posterPath = "/6FcBZOKvyrLCKGCyBG0ySCR4okt.jpg",
+            trailerKey = "kA9NfV4pM_Q",
+            colorHex = 0xFFBE185D
+        ),
+        UpcomingRelease(
             id = "u1400336",
             tmdbId = 1400336,
             title = "Zor Baba 4",
-            originalTitle = "Focker-in-Law",
+            originalTitle = "Focker In-Law",
             releaseDate = "2026-11-27",
             durationMins = 105,
             genre = "Komedi / Romantik",

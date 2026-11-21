@@ -17,7 +17,7 @@ object SmartWheelLists {
         HighlightsRepository.popularMovies().takeIf { it.size >= 4 }?.let {
             CustomWheelList(
                 id = POPULAR_MOVIES,
-                name = "Şu An Popüler",
+                name = "Popüler Filmler",
                 emoji = "🔥",
                 description = "Türkiye'de platformlarda bu hafta en çok izlenen filmler",
                 movies = it.sortedWith(compareByDescending<com.example.data.model.Movie> { m -> m.year }.thenByDescending { m -> m.imdb }),

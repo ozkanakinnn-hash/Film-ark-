@@ -1,5 +1,7 @@
 package com.example.ui.screens
 
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.AutoGraph
 import androidx.compose.foundation.lazy.LazyRow
 import com.example.ui.components.MovieDetailSheet
 import android.appwidget.AppWidgetManager
@@ -127,6 +129,7 @@ fun ProfileScreen(
     onSaveNote: (String, String) -> Unit = { _, _ -> },
     onRemoveWatched: (String) -> Unit,
     onMovieFlexClick: (Movie) -> Unit,
+    onStatsClick: () -> Unit = {},
     onBack: () -> Unit
 ) {
     BackHandler { onBack() }
@@ -317,6 +320,40 @@ fun ProfileScreen(
                         )
                     }
                 }
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Geçmiş Analiz Dashboard (ana sayfadan buraya taşındı)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(18.dp))
+                    .background(CinemaSurface)
+                    .border(1.5.dp, ElectricCyan.copy(alpha = 0.45f), RoundedCornerShape(18.dp))
+                    .clickable { onStatsClick() }
+                    .padding(horizontal = 16.dp, vertical = 14.dp)
+                    .testTag("home_stats_entry_card")
+            ) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(44.dp)
+                        .background(Brush.linearGradient(listOf(ElectricCyan, NeonPink)), CircleShape)
+                ) {
+                    Icon(Icons.Default.AutoGraph, contentDescription = "Geçmiş analizi", tint = Color.White, modifier = Modifier.size(22.dp))
+                }
+                Spacer(modifier = Modifier.width(12.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("Geçmiş Analiz Dashboard 📊", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                    Text(
+                        "${savedDecisions.size} karar • En sık seçilen türler ve filmler",
+                        fontSize = 11.sp,
+                        color = TextSecondary
+                    )
+                }
+                Icon(Icons.Default.PlayArrow, contentDescription = null, tint = PopcornGold, modifier = Modifier.size(20.dp))
             }
 
             Spacer(modifier = Modifier.height(14.dp))

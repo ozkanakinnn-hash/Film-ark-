@@ -21,6 +21,7 @@ object CustomWheelListRepository {
 
     private const val PREF_NAME = "ne_izlesek_custom_lists_prefs"
     private const val KEY_PRESETS_SEEDED = "starter_presets_seeded_v1"
+    private const val KEY_PRESETS_V2_ADDED = "catalog_presets_added_v2"
 
     // Yazımlar sırayla: art arda yapılan işlemler (ör. izlendi + not) birbirini ezmesin
     @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
@@ -53,6 +54,16 @@ object CustomWheelListRepository {
                     .sortedWith(compareByDescending<CustomWheelList> { !it.isPreset }.thenByDescending { it.updatedAtMillis })
                 _customLists.value = merged
                 prefs?.edit()?.putBoolean(KEY_PRESETS_SEEDED, true)?.apply()
+                // v2: yeni hazır listeleri mevcut kullanıcılara bir kez ekle (silinenler geri gelmez)
+                if (prefs?.getBoolean(KEY_PRESETS_V2_ADDED, false) != true) {
+                    val added = buildCatalogPresets(1_700_000_000_000L).filter { p -> merged.none { it.id == p.id } }
+                    if (added.isNotEmpty()) {
+                        _customLists.value = (merged + added)
+                            .sortedWith(compareByDescending<CustomWheelList> { !it.isPreset }.thenByDescending { it.updatedAtMillis })
+                        localDao.upsertLists(added.map { encodeEntity(it) })
+                    }
+                    prefs?.edit()?.putBoolean(KEY_PRESETS_V2_ADDED, true)?.apply()
+                }
             } else if (!alreadySeeded) {
                 val starters = buildDefaultStarterPresets()
                 _customLists.value = starters
@@ -251,7 +262,39 @@ object CustomWheelListRepository {
                 isPreset = true,
                 updatedAtMillis = now + 1L
             )
+        ) + buildCatalogPresets(now)
+    }
+
+    /** Katalogdan türetilen ek hazır listeler (her biri en iyi puanlı 10 film, yeniden eskiye). */
+    private fun buildCatalogPresets(now: Long): List<CustomWheelList> {
+        val films = MovieRepository.allMovies.filter { !it.isSeries && it.imdb >= 6.5 }
+        fun pick(predicate: (Movie) -> Boolean): List<Movie> = films.filter(predicate)
+            .sortedByDescending { it.imdb }
+            .take(10)
+            .sortedWith(compareByDescending<Movie> { it.year }.thenByDescending { it.imdb })
+        data class Spec(val id: String, val name: String, val emoji: String, val desc: String, val color: Long, val filter: (Movie) -> Boolean)
+        val specs = listOf(
+            Spec("preset_romantik_aksam", "Romantik Akşam", "❤️", "Battaniye altında izlenecek aşk hikâyeleri", 0xFFBE185D) { it.moodTag == "romance" },
+            Spec("preset_kafa_yakan", "Kafa Yakan Filmler", "🧠", "Sonunda 'nasıl yani?' dedirten zihin bükücüler", 0xFF7C3AED) { it.moodTag == "mind_bender" },
+            Spec("preset_aksiyon_dolu", "Aksiyon Dolu", "💥", "Nefes nefese kovalamaca ve büyük patlamalar", 0xFFC2410C) { it.genre.contains("Aksiyon") },
+            Spec("preset_gerilim_gecesi", "Gerilim Gecesi", "⚡", "Tırnak yedirten gerilim ve suç filmleri", 0xFF6D28D9) { it.moodTag == "thriller" },
+            Spec("preset_animasyon_keyfi", "Animasyon Keyfi", "🎨", "Her yaşa görsel şölen sunan animasyonlar", 0xFF059669) { it.moodTag == "animation" },
+            Spec("preset_komedi_molasi", "Komedi Molası", "😂", "Günün stresini alacak kahkaha dozu", 0xFFD97706) { it.moodTag == "comedy" }
         )
+        return specs.mapIndexedNotNull { idx, spec ->
+            val movies = pick(spec.filter)
+            if (movies.size < 4) return@mapIndexedNotNull null
+            CustomWheelList(
+                id = spec.id,
+                name = spec.name,
+                emoji = spec.emoji,
+                description = spec.desc,
+                movies = movies,
+                accentColorHex = spec.color,
+                isPreset = true,
+                updatedAtMillis = now - 1L - idx
+            )
+        }
     }
 
     private fun encodeEntity(list: CustomWheelList): CustomWheelListEntity {

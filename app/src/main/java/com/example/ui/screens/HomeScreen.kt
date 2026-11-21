@@ -102,6 +102,8 @@ fun HomeScreen(
     personalPicks: List<Movie> = emptyList(),
     ticketPosters: List<Movie> = emptyList(),
     smartWheelLists: List<com.example.data.model.CustomWheelList> = emptyList(),
+    popularMovieBackdrops: List<String> = com.example.data.repository.HighlightsRepository.popularMovieBackdrops().take(2),
+    popularSeriesBackdrops: List<String> = com.example.data.repository.HighlightsRepository.popularSeriesBackdrops().take(2),
     onSpinSmartList: (String) -> Unit = {},
     onSoloClick: () -> Unit,
     onCompareClick: () -> Unit = {},
@@ -292,105 +294,51 @@ fun HomeScreen(
                 onWheelClick = onSoloClick
             )
 
-            if (smartWheelLists.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(14.dp))
-                Text(
-                    text = "Hazır Çarklar",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Black,
-                    color = TextPrimary,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                androidx.compose.foundation.lazy.LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    modifier = Modifier.fillMaxWidth().testTag("home_smart_wheels_row")
-                ) {
-                    items(smartWheelLists.size) { idx ->
-                        val list = smartWheelLists[idx]
-                        val accent = Color(list.accentColorHex)
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(14.dp))
-                                .background(accent.copy(alpha = 0.12f))
-                                .border(1.dp, accent.copy(alpha = 0.6f), RoundedCornerShape(14.dp))
-                                .clickable { onSpinSmartList(list.id) }
-                                .padding(horizontal = 12.dp, vertical = 10.dp)
-                                .testTag("home_smart_wheel_${list.id}")
-                        ) {
-                            Text(text = list.emoji, fontSize = 18.sp)
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Column {
-                                Text(list.name, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
-                                Text("Çarkı çevir", fontSize = 10.sp, color = accent, fontWeight = FontWeight.SemiBold)
-                            }
-                        }
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(14.dp))
-
-            // Visual Genre Statistics Quick Entry Card
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(18.dp))
-                    .clickable { onStatsClick() }
-                    .border(
-                        1.dp,
-                        Brush.horizontalGradient(listOf(ElectricCyan.copy(alpha = 0.65f), PopcornGold.copy(alpha = 0.65f))),
-                        RoundedCornerShape(18.dp)
-                    )
-                    .testTag("home_stats_entry_card"),
-                shape = RoundedCornerShape(18.dp),
-                colors = CardDefaults.cardColors(containerColor = CinemaSurface)
+            // Hazır Çarklar: iki eşit klaket kutusu + "Bunu Niye İzledim?" kartı
+            Spacer(modifier = Modifier.height(18.dp))
+            Text(
+                text = "Hazır Çarklar",
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Black,
+                color = TextPrimary,
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)
+            )
+            Text(
+                text = "Haftalık katalogdan otomatik oluşur • dokun ve çevir",
+                fontSize = 12.sp,
+                color = TextSecondary,
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp)
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxWidth().testTag("home_smart_wheels_row")
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 14.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(44.dp)
-                            .background(
-                                Brush.linearGradient(listOf(ElectricCyan, NeonPink)),
-                                CircleShape
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.AutoGraph,
-                            contentDescription = "Tür istatistik paneli",
-                            tint = Color.White,
-                            modifier = Modifier.size(22.dp)
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "Geçmiş Analiz Dashboard 📊",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = TextPrimary
-                        )
-                        Text(
-                            text = "${savedDecisions.size} DB kaydı • En sık seçilen türler & filmler ($favoriteCount ❤️)",
-                            fontSize = 11.sp,
-                            color = TextSecondary
-                        )
-                    }
-                    Icon(
-                        imageVector = Icons.Default.PlayArrow,
-                        contentDescription = null,
-                        tint = PopcornGold,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
+                com.example.ui.components.ClapperWheelCard(
+                    title = "Popüler Filmler",
+                    subtitle = "En çok izlenenler",
+                    backdropPaths = popularMovieBackdrops,
+                    accent = Color(0xFFE9B949),
+                    redButton = false,
+                    onClick = { onSpinSmartList(com.example.data.repository.SmartWheelLists.POPULAR_MOVIES) },
+                    testTag = "home_smart_wheel_${com.example.data.repository.SmartWheelLists.POPULAR_MOVIES}",
+                    modifier = Modifier.weight(1f)
+                )
+                com.example.ui.components.ClapperWheelCard(
+                    title = "Popüler Diziler",
+                    subtitle = "Gündemdeki diziler",
+                    backdropPaths = popularSeriesBackdrops,
+                    accent = Color(0xFFD63447),
+                    redButton = true,
+                    onClick = { onSpinSmartList(com.example.data.repository.SmartWheelLists.POPULAR_SERIES) },
+                    testTag = "home_smart_wheel_${com.example.data.repository.SmartWheelLists.POPULAR_SERIES}",
+                    modifier = Modifier.weight(1f)
+                )
             }
+            Spacer(modifier = Modifier.height(16.dp))
+            com.example.ui.components.WorstWheelCard(
+                onClick = { onSpinSmartList(com.example.data.repository.SmartWheelLists.WORST) }
+            )
 
             Spacer(modifier = Modifier.height(22.dp))
 

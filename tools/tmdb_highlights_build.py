@@ -85,6 +85,24 @@ def upcoming_items(today):
     return items[:40]
 
 
+def recent_backdrops(path, ids, date_key, today, want=4):
+    """Hazır çark kutuları için son zamanlarda popüler yapımların YAZISIZ sahne görüntüleri."""
+    limit = (today - datetime.timedelta(days=540)).isoformat()
+    out = []
+    for tid in ids:
+        if len(out) >= want:
+            break
+        d = api_get(f"{path}{tid}", language="tr-TR")
+        if (d.get(date_key) or "") < limit:
+            continue
+        imgs = api_get(f"{path}{tid}/images", include_image_language="null")
+        bd = [b for b in imgs.get("backdrops", []) if b.get("iso_639_1") is None]
+        if bd:
+            out.append(bd[0]["file_path"])
+        time.sleep(0.05)
+    return out
+
+
 def main():
     today = datetime.date.today()
     tr_flat = dict(watch_region="TR", with_watch_monetization_types="flatrate", sort_by="popularity.desc")
@@ -99,11 +117,15 @@ def main():
                 worst.append(r["id"])
     worst = worst[:40]
     upcoming = upcoming_items(today)
+    movie_backdrops = recent_backdrops("/movie/", popular_movies, "release_date", today)
+    series_backdrops = recent_backdrops("/tv/", popular_series, "last_air_date", today)
     doc = {"generatedAt": today.isoformat(), "popularMovies": popular_movies, "popularSeries": popular_series,
-           "worstMovies": worst, "upcoming": upcoming}
+           "worstMovies": worst, "upcoming": upcoming,
+           "popularMovieBackdrops": movie_backdrops, "popularSeriesBackdrops": series_backdrops}
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(doc, f, ensure_ascii=False, indent=1)
         f.write("\n")
+    print(f"Kutu görüntüleri: {len(movie_backdrops)} film, {len(series_backdrops)} dizi")
     print(f"Popüler film: {len(popular_movies)} | popüler dizi: {len(popular_series)} | "
           f"en kötü: {len(worst)} | yakında: {len(upcoming)}")
 

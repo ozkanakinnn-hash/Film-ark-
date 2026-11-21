@@ -31,7 +31,9 @@ class RemoteCatalog(
     val popularMovieTmdbIds: List<Int> = emptyList(),
     val popularSeriesTmdbIds: List<Int> = emptyList(),
     val worstMovieTmdbIds: List<Int> = emptyList(),
-    val upcoming: List<UpcomingRelease> = emptyList()
+    val upcoming: List<UpcomingRelease> = emptyList(),
+    val popularMovieBackdrops: List<String> = emptyList(),
+    val popularSeriesBackdrops: List<String> = emptyList()
 )
 
 /**
@@ -155,6 +157,10 @@ object RemoteCatalogRepository {
             val a = sections?.optJSONArray(key) ?: return emptyList()
             return (0 until minOf(a.length(), 200)).mapNotNull { a.optInt(it, 0).takeIf { id -> id > 0 } }.distinct()
         }
+        fun paths(key: String): List<String> {
+            val a = sections?.optJSONArray(key) ?: return emptyList()
+            return (0 until minOf(a.length(), 10)).mapNotNull { a.optString(it).takeIf { p -> POSTER.matches(p) } }
+        }
         val upcomingArr = root.optJSONArray("upcoming")
         val upcoming = if (upcomingArr == null) emptyList() else (0 until minOf(upcomingArr.length(), 100))
             .mapNotNull { i -> upcomingArr.optJSONObject(i)?.let { runCatching { toUpcoming(it) }.getOrNull() } }
@@ -165,7 +171,9 @@ object RemoteCatalogRepository {
             popularMovieTmdbIds = ids("popularMovies"),
             popularSeriesTmdbIds = ids("popularSeries"),
             worstMovieTmdbIds = ids("worstMovies"),
-            upcoming = upcoming
+            upcoming = upcoming,
+            popularMovieBackdrops = paths("popularMovieBackdrops"),
+            popularSeriesBackdrops = paths("popularSeriesBackdrops")
         )
     }
 

@@ -60,6 +60,9 @@ def write_highlights_kotlin(hl):
         f"    val popularMovieTmdbIds: List<Int> = listOf({ints(hl.get('popularMovies', []))})",
         f"    val popularSeriesTmdbIds: List<Int> = listOf({ints(hl.get('popularSeries', []))})",
         f"    val worstMovieTmdbIds: List<Int> = listOf({ints(hl.get('worstMovies', []))})",
+        "    /** Hazır çark kutuları: son zamanlarda popüler yapımların yazısız sahne görüntüleri (TMDB yolları). */",
+        f"    val popularMovieBackdrops: List<String> = listOf({', '.join(kstr(x) for x in hl.get('popularMovieBackdrops', []))})",
+        f"    val popularSeriesBackdrops: List<String> = listOf({', '.join(kstr(x) for x in hl.get('popularSeriesBackdrops', []))})",
         "    val upcoming: List<UpcomingRelease> by lazy {",
         "        listOf(",
         ",\n".join(rows),
@@ -141,6 +144,8 @@ def main():
             "popularMovies": hl.get("popularMovies", []),
             "popularSeries": hl.get("popularSeries", []),
             "worstMovies": hl.get("worstMovies", []),
+            "popularMovieBackdrops": hl.get("popularMovieBackdrops", []),
+            "popularSeriesBackdrops": hl.get("popularSeriesBackdrops", []),
         }
         doc["upcoming"] = hl.get("upcoming", [])
         write_highlights_kotlin(hl)

@@ -28,6 +28,13 @@ object HighlightsRepository {
     fun popularSeries(): List<Movie> =
         resolve(remote()?.popularSeriesTmdbIds?.ifEmpty { null } ?: GeneratedHighlights.popularSeriesTmdbIds, series = true)
 
+    /** Hazır çark kutuları için son zamanlarda popüler filmlerin yazısız sahne görüntüleri (TMDB yolları). */
+    fun popularMovieBackdrops(): List<String> =
+        remote()?.popularMovieBackdrops?.ifEmpty { null } ?: GeneratedHighlights.popularMovieBackdrops
+
+    fun popularSeriesBackdrops(): List<String> =
+        remote()?.popularSeriesBackdrops?.ifEmpty { null } ?: GeneratedHighlights.popularSeriesBackdrops
+
     /** "Bunu Niye İzledim?" çarkı: çok oy almış ama en düşük puanlı filmler (puana göre artan). */
     fun worstMovies(): List<Movie> {
         val listed = resolve(remote()?.worstMovieTmdbIds?.ifEmpty { null } ?: GeneratedHighlights.worstMovieTmdbIds, series = false)

@@ -421,6 +421,7 @@ fun DecisionApp(
                         onSaveNote = { id, note -> viewModel.updateWatchedMovieNote(id, note) },
                         onRemoveWatched = { viewModel.removeWatchedMovie(it) },
                         onMovieFlexClick = { viewModel.selectMovieForFlex(it) },
+                        onStatsClick = { viewModel.navigateTo(Screen.STATS) },
                         onBack = { viewModel.navigateTo(Screen.HOME) }
                     )
                 }
@@ -495,7 +496,7 @@ fun DecisionApp(
                         watchedMovies = watchedMovies,
                         historyDashboard = historyDashboardStats,
                         onMovieClick = { viewModel.selectMovieForFlex(it) },
-                        onBack = { viewModel.navigateTo(Screen.HOME) }
+                        onBack = { viewModel.navigateTo(Screen.PROFILE) }
                     )
                 }
             }

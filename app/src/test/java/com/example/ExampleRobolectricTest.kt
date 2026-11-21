@@ -740,7 +740,9 @@ class ExampleRobolectricTest {
     WatchedMovieRepository.markAsWatched(watchedRewatch)
     WatchedMovieRepository.toggleRewatch(watchedRewatch.id)
 
-    composeTestRule.onNodeWithTag("home_screen_list")
+    composeTestRule.onNodeWithTag("profile_icon_button").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithTag("profile_screen_list")
       .performScrollToNode(hasTestTag("home_stats_entry_card"))
     composeTestRule.onNodeWithTag("home_stats_entry_card").performClick()
     composeTestRule.waitForIdle()
@@ -1650,11 +1652,20 @@ class ExampleRobolectricTest {
   @Test
   fun `home smart wheels row spins worst movies wheel directly`() {
     composeTestRule.onNodeWithTag("home_screen_list").performScrollToNode(hasTestTag("home_smart_wheels_row"))
-    composeTestRule.onNodeWithTag("home_smart_wheels_row")
-      .performScrollToNode(hasTestTag("home_smart_wheel_${com.example.data.repository.SmartWheelLists.WORST}"))
-    composeTestRule.onNodeWithTag("home_smart_wheel_${com.example.data.repository.SmartWheelLists.WORST}").performClick()
+    composeTestRule.onNodeWithTag("home_smart_wheel_${com.example.data.repository.SmartWheelLists.POPULAR_SERIES}").assertExists()
+    composeTestRule.onNodeWithTag("home_smart_wheel_${com.example.data.repository.SmartWheelLists.POPULAR_MOVIES}_title", useUnmergedTree = true)
+      .assertTextContains("Popüler Filmler")
+    composeTestRule.onNodeWithTag("home_screen_list").performScrollToNode(hasTestTag("home_worst_wheel_card"))
+    composeTestRule.onNodeWithTag("home_worst_wheel_card").performClick()
     composeTestRule.waitForIdle()
     composeTestRule.onNodeWithTag("spin_wheel_button").assertExists()
+  }
+
+  @Test
+  fun `custom list presets include catalog derived lists`() {
+    val ids = CustomWheelListRepository.customLists.value.map { it.id }
+    assertTrue(ids.containsAll(listOf("preset_korku_gecesi", "preset_romantik_aksam", "preset_kafa_yakan", "preset_komedi_molasi")))
+    assertTrue(CustomWheelListRepository.customLists.value.size >= 8)
   }
 
   @Test
