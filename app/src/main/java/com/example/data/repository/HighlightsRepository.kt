@@ -12,14 +12,21 @@ import java.util.Locale
  * Listeler TMDB kimliğiyle tutulur ve katalogdaki yapımlara çevrilir (bulunamayanlar atlanır).
  */
 object HighlightsRepository {
+    private const val MIN_WORST = 8
 
     private fun remote() = RemoteCatalogRepository.catalog.value
 
+    /**
+     * TMDB kimliklerini yapımlara çevirir. Önce güncel katalogda (uzaktan indirilen varsa o) arar;
+     * bulunamayanlar APK içindeki kataloğa düşer, böylece liste hiçbir zaman boş kalmaz.
+     */
     private fun resolve(tmdbIds: List<Int>, series: Boolean): List<Movie> {
-        val byTmdb = MovieRepository.allMovies
+        fun index(movies: List<Movie>) = movies
             .filter { it.isSeries == series && it.tmdbId != null }
             .associateBy { it.tmdbId!! }
-        return tmdbIds.mapNotNull { byTmdb[it] }.distinctBy { it.id }
+        val current = index(MovieRepository.allMovies)
+        val bundled by lazy { index(if (series) GeneratedSeries.series else GeneratedMovies.movies) }
+        return tmdbIds.mapNotNull { current[it] ?: bundled[it] }.distinctBy { it.id }
     }
 
     fun popularMovies(): List<Movie> =
@@ -38,8 +45,9 @@ object HighlightsRepository {
     /** "Bunu Niye İzledim?" çarkı: çok oy almış ama en düşük puanlı filmler (puana göre artan). */
     fun worstMovies(): List<Movie> {
         val listed = resolve(remote()?.worstMovieTmdbIds?.ifEmpty { null } ?: GeneratedHighlights.worstMovieTmdbIds, series = false)
-        val pool = listed.ifEmpty {
-            MovieRepository.allMovies.filter { !it.isSeries && it.imdb in 0.1..5.6 }
+        val pool = if (listed.size >= MIN_WORST) listed else {
+            // Liste gelmediyse: katalogdaki en düşük puanlı filmler
+            (listed + MovieRepository.allMovies.filter { !it.isSeries && it.imdb in 0.1..5.6 }).distinctBy { it.id }
         }
         return pool.sortedBy { it.imdb }
     }

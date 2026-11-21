@@ -53,8 +53,9 @@ object RemoteCatalogRepository {
     private const val MAX_BYTES = 3 * 1024 * 1024
     private const val MIN_ITEMS = 50
     private const val MAX_ITEMS = 3_000
-    private const val WEEK_MS = 7L * 24 * 60 * 60 * 1000
-    private const val RETRY_MS = 24L * 60 * 60 * 1000
+    // Katalog her pazartesi yenilenir; telefon günde en fazla bir kez kontrol eder (değişmediyse ETag ile 304, veri inmez)
+    private const val CHECK_MS = 20L * 60 * 60 * 1000
+    private const val RETRY_MS = 6L * 60 * 60 * 1000
     private const val CACHE_FILE = "remote_catalog.json"
     private const val PREFS = "remote_catalog_prefs"
     private const val KEY_LAST_SUCCESS = "last_success_ms"
@@ -75,7 +76,7 @@ object RemoteCatalogRepository {
         cacheFile = File(app.filesDir, CACHE_FILE)
         scope.launch {
             cacheFile?.takeIf { it.exists() && it.length() in 1..MAX_BYTES }?.let { file ->
-                runCatching { parse(file.readText()) }.getOrNull()?.let { _catalog.value = it }
+                runCatching { parse(file.readText()) }.getOrNull()?.takeIf { isNotOlderThanBundled(it) }?.let { _catalog.value = it }
             }
             if (autoFetch && isDue(System.currentTimeMillis())) refresh()
         }
@@ -85,7 +86,7 @@ object RemoteCatalogRepository {
         val p = prefs ?: return false
         val lastSuccess = p.getLong(KEY_LAST_SUCCESS, 0L)
         val lastAttempt = p.getLong(KEY_LAST_ATTEMPT, 0L)
-        return now - lastSuccess >= WEEK_MS && now - lastAttempt >= RETRY_MS
+        return now - lastSuccess >= CHECK_MS && now - lastAttempt >= RETRY_MS
     }
 
     /** İndirir, doğrular ve kaydeder. Başarılıysa true. */
@@ -119,6 +120,8 @@ object RemoteCatalogRepository {
                         }
                         val text = String(bytes, Charsets.UTF_8)
                         val parsed = parse(text) ?: return@runCatching false
+                        // Sunucudaki katalog APK içindekinden eskiyse kullanma (eski biçimde vitrin/en kötüler listesi yok)
+                        if (!isNotOlderThanBundled(parsed)) return@runCatching false
                         cacheFile?.writeText(text)
                         conn.getHeaderField("ETag")?.let { p.edit().putString(KEY_ETAG, it.take(200)).apply() }
                         _catalog.value = parsed
@@ -133,6 +136,10 @@ object RemoteCatalogRepository {
         if (result) p.edit().putLong(KEY_LAST_SUCCESS, System.currentTimeMillis()).apply()
         return result
     }
+
+    /** Uzaktan katalog, APK içindeki katalogla aynı tarihli ya da daha yeni olmalı (ISO tarihleri metin olarak karşılaştırılır). */
+    fun isNotOlderThanBundled(remote: RemoteCatalog): Boolean =
+        remote.generatedAt.take(10) >= GeneratedHighlights.GENERATED_AT
 
     // ---------------- Doğrulama ----------------
 

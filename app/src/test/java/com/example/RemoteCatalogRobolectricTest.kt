@@ -99,4 +99,30 @@ class RemoteCatalogRobolectricTest {
         assertTrue(movies.none { it.isSeries })
         assertEquals("3 sezon • bölüm 45 dk", series.first().copy(seasonCount = 3, durationMins = 45).durationLabel())
     }
+
+    @Test
+    fun oldRemoteCatalog_isIgnored_andWorstWheelStillOpens() {
+        // main dalındaki eski katalog gibi: tarihi eski, "sections" yok, en kötü filmler içinde değil
+        val root = JSONObject(catalogText())
+        val worstIds = com.example.data.repository.GeneratedHighlights.worstMovieTmdbIds.toSet()
+        val items = root.getJSONArray("items")
+        val kept = org.json.JSONArray()
+        for (i in 0 until items.length()) {
+            val o = items.getJSONObject(i)
+            if (o.optInt("tmdbId", -1) !in worstIds) kept.put(o)
+        }
+        root.put("items", kept).put("generatedAt", "2026-01-01")
+        root.remove("sections")
+        root.remove("upcoming")
+        val old = RemoteCatalogRepository.parse(root.toString())!!
+        assertFalse("APK'dakinden eski katalog kullanılmamalı", RemoteCatalogRepository.isNotOlderThanBundled(old))
+        assertTrue(RemoteCatalogRepository.isNotOlderThanBundled(RemoteCatalogRepository.parse(catalogText())!!))
+
+        // Yine de uygulansa bile "Bunu Niye İzledim?" çarkı açılmalı ve düşük puanlı filmlerden oluşmalı
+        RemoteCatalogRepository.applyForTests(old)
+        val worst = com.example.data.repository.SmartWheelLists.byId(com.example.data.repository.SmartWheelLists.WORST)
+        assertNotNull("En kötüler çarkı her zaman açılmalı", worst)
+        assertTrue(worst!!.movies.size >= 8)
+        assertTrue("Hepsi düşük puanlı film", worst.movies.all { !it.isSeries && it.imdb <= 6.0 })
+    }
 }
