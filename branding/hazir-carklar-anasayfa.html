@@ -34,30 +34,45 @@ h2{font-size:17px;font-weight:900;margin:0 4px 4px} .sub{font-size:12px;color:rg
 .ph{font-size:17px;font-weight:900;margin:6px 4px 12px}
 .prow{display:flex;gap:10px;margin-bottom:14px}.prow div{flex:1;background:#17141b;border-radius:14px;padding:12px;text-align:center;border:1px solid #2a2530}
 .prow b{display:block;font-size:20px;color:#e9b949}.prow span{font-size:10.5px;color:rgba(245,239,230,.55)}
+
+.slate{overflow:hidden}
+.bgp{position:absolute;inset:0;display:flex;gap:3px;opacity:.95}
+.bgp img{flex:1;height:100%;object-fit:cover;min-width:0}
+.bgshade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,10,15,.55) 0%,rgba(11,10,15,.35) 35%,rgba(11,10,15,.88) 75%,rgba(11,10,15,.96) 100%)}
+.slate > *:not(.bgp):not(.bgshade){position:relative;z-index:2}
+.rowh{color:rgba(245,239,230,.75)!important;text-shadow:0 1px 3px #000}
+.neon{margin-top:34px;font-size:15.5px;font-weight:900;line-height:1.15;color:#fff;letter-spacing:.3px}
+.neon.on{text-shadow:0 0 4px #fff,0 0 10px var(--acc),0 0 20px var(--acc),0 2px 4px #000}
+.neon.off{text-shadow:0 2px 4px #000;color:rgba(255,255,255,.82)}
+.live{display:inline-flex;align-items:center;gap:5px;font-size:9px;font-weight:900;letter-spacing:1.4px;color:var(--acc);background:rgba(5,4,6,.78);border:1px solid var(--acc);border-radius:5px;padding:2px 6px;margin-top:6px}
+.live i{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 6px var(--acc)}
+.live.off i{opacity:.25;box-shadow:none}
+.slate > .go{position:absolute!important;left:10px;bottom:12px;z-index:3}
+.clap{height:206px!important}
 </style></head><body>
 <h2>Hazır Çarklar</h2><div class="sub">Haftalık katalogdan otomatik oluşur • dokun ve çevir</div>
-<div class="grid"><div class="clap">
+<div class="grid"><div class="clap" style="--acc:#E9B949">
   <div class="stick top"><div class="stripes"></div><div class="hinge"></div></div>
   <div class="stick low"><div class="stripes"></div></div>
   <div class="slate">
+    <div class="bgp"><img src="p/l80bthReoL08m8oU74R4ZMxgnGZ.jpg"><img src="p/zhxlzxBlO1sWB1rPn7RmAoeQ2na.jpg"><img src="p/pS2R3DEiucuizVkKP80qzdO97TE.jpg"></div><div class="bgshade"></div>
     <div class="rowh"><span>SAHNE</span><span>ÇEKİM</span><span>ROLL</span></div>
-    <div class="lcd" style="color:#E9B949;text-shadow:0 0 6px #E9B949"><b>48</b> FİLM</div>
-    <div class="name"><i>🔥</i>Şu An En Popüler</div>
-    <div class="line"><span>YAPIM</span>Ne İzlesek?<em style="border-color:#E9B949;color:#E9B949">POPÜLER</em></div>
+    <div class="neon on">🔥 Şu An En Popüler</div>
+    <div class="live on"><i></i>BU HAFTA</div>
     <div class="go">▶ ÇEVİR</div>
   </div>
-</div><div class="clap">
+</div><div class="clap" style="--acc:#2DD4BF">
   <div class="stick top"><div class="stripes"></div><div class="hinge"></div></div>
   <div class="stick low"><div class="stripes"></div></div>
   <div class="slate">
+    <div class="bgp"><img src="p/7daMA65eFTxcTg58E0YoCMyAj63.jpg"><img src="p/z0XiwdrCQ9yVIr4O0pxzaAYRxdW.jpg"><img src="p/yZevl2vHQgmosfwUdVNzviIfaWS.jpg"></div><div class="bgshade"></div>
     <div class="rowh"><span>SAHNE</span><span>ÇEKİM</span><span>ROLL</span></div>
-    <div class="lcd" style="color:#2DD4BF;text-shadow:0 0 6px #2DD4BF"><b>48</b> DİZİ</div>
-    <div class="name"><i>📺</i>Popüler Diziler</div>
-    <div class="line"><span>YAPIM</span>Ne İzlesek?<em style="border-color:#2DD4BF;color:#2DD4BF">DİZİ</em></div>
+    <div class="neon on">📺 Popüler Diziler</div>
+    <div class="live on"><i></i>BU HAFTA</div>
     <div class="go">▶ ÇEVİR</div>
   </div>
 </div></div>
 <div class="worst"><div class="e">🤦</div><div><div class="tt">Bunu Niye İzledim?</div><div class="ss">En düşük puanlı filmler çarkı</div></div><div class="go2">BUNU SEN İSTEDİN</div></div>
-<div class="ctx" style="margin-top:10px">↑ "Geçmiş Analiz" kartının yerinde</div>
-<div class="cap">Ana sayfa • Hazır Çarklar önizlemesi</div>
+
+<div class="cap">Ana sayfa • Hazır Çarklar önizlemesi (yazılar yanıp söner)</div>
 </body></html>
