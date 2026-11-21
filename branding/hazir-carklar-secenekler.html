@@ -11,14 +11,14 @@ h2{font-size:17px;font-weight:900;margin:0 4px 2px}.sub{font-size:12px;color:rgb
 .btn.red{background:linear-gradient(180deg,#ef5466,#c22a3c);color:#fff}
 /* A: üstte görsel, altta klaket tahtası */
 .A .body{margin-top:40px;border-radius:0 0 14px 14px;overflow:hidden;border:1.5px solid #2a2530;border-top:none;background:#141117;box-shadow:0 10px 18px rgba(0,0,0,.5)}
-.A .img{height:96px;background-size:cover;background-position:center;position:relative}
+.A .img{height:96px;position:relative;overflow:hidden}
 .A .img::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,10,15,0) 55%,#141117 100%)}
 .A .slate{padding:8px 10px 11px;border-top:2px solid var(--acc)}
 .A .row{display:flex;align-items:center;gap:7px}
 .A .foot{display:flex;align-items:center;justify-content:space-between;margin-top:9px}
 .A .chalk{flex:1;height:1px;background:rgba(245,239,230,.15);margin-right:8px}
 /* B: tam görsel, alt bant */
-.B .body{margin-top:40px;height:150px;border-radius:0 0 14px 14px;overflow:hidden;border:1.5px solid #2a2530;border-top:none;position:relative;background-size:cover;background-position:center;box-shadow:0 10px 18px rgba(0,0,0,.5)}
+.B .body{margin-top:40px;height:150px;border-radius:0 0 14px 14px;overflow:hidden;border:1.5px solid #2a2530;border-top:none;position:relative;box-shadow:0 10px 18px rgba(0,0,0,.5)}
 .B .body::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,10,15,.05) 20%,rgba(11,10,15,.92) 78%)}
 .B .band{position:absolute;left:10px;right:10px;bottom:10px;z-index:2}
 .B .row{display:flex;align-items:center;gap:7px}
@@ -38,19 +38,22 @@ h2{font-size:17px;font-weight:900;margin:0 4px 2px}.sub{font-size:12px;color:rgb
 .worst .tt{font-weight:900;font-size:16px}.worst .ss{font-size:11.5px;color:rgba(245,239,230,.6);margin-top:2px}
 .worst .go2{margin-left:auto;white-space:nowrap;font-size:10px;font-weight:900;color:#ff4d5e;border:1.5px solid #ff4d5e;border-radius:8px;padding:4px 8px;transform:rotate(-6deg);flex:none}
 .note{font-size:10.5px;letter-spacing:1.4px;color:rgba(245,239,230,.4);font-weight:800;text-align:center;margin-top:8px}
+.strips{position:absolute;top:0;bottom:0;left:-18%;right:-18%;display:flex;gap:3px;transform:skewX(-12deg);background:#e9b949}
+.strips div{flex:1;background-size:cover;background-position:center;transform:skewX(12deg) scale(1.25)}
+.strips .w{flex:1;overflow:hidden}
 </style></head><body>
 <h2>Hazır Çarklar</h2><div class="sub">Haftalık katalogdan otomatik oluşur • dokun ve çevir</div>
 <div class="opt">SEÇENEK A</div>
-<div class="grid" style="margin-top:18px"><div class="clap A" style="--acc:#E9B949"><div class="stick top"><div class="stripes"></div><div class="hinge"></div></div><div class="stick low"><div class="stripes"></div></div><div class="body"><div class="img" style="background-image:url(p/bd_7RyHsO4yDXtBv1zUU3mTpHeQ0d5.jpg)"></div>
+<div class="grid" style="margin-top:18px"><div class="clap A" style="--acc:#E9B949"><div class="stick top"><div class="stripes"></div><div class="hinge"></div></div><div class="stick low"><div class="stripes"></div></div><div class="body"><div class="img"><div class="strips"><div class="w"><div style="height:100%;background-image:url(p/bd_7RyHsO4yDXtBv1zUU3mTpHeQ0d5.jpg)"></div></div><div class="w"><div style="height:100%;background-image:url(p/bd_oHBhHoNe59VH6bUMazDtJmWOFSS.jpg)"></div></div><div class="w"><div style="height:100%;background-image:url(p/bd_o3XwuDUj0n8qnK91p6q8LKfr6rj.jpg)"></div></div></div></div>
 <div class="slate"><div class="row"><img class="lg" src="logo.svg"><div class="t glow">Popüler Filmler</div></div><div class="d">Bu hafta en çok izlenenler</div>
-<div class="foot"><div class="chalk"></div><span class="btn ">▶ ÇEVİR</span></div></div></div></div><div class="clap A" style="--acc:#D63447"><div class="stick top"><div class="stripes"></div><div class="hinge"></div></div><div class="stick low"><div class="stripes"></div></div><div class="body"><div class="img" style="background-image:url(p/bd_jbTqU6BJMufoMnPSlO4ThrcXs3Y.jpg)"></div>
+<div class="foot"><div class="chalk"></div><span class="btn ">▶ ÇEVİR</span></div></div></div></div><div class="clap A" style="--acc:#D63447"><div class="stick top"><div class="stripes"></div><div class="hinge"></div></div><div class="stick low"><div class="stripes"></div></div><div class="body"><div class="img"><div class="strips"><div class="w"><div style="height:100%;background-image:url(p/bd_d87JXX3DLkRJMfm5StCmmnmhHuX.jpg)"></div></div><div class="w"><div style="height:100%;background-image:url(p/bd_jbTqU6BJMufoMnPSlO4ThrcXs3Y.jpg)"></div></div><div class="w"><div style="height:100%;background-image:url(p/bd_nO7EzksrBzlNpAg5rgv8HzaBIkx.jpg)"></div></div></div></div>
 <div class="slate"><div class="row"><img class="lg" src="logo.svg"><div class="t glow">Popüler Diziler</div></div><div class="d">Platformlarda gündemdekiler</div>
 <div class="foot"><div class="chalk"></div><span class="btn red">▶ ÇEVİR</span></div></div></div></div></div>
 <div class="opt" style="margin-top:34px">SEÇENEK B</div>
-<div class="grid" style="margin-top:18px"><div class="clap B" style="--acc:#E9B949"><div class="stick top"><div class="stripes"></div><div class="hinge"></div></div><div class="stick low"><div class="stripes"></div></div><div class="body" style="background-image:url(p/bd_7RyHsO4yDXtBv1zUU3mTpHeQ0d5.jpg)"><div class="bar"></div>
+<div class="grid" style="margin-top:18px"><div class="clap B" style="--acc:#E9B949"><div class="stick top"><div class="stripes"></div><div class="hinge"></div></div><div class="stick low"><div class="stripes"></div></div><div class="body"><div class="strips"><div class="w"><div style="height:100%;background-image:url(p/bd_7RyHsO4yDXtBv1zUU3mTpHeQ0d5.jpg)"></div></div><div class="w"><div style="height:100%;background-image:url(p/bd_oHBhHoNe59VH6bUMazDtJmWOFSS.jpg)"></div></div><div class="w"><div style="height:100%;background-image:url(p/bd_o3XwuDUj0n8qnK91p6q8LKfr6rj.jpg)"></div></div></div><div class="bar"></div>
 <div class="band"><div class="row"><img class="lg" src="logo.svg"><div class="t glow">Popüler Filmler</div></div>
-<div class="foot"><div class="d">En çok izlenenler</div><span class="btn ">▶ ÇEVİR</span></div></div></div></div><div class="clap B" style="--acc:#D63447"><div class="stick top"><div class="stripes"></div><div class="hinge"></div></div><div class="stick low"><div class="stripes"></div></div><div class="body" style="background-image:url(p/bd_jbTqU6BJMufoMnPSlO4ThrcXs3Y.jpg)"><div class="bar"></div>
+<div class="foot"><div class="d">En çok izlenenler</div><span class="btn ">▶ ÇEVİR</span></div></div></div></div><div class="clap B" style="--acc:#D63447"><div class="stick top"><div class="stripes"></div><div class="hinge"></div></div><div class="stick low"><div class="stripes"></div></div><div class="body"><div class="strips"><div class="w"><div style="height:100%;background-image:url(p/bd_d87JXX3DLkRJMfm5StCmmnmhHuX.jpg)"></div></div><div class="w"><div style="height:100%;background-image:url(p/bd_jbTqU6BJMufoMnPSlO4ThrcXs3Y.jpg)"></div></div><div class="w"><div style="height:100%;background-image:url(p/bd_nO7EzksrBzlNpAg5rgv8HzaBIkx.jpg)"></div></div></div><div class="bar"></div>
 <div class="band"><div class="row"><img class="lg" src="logo.svg"><div class="t glow">Popüler Diziler</div></div>
 <div class="foot"><div class="d">Gündemdeki diziler</div><span class="btn red">▶ ÇEVİR</span></div></div></div></div></div>
-<div class="worst"><div class="e">🤦</div><div><div class="tt">Bunu Niye İzledim?</div><div class="ss">En düşük puanlı filmler çarkı</div></div><div class="go2">BUNU SEN İSTEDİN</div></div>
-<div class="note">↑ İLK HÂLİYLE KALIYOR (her iki seçenekte de)</div></body></html>
+<div class="worst"><div class="e" style="background:none"><img src="logo.svg" style="width:46px;height:46px;border-radius:12px"></div><div><div class="tt">Bunu Niye İzledim?</div><div class="ss">En düşük puanlı filmler çarkı</div></div><div class="go2">BUNU SEN İSTEDİN</div></div>
+<div class="note">↑ LOGO EKLENDİ • DAMGA AYNI</div></body></html>
