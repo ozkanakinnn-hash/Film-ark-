@@ -1,5 +1,6 @@
 package com.example.ui.screens
 
+import com.example.ui.components.ScreenBackHandler
 import android.view.HapticFeedbackConstants
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
@@ -151,7 +152,8 @@ fun CompareScreen(
     onBack: () -> Unit
 ) {
     var immersive by rememberSaveable { mutableStateOf(false) }
-    BackHandler { if (immersive) immersive = false else onBack() }
+    ScreenBackHandler(enabled = !immersive) { onBack() }
+    BackHandler(enabled = immersive) { immersive = false }
 
     val left = compareState.leftMovie
     val right = compareState.rightMovie

@@ -1,10 +1,10 @@
 package com.example.ui.screens
 
+import com.example.ui.components.ScreenBackHandler
 import com.example.ui.components.filmIcon
 
 import com.example.ui.components.FilmIconView
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -128,7 +128,7 @@ fun FilterScreen(
     onProceedToWheel: () -> Unit,
     onBack: () -> Unit
 ) {
-    BackHandler { onBack() }
+    ScreenBackHandler { onBack() }
 
     var showQuickNarrowFilters by remember { mutableStateOf(false) }
 

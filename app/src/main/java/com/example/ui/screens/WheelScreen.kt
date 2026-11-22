@@ -1,5 +1,6 @@
 package com.example.ui.screens
 
+import com.example.ui.components.ScreenBackHandler
 import android.view.HapticFeedbackConstants
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -156,7 +157,7 @@ fun WheelScreen(
     onOpenStoryModal: () -> Unit,
     onBack: () -> Unit
 ) {
-    BackHandler { onBack() }
+    ScreenBackHandler { onBack() }
     val view = LocalView.current
     var revealMovie by remember { mutableStateOf<Movie?>(null) }
     var lastRevealMovie by remember { mutableStateOf<Movie?>(null) }

@@ -1,10 +1,10 @@
 package com.example.ui.screens
 
+import com.example.ui.components.ScreenBackHandler
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.background
@@ -132,7 +132,7 @@ fun FlexScreen(
     isVetoedOnce: Boolean = false,
     onBack: () -> Unit
 ) {
-    BackHandler { onBack() }
+    ScreenBackHandler { onBack() }
 
     val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current

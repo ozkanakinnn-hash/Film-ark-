@@ -1,12 +1,12 @@
 package com.example.ui.screens
 
+import com.example.ui.components.ScreenBackHandler
 import androidx.compose.foundation.lazy.LazyRow
 import com.example.ui.components.MovieDetailSheet
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.os.Build
 import android.widget.Toast
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -129,7 +129,7 @@ fun ProfileScreen(
     onMovieFlexClick: (Movie) -> Unit,
     onBack: () -> Unit
 ) {
-    BackHandler { onBack() }
+    ScreenBackHandler { onBack() }
 
     var watchLaterDetail by remember { mutableStateOf<Movie?>(null) }
     watchLaterDetail?.let { movie ->

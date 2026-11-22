@@ -1,6 +1,6 @@
 package com.example.ui.screens
 
-import androidx.activity.compose.BackHandler
+import com.example.ui.components.ScreenBackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -116,7 +116,7 @@ fun CustomListsScreen(
     onRestorePresets: () -> Unit,
     onBack: () -> Unit
 ) {
-    BackHandler { onBack() }
+    ScreenBackHandler { onBack() }
 
     var showEditorDialog by remember { mutableStateOf(false) }
     var editingList by remember { mutableStateOf<CustomWheelList?>(null) }

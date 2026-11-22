@@ -1,6 +1,6 @@
 package com.example.ui.screens
 
-import androidx.activity.compose.BackHandler
+import com.example.ui.components.ScreenBackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -48,7 +48,7 @@ fun StatsScreen(
     onMovieClick: (Movie) -> Unit = {},
     onBack: () -> Unit
 ) {
-    BackHandler { onBack() }
+    ScreenBackHandler { onBack() }
 
     LazyColumn(
         modifier = Modifier

@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import com.example.ui.components.PredictiveBackContainer
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
@@ -217,6 +218,7 @@ fun DecisionApp(
                 .padding(innerPadding),
             label = "screen_transition"
         ) { screen ->
+          PredictiveBackContainer {
           Box(modifier = Modifier.fillMaxSize()) {
             when (screen) {
                 Screen.HOME -> {
@@ -398,6 +400,7 @@ fun DecisionApp(
                     )
                 }
             }
+          }
           }
         }
     }

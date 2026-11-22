@@ -1,8 +1,8 @@
 package com.example.ui.screens
 
+import com.example.ui.components.ScreenBackHandler
 import com.example.data.model.normalizeSelectionModeCategory
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -108,7 +108,7 @@ fun HistoryScreen(
     onClearHistory: () -> Unit = {},
     onBack: () -> Unit
 ) {
-    BackHandler { onBack() }
+    ScreenBackHandler { onBack() }
 
     val totalMinutes = savedDecisions.sumOf { it.minutesSaved }
     var shareTargetMovie by remember { mutableStateOf<Movie?>(null) }
