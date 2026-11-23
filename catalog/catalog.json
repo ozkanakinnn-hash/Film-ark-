@@ -1,33 +1,9 @@
 {
  "format": "ne-izlesek-catalog",
  "version": 1,
- "generatedAt": "2026-11-16",
+ "generatedAt": "2026-11-23",
  "attribution": "Film/dizi bilgileri ve posterler: TMDB. Platform bilgileri: JustWatch. This product uses the TMDB API but is not endorsed or certified by TMDB.",
  "items": [
-  {
-   "id": "t1236045",
-   "kind": "movie",
-   "title": "Animals",
-   "originalTitle": "Animals",
-   "year": 2026,
-   "durationMins": 109,
-   "imdb": 6.9,
-   "moodTag": "thriller",
-   "platforms": [
-    "Netflix"
-   ],
-   "genre": "Gerilim / Dram",
-   "logline": "Los Angeles belediye başkanlığı adayı ve eşi, oğulları kaçırılınca fidye parasını toplamak için mücadele ederken hayatlarını altüst edebilecek kararlar almak zorunda kalır.",
-   "whyWatch": "2026 yapımı, ★6.9 puanlı taze bir gerilim seçeneği.",
-   "posterPath": "/iISM36voS1E8gX9BM0DVK0kgi3E.jpg",
-   "tmdbId": 1236045,
-   "trailerKey": "ZkN2M4ODdys",
-   "colorHex": 4285343961,
-   "audio": [
-    "subtitled"
-   ],
-   "isCult": false
-  },
   {
    "id": "t1400940",
    "kind": "movie",
@@ -53,43 +29,18 @@
    "isCult": false
   },
   {
-   "id": "t1204680",
-   "kind": "movie",
-   "title": "Coyote Acme'ye Karşı",
-   "originalTitle": "Coyote vs. Acme",
-   "year": 2026,
-   "durationMins": 103,
-   "imdb": 8.2,
-   "moodTag": "animation",
-   "platforms": [
-    "Diğer"
-   ],
-   "genre": "Animasyon / Komedi",
-   "logline": "Wile E. Coyote, Road Runner'ı yakalama girişimleri sırasında kullandığı ve sürekli bozularak kendisine zarar veren ürünler nedeniyle Acme Corporation şirketine karşı hukuki bir süreç başlatır.",
-   "whyWatch": "Adalete aç.",
-   "posterPath": "/tiS1RDaTrPftGZ0yGNaUW5DLuir.jpg",
-   "tmdbId": 1204680,
-   "trailerKey": "ztcf-CoGF3s",
-   "colorHex": 4278556265,
-   "audio": [
-    "dubbed",
-    "subtitled"
-   ],
-   "isCult": false
-  },
-  {
    "id": "t1400837",
    "kind": "movie",
    "title": "Diğer Anne",
    "originalTitle": "Other Mommy",
    "year": 2026,
    "durationMins": 93,
-   "imdb": 6.3,
+   "imdb": 6.5,
    "moodTag": "horror",
    "platforms": [
     "Diğer"
    ],
-   "genre": "Korku / Gizem",
+   "genre": "Korku",
    "logline": "Bela adlı küçük bir kız, evinde annesine tekinsiz derecede benzeyen kötücül bir varlıkla bağ kurar.",
    "whyWatch": "Annen seni kurtarmayacak.",
    "posterPath": "/a0373Ae8HxzB7vVawkvJe9rn4vN.jpg",
@@ -126,6 +77,30 @@
    "isCult": false
   },
   {
+   "id": "t1375646",
+   "kind": "movie",
+   "title": "Koloni",
+   "originalTitle": "군체",
+   "year": 2026,
+   "durationMins": 122,
+   "imdb": 8.2,
+   "moodTag": "horror",
+   "platforms": [
+    "Diğer"
+   ],
+   "genre": "Korku / Aksiyon",
+   "logline": "Biyoteknoloji profesörü Se-jeong, bir biyoteknoloji konferansına katılır; ancak hızla mutasyona uğrayan bir virüsün ortaya çıkmasıyla etkinlik kısa sürede felakete dönüşür.",
+   "whyWatch": "2026 yapımı, ★8.2 puanlı taze bir korku seçeneği.",
+   "posterPath": "/fbUEOKlP2qWSANg63mOhXwxorlN.jpg",
+   "tmdbId": 1375646,
+   "trailerKey": "LW6dpj1uCK8",
+   "colorHex": 4286520605,
+   "audio": [
+    "subtitled"
+   ],
+   "isCult": false
+  },
+  {
    "id": "t1384216",
    "kind": "movie",
    "title": "Köpek ve Yıldızlar",
@@ -145,55 +120,6 @@
    "trailerKey": "jzVD-ePUxpk",
    "colorHex": 4290920716,
    "audio": [
-    "subtitled"
-   ],
-   "isCult": false
-  },
-  {
-   "id": "t1148365",
-   "kind": "movie",
-   "title": "Matchbox the Movie",
-   "originalTitle": "Matchbox the Movie",
-   "year": 2026,
-   "durationMins": 127,
-   "imdb": 7.5,
-   "moodTag": "comedy",
-   "platforms": [
-    "Diğer"
-   ],
-   "genre": "Komedi / Aksiyon",
-   "logline": "Bir grup eski çocukluk arkadaşı tekrar bir araya gelir. Ancak tesadüfen tehlikeli, uluslararası bir komployu keşfettiklerinde buluşmaları çılgın bir hâl alır ve dünyayı kurtarmaları gerekir.",
-   "whyWatch": "Dünyayı kurtar, ama arkadaşlarınla.",
-   "posterPath": "/aHhHRz6nOpwkqJs5ASeRGAdK2dt.jpg",
-   "tmdbId": 1148365,
-   "trailerKey": "7xfqITrMDcI",
-   "colorHex": 4292441862,
-   "audio": [
-    "subtitled"
-   ],
-   "isCult": false
-  },
-  {
-   "id": "t1108427",
-   "kind": "movie",
-   "title": "Moana",
-   "originalTitle": "Moana",
-   "year": 2026,
-   "durationMins": 115,
-   "imdb": 7.4,
-   "moodTag": "comedy",
-   "platforms": [
-    "Diğer"
-   ],
-   "genre": "Komedi / Aile",
-   "logline": "Genç Moana, Okyanus'un çağrısına kulak verir ve halkına refahı geri getirmek için çıktığı unutulmaz bir yolculukta, kötü şöhretli yarı tanrı Maui ile birlikte ilk kez adası Motunui'nin resifinin ötesine açılır.",
-   "whyWatch": "Okyanusun onu seçmesinin bir nedeni var.",
-   "posterPath": "/AddecwRjKUqiRaztmZwxgCz6eHr.jpg",
-   "tmdbId": 1108427,
-   "trailerKey": "EEz5xbzYPKI",
-   "colorHex": 4292441862,
-   "audio": [
-    "dubbed",
     "subtitled"
    ],
    "isCult": false
@@ -253,7 +179,7 @@
    "originalTitle": "Toy Story 5",
    "year": 2026,
    "durationMins": 102,
-   "imdb": 8.3,
+   "imdb": 8.2,
    "moodTag": "animation",
    "platforms": [
     "Diğer"
@@ -326,7 +252,7 @@
    "originalTitle": "호프",
    "year": 2026,
    "durationMins": 157,
-   "imdb": 6.8,
+   "imdb": 6.9,
    "moodTag": "mind_bender",
    "platforms": [
     "Diğer"
@@ -344,13 +270,38 @@
    "isCult": false
   },
   {
+   "id": "t791523",
+   "kind": "movie",
+   "title": "Vahşi Orman",
+   "originalTitle": "Wildwood",
+   "year": 2026,
+   "durationMins": 132,
+   "imdb": 8.5,
+   "moodTag": "animation",
+   "platforms": [
+    "Diğer"
+   ],
+   "genre": "Animasyon / Macera",
+   "logline": "Coraline'i yaratan ellerden... Prue McKeel, küçük erkek kardeşi bir karga sürüsü tarafından kaçırıldıktan sonra Oregon'un hemen ötesindeki gizli ve büyülü vahşi ormanda umutsuz bir arama çalışması başlatır.",
+   "whyWatch": "Sevginiz için ne kadar uzağa gidebilirsiniz?",
+   "posterPath": "/snFM00mpNAfUzUtkdEW0uDEvXA0.jpg",
+   "tmdbId": 791523,
+   "trailerKey": "bJQGtSeLPII",
+   "colorHex": 4278556265,
+   "audio": [
+    "dubbed",
+    "subtitled"
+   ],
+   "isCult": false
+  },
+  {
    "id": "t1263337",
    "kind": "movie",
    "title": "Vahşinin Kalbi",
    "originalTitle": "Heart of the Beast",
    "year": 2026,
-   "durationMins": 101,
-   "imdb": 7.6,
+   "durationMins": 102,
+   "imdb": 7.8,
    "moodTag": "thriller",
    "platforms": [
     "Diğer"
@@ -464,30 +415,6 @@
    "isCult": false
   },
   {
-   "id": "t83533",
-   "kind": "movie",
-   "title": "Avatar: Ateş ve Kül",
-   "originalTitle": "Avatar: Fire and Ash",
-   "year": 2025,
-   "durationMins": 198,
-   "imdb": 7.6,
-   "moodTag": "easy_watch",
-   "platforms": [
-    "Disney+"
-   ],
-   "genre": "Bilim Kurgu / Macera",
-   "logline": "Pandora gezegeninde geçen destansı macera devam ediyor. Sully ailesi, Pandora'nın Kül halkı kabilesiyle tanışır ve yeni tehditlerle yüzleşirler.",
-   "whyWatch": "Ateşle yüzleş.",
-   "posterPath": "/8kknNk7PbOcDUXynUZYZ7EHnKAA.jpg",
-   "tmdbId": 83533,
-   "trailerKey": "zJxzIjjDkR8",
-   "colorHex": 4280110808,
-   "audio": [
-    "subtitled"
-   ],
-   "isCult": false
-  },
-  {
    "id": "t755898",
    "kind": "movie",
    "title": "Dünyalar Savaşı",
@@ -505,6 +432,30 @@
    "posterPath": "/iFWDt2eS91aK1TLxZT1rEZq3QB3.jpg",
    "tmdbId": 755898,
    "trailerKey": "d9erkpdh5o0",
+   "colorHex": 4280110808,
+   "audio": [
+    "subtitled"
+   ],
+   "isCult": false
+  },
+  {
+   "id": "t695721",
+   "kind": "movie",
+   "title": "Açlık Oyunları: Kuşların ve Yılanların Şarkısı",
+   "originalTitle": "The Hunger Games: The Ballad of Songbirds & Snakes",
+   "year": 2023,
+   "durationMins": 157,
+   "imdb": 6.9,
+   "moodTag": "easy_watch",
+   "platforms": [
+    "Diğer"
+   ],
+   "genre": "Bilim Kurgu / Aksiyon",
+   "logline": "Capitol'de gözden düşen ve solmakta olan bir soyun son umudu olan Coriolanus Snow, 10. Açlık Oyunları için mentor olarak seçildiğinde hayatı değişir. Snow, yoksul 12.",
+   "whyWatch": "Herkes bir şeye açlık duyar.",
+   "posterPath": "/fpCw9qWv7EWkpLcNoSBxlIin8ZG.jpg",
+   "tmdbId": 695721,
+   "trailerKey": "jAXWhKMmYuk",
    "colorHex": 4280110808,
    "audio": [
     "subtitled"
@@ -697,7 +648,7 @@
    "platforms": [
     "Disney+"
    ],
-   "genre": "Animasyon / Aile",
+   "genre": "Animasyon / Dram",
    "logline": "Küçük bir yanlış adım, şehrin en iyi caz kulübünde çalmak üzere hayatının şansını yakalayan ortaokul müzik öğretmeni Joe Gardner'nı New York sokaklarından, yeni ruhların dünyaya gitmeden önce kişiliklerini, tuhaflıklarını ve ilgi…",
    "whyWatch": "Herkesin bir ruhu vardır. Joe Gardner ise kendisininkini bulmak üzeredir.",
    "posterPath": "/nEnPHSZlr0zOqW1LVyFrkvbyhpr.jpg",
@@ -754,6 +705,31 @@
    "tmdbId": 420817,
    "trailerKey": "DNF2bVlbhKc",
    "colorHex": 4290648157,
+   "audio": [
+    "dubbed",
+    "subtitled"
+   ],
+   "isCult": false
+  },
+  {
+   "id": "t299534",
+   "kind": "movie",
+   "title": "Avengers: Endgame",
+   "originalTitle": "Avengers: Endgame",
+   "year": 2019,
+   "durationMins": 182,
+   "imdb": 8.2,
+   "moodTag": "easy_watch",
+   "platforms": [
+    "Disney+"
+   ],
+   "genre": "Macera / Bilim Kurgu",
+   "logline": "Marvel Sinematik Evreni'nin dördüncü aşamasının zirve noktası olarak kabul edilen bu epik filmde, \"Avengers: Sonsuzluk Savaşı\" (2018) olaylarının hemen ardından başlar ve Thanos'un sonsuz taşları kullanarak evrenin yarısını yok…",
+   "whyWatch": "Son savaş, son şans!",
+   "posterPath": "/zx1uMVXSJrzYCA8KTpmeEBqBx66.jpg",
+   "tmdbId": 299534,
+   "trailerKey": "L2NAh3CIdig",
+   "colorHex": 4279203438,
    "audio": [
     "dubbed",
     "subtitled"
@@ -888,31 +864,6 @@
    "isCult": false
   },
   {
-   "id": "t299536",
-   "kind": "movie",
-   "title": "Avengers: Sonsuzluk Savaşı",
-   "originalTitle": "Avengers: Infinity War",
-   "year": 2018,
-   "durationMins": 154,
-   "imdb": 8.2,
-   "moodTag": "easy_watch",
-   "platforms": [
-    "Disney+"
-   ],
-   "genre": "Macera / Aksiyon",
-   "logline": "Kaptan Amerika ve Iron Man'in arasında yaşanan olayların ardından bölünen kahramanlarımız, birbirlerinden uzaklara savrulurlar. Hepsi kendi yandaşlarıyla dünyayı korumaya çalışmaktadır.",
-   "whyWatch": "Bütün bir evren. İlk ve son kez.",
-   "posterPath": "/7FQTJyrvhUp9oYDhHgujWRlxUES.jpg",
-   "tmdbId": 299536,
-   "trailerKey": "QwievZ1Tx-8",
-   "colorHex": 4279203438,
-   "audio": [
-    "dubbed",
-    "subtitled"
-   ],
-   "isCult": false
-  },
-  {
    "id": "t332562",
    "kind": "movie",
    "title": "Bir Yıldız Doğuyor",
@@ -926,7 +877,7 @@
    ],
    "genre": "Romantik / Müzik",
    "logline": "Jackson Maine, son zamanlarında kariyerinde düşüş gösteren yetenekli bir müzisyendir. Bir gün, henüz keşfedilmemiş genç bir yetenek olan Ally ile tanışır ve ikili arasında tutkulu bir aşk başlar.",
-   "whyWatch": "TMDB'de 12.497 oyla ★7.5: romantik sevenlerin ortak kararı.",
+   "whyWatch": "TMDB'de 12.511 oyla ★7.5: romantik sevenlerin ortak kararı.",
    "posterPath": "/6zfP2NnRpYHZYPxfMdNskyBclzx.jpg",
    "tmdbId": 332562,
    "trailerKey": "4tZ5Bbahcp4",
@@ -1380,7 +1331,7 @@
    ],
    "genre": "Komedi / Aksiyon",
    "logline": "Marvel Stüdyoları'nın Thor: Ragnarok filminde, Thor evrenin diğer tarafında tutukludur ve güçlü çekici yanında değildir, çok güçlü yeni tehdit zalim Hela'nın elinde ana gezegeninin yok oluşu ve Asgard uygarlığının sonu olan…",
-   "whyWatch": "TMDB'de 22.775 oyla ★7.6: komedi sevenlerin ortak kararı.",
+   "whyWatch": "TMDB'de 22.800 oyla ★7.6: komedi sevenlerin ortak kararı.",
    "posterPath": "/vznEpyt2LNr3P14s7n70sR2iWgA.jpg",
    "tmdbId": 284053,
    "trailerKey": "ue80QwXMRHg",
@@ -1481,7 +1432,7 @@
    ],
    "genre": "Fantastik / Macera",
    "logline": "Marvel Studios'un yapımında, korkunç bir araba kazasında ellerini kaybettikten sonra hayatı sonsuza dek değişen dünyaca ünlü beyin cerrahi Dr. Stephen Strange in öyküsü anlatılıyor.",
-   "whyWatch": "TMDB'de 24.215 oyla ★7.4: fantastik sevenlerin ortak kararı.",
+   "whyWatch": "TMDB'de 24.246 oyla ★7.4: fantastik sevenlerin ortak kararı.",
    "posterPath": "/nifqM5VkblSttwwqGXoDXmXwrHA.jpg",
    "tmdbId": 284052,
    "trailerKey": "HSzx-zryEgM",
@@ -1557,7 +1508,7 @@
    ],
    "genre": "Macera / Aksiyon",
    "logline": "Steve Rogers insanlığı korumayı amaçlayan yeni bir Yenilmezler oluşumuna liderlik eder, sivil kayıpların olduğu bir olay yaşadıktan sonra, ekibi yönlendirecek bir yönetim kurulunca idare edilen bir denetim sistemi kurulmasına…",
-   "whyWatch": "TMDB'de 24.867 oyla ★7.5: macera sevenlerin ortak kararı.",
+   "whyWatch": "TMDB'de 24.904 oyla ★7.5: macera sevenlerin ortak kararı.",
    "posterPath": "/td9wjb1v4sBE0T5UsZx50QnsZ3j.jpg",
    "tmdbId": 271110,
    "trailerKey": "dKrVegVI0Us",
@@ -1632,7 +1583,7 @@
    ],
    "genre": "Romantik / Dram",
    "logline": "Will Traynor zengin, başarılı, yakışıklı, yaşamayı seven ve istediği her şeye sahip olan genç bir adamdır. Ancak talihsiz bir motosiklet kazası sonrası felç kalınca yaşama hevesini kaybetmiş, ölmeyi düşünmeye başlamıştır.",
-   "whyWatch": "TMDB'de 13.725 oyla ★7.9: romantik sevenlerin ortak kararı.",
+   "whyWatch": "TMDB'de 13.736 oyla ★7.9: romantik sevenlerin ortak kararı.",
    "posterPath": "/iQhtbMyfdiXIePGC5zGBWrzz9ce.jpg",
    "tmdbId": 296096,
    "trailerKey": "T0MmkG_nG1U",
@@ -1726,7 +1677,7 @@
    "originalTitle": "부산행",
    "year": 2016,
    "durationMins": 120,
-   "imdb": 7.8,
+   "imdb": 7.7,
    "moodTag": "horror",
    "platforms": [
     "Diğer"
@@ -1835,7 +1786,7 @@
    "genre": "Macera / Bilim Kurgu",
    "logline": "John Hammond'ın başarısızlıkla sonuçlanan Jurassic Park denemesinin üzerinden tam 22 yıl geçmiştir.",
    "whyWatch": "Tüm canlıları ezmek için uyandılar",
-   "posterPath": "/rhr4y79GpxQF9IsfJItRXVaoGs4.jpg",
+   "posterPath": "/bkXjL03yWPmiuFqxWEp4zSYVZBY.jpg",
    "tmdbId": 135397,
    "trailerKey": "ftpJDY6-xiE",
    "colorHex": 4279203438,
@@ -2035,7 +1986,7 @@
    ],
    "genre": "Komedi / Dram",
    "logline": "Riggan adlı bir tiyatro oyunun baş oyuncusu provalar esnasında beklenmedik bir biçimde yaralanır ve yerinin acil olarak doldurulması gerekir.",
-   "whyWatch": "TMDB'de 14.002 oyla ★7.4: komedi sevenlerin ortak kararı.",
+   "whyWatch": "TMDB'de 14.029 oyla ★7.4: komedi sevenlerin ortak kararı.",
    "posterPath": "/ueSmUbyr36raTlRKCLCT5WmvvwG.jpg",
    "tmdbId": 194662,
    "trailerKey": "ytZJxyZSp2w",
@@ -2110,7 +2061,7 @@
    ],
    "genre": "Romantik / Dram",
    "logline": "Film, modern bilim ve teknoloji tarihini değiştiren İngiliz fizikçi ve teorisyen Stephen Hawking'in hayatından bir kesiti ele alıyor.",
-   "whyWatch": "TMDB'de 11.371 oyla ★7.8: romantik sevenlerin ortak kararı.",
+   "whyWatch": "TMDB'de 11.389 oyla ★7.8: romantik sevenlerin ortak kararı.",
    "posterPath": "/1SN2W7YU6dAFogd2DIR7MxvcpPu.jpg",
    "tmdbId": 266856,
    "trailerKey": "RBbJsw_SCd8",
@@ -2249,6 +2200,31 @@
    "isCult": false
   },
   {
+   "id": "t101299",
+   "kind": "movie",
+   "title": "Açlık Oyunları: Ateşi Yakalamak",
+   "originalTitle": "The Hunger Games: Catching Fire",
+   "year": 2013,
+   "durationMins": 146,
+   "imdb": 7.4,
+   "moodTag": "easy_watch",
+   "platforms": [
+    "Disney+"
+   ],
+   "genre": "Macera / Aksiyon",
+   "logline": "Ateşi Yakalamak, Katniss Everdeen'in diğer haraç Peete Mellark'la 74. Açlık Oyunları'nı kazandıktan sonra sağ salim evine geri dönüşünden başlıyor.",
+   "whyWatch": "Her devrim bir kıvılcımla başlar.",
+   "posterPath": "/5BJDcOEX4WgSTWlxBb4K2t4lf41.jpg",
+   "tmdbId": 101299,
+   "trailerKey": "zoKj7TdJk98",
+   "colorHex": 4279203438,
+   "audio": [
+    "dubbed",
+    "subtitled"
+   ],
+   "isCult": false
+  },
+  {
    "id": "t152601",
    "kind": "movie",
    "title": "Aşk",
@@ -2358,6 +2334,7 @@
    "imdb": 6.7,
    "moodTag": "mind_bender",
    "platforms": [
+    "Netflix",
     "Prime Video"
    ],
    "genre": "Aksiyon / Bilim Kurgu",
@@ -2518,31 +2495,6 @@
    "tmdbId": 72105,
    "trailerKey": "dX7CvY7VtWc",
    "colorHex": 4292441862,
-   "audio": [
-    "dubbed",
-    "subtitled"
-   ],
-   "isCult": false
-  },
-  {
-   "id": "t70160",
-   "kind": "movie",
-   "title": "Açlık Oyunları",
-   "originalTitle": "The Hunger Games",
-   "year": 2012,
-   "durationMins": 142,
-   "imdb": 7.2,
-   "moodTag": "thriller",
-   "platforms": [
-    "Disney+"
-   ],
-   "genre": "Bilim Kurgu / Macera",
-   "logline": "Yakın bir gelecekte Kuzey Amerika kuraklık ve arkasından gelen yangın ve kıtlıklarla zayıflayarak çökmüş; yerini bir başkent ve 12 eyaletten oluşan Panem adında bir ülkeye bırakmıştır.",
-   "whyWatch": "Tüm dünya izliyor olacak.",
-   "posterPath": "/tSYjmaqkmlhRm6CJuutxcetalto.jpg",
-   "tmdbId": 70160,
-   "trailerKey": "wLGOaKY5STw",
-   "colorHex": 4280110808,
    "audio": [
     "dubbed",
     "subtitled"
@@ -2714,8 +2666,8 @@
     "Prime Video"
    ],
    "genre": "Aksiyon / Macera",
-   "logline": "M'in geçmişi peşine takıldığında Bond'un ona olan bağlılığı sinanır. MI6 saldırıya uğradıktan sonra 007, bedeli ne kadar kişisel olursa olsun, tehdidi bulup yok etmek zorundadır.",
-   "whyWatch": "TMDB'de 16.600 oyla ★7.3: aksiyon sevenlerin ortak kararı.",
+   "logline": "M'in geçmişi peşine takıldığında Bond'un ona olan bağlılığı sınanır. MI6 saldırıya uğradıktan sonra 007, bedeli ne kadar kişisel olursa olsun, tehdidi bulup yok etmek zorundadır.",
+   "whyWatch": "TMDB'de 16.625 oyla ★7.3: aksiyon sevenlerin ortak kararı.",
    "posterPath": "/821e8TvvueE72hqO4JCy4HJdmHv.jpg",
    "tmdbId": 37724,
    "trailerKey": "qDbNLjT8YQM",
@@ -2740,7 +2692,7 @@
    ],
    "genre": "Romantik / Dram",
    "logline": "Eski bir tarih öğretmeni olan Pat Solatano, yaşamında değer verdiği her şeyi bir günde yitirmiş bir adamdır. Yaşadığı ciddi bir travma sonrası \"patlar\" ve ardından mahkeme kararı ile 8 ay rehabilitasyon merkezinde tedavi görür.",
-   "whyWatch": "TMDB'de 12.977 oyla ★7.2: romantik sevenlerin ortak kararı.",
+   "whyWatch": "TMDB'de 12.997 oyla ★7.2: romantik sevenlerin ortak kararı.",
    "posterPath": "/pSx7So6JxahXUJr8BWsMMkbxL0q.jpg",
    "tmdbId": 82693,
    "trailerKey": "EI_3ywJLQio",
@@ -2841,7 +2793,7 @@
    ],
    "genre": "Gerilim / Gizem",
    "logline": "Ya bir hap sizi daha zengin ve daha güçlü kılabilseydi? Eddie, perişan halde yaşayan New York'lu bir yazardır. Ancak günün birinde beyninin tüm kapasitesini kullanabileceği bir ilaçla tanışır.",
-   "whyWatch": "TMDB'de 11.922 oyla ★7.2: gerilim sevenlerin ortak kararı.",
+   "whyWatch": "TMDB'de 11.945 oyla ★7.2: gerilim sevenlerin ortak kararı.",
    "posterPath": "/z0bwsepddFsp4QvGbV4tef662O5.jpg",
    "tmdbId": 51876,
    "trailerKey": "zLJxkSuRWD4",
@@ -2942,7 +2894,7 @@
    ],
    "genre": "Animasyon / Aile",
    "logline": "Krallığın en çok aranan, en cazibeli haydutu Flynn Rider, Rapunzel tarafından rehin alınınca bu alışılmadık ikilinin komik macerası başlar.",
-   "whyWatch": "TMDB'de 12.884 oyla ★7.6: animasyon sevenlerin ortak kararı.",
+   "whyWatch": "TMDB'de 12.905 oyla ★7.6: animasyon sevenlerin ortak kararı.",
    "posterPath": "/64lvymVMSKcg2ZVB5WQyEzQkmrY.jpg",
    "tmdbId": 38757,
    "trailerKey": "gsYKF8ecC8g",
@@ -2967,7 +2919,7 @@
    ],
    "genre": "Korku / Dram",
    "logline": "Genç bir kadın olan Nina, yetenekli bir balerindir. Eski bir balerin olan ve dans konusundaki hırsını kendisine aşılayan annesi ile New York’ta yaşayan Nina’nın hayatı danstan ibarettir.",
-   "whyWatch": "TMDB'de 16.068 oyla ★7.7: korku sevenlerin ortak kararı.",
+   "whyWatch": "TMDB'de 16.092 oyla ★7.7: korku sevenlerin ortak kararı.",
    "posterPath": "/nJLkcR8tptrWZefPYRRkfWwKBoa.jpg",
    "tmdbId": 44214,
    "trailerKey": "2Pxc_5f27Kg",
@@ -2997,6 +2949,31 @@
    "tmdbId": 20352,
    "trailerKey": "zzCZ1W_CUoI",
    "colorHex": 4278556265,
+   "audio": [
+    "dubbed",
+    "subtitled"
+   ],
+   "isCult": false
+  },
+  {
+   "id": "t19995",
+   "kind": "movie",
+   "title": "Avatar",
+   "originalTitle": "Avatar",
+   "year": 2009,
+   "durationMins": 162,
+   "imdb": 7.6,
+   "moodTag": "easy_watch",
+   "platforms": [
+    "Disney+"
+   ],
+   "genre": "Bilim Kurgu / Aksiyon",
+   "logline": "Bir hırsızlık olayında ağabeyi ölen yarı felçli Jake Sully, Pandora adındaki uzak bir gezegende görevinin başına geçmeye karar verir. Bu yerde Na’vi adında giderek tükenmekte olan bir halk yaşamaktadır.",
+   "whyWatch": "Yeni bir Dünyaya hoş geldiniz.",
+   "posterPath": "/gKY6q7SjCkAU6FqvqWybDYgUKIF.jpg",
+   "tmdbId": 19995,
+   "trailerKey": "E7ft0yk_PBw",
+   "colorHex": 4280110808,
    "audio": [
     "dubbed",
     "subtitled"
@@ -3067,7 +3044,7 @@
    ],
    "genre": "Aksiyon / Gizem",
    "logline": "Holmes ve cesur ortağı Watson, birbirinden tehlikeli maceralara gözlerini karartıp dalıyorlar.",
-   "whyWatch": "TMDB'de 15.229 oyla ★7.2: aksiyon sevenlerin ortak kararı.",
+   "whyWatch": "TMDB'de 15.247 oyla ★7.2: aksiyon sevenlerin ortak kararı.",
    "posterPath": "/momkKuWburNTqKBF6ez7rvhYVhE.jpg",
    "tmdbId": 10528,
    "trailerKey": "zBQfbc1t_I8",
@@ -3097,6 +3074,31 @@
    "tmdbId": 16869,
    "trailerKey": "uSEDz-my7XQ",
    "colorHex": 4288614969,
+   "audio": [
+    "dubbed",
+    "subtitled"
+   ],
+   "isCult": false
+  },
+  {
+   "id": "t13183",
+   "kind": "movie",
+   "title": "Watchmen",
+   "originalTitle": "Watchmen",
+   "year": 2009,
+   "durationMins": 163,
+   "imdb": 7.4,
+   "moodTag": "mind_bender",
+   "platforms": [
+    "Diğer"
+   ],
+   "genre": "Gizem / Aksiyon",
+   "logline": "86-87 yılları arasında basılan 12 sayıdan oluşan Watchmen yayınlandığı Soğuk Savaş Dönemi’nden fazlasıyla etkilenmiş bir çizgi roman.",
+   "whyWatch": "TMDB'de 10.426 oyla ★7.4: gizem sevenlerin ortak kararı.",
+   "posterPath": "/aVURelN3pM56lFM7Dgfs5TixcIf.jpg",
+   "tmdbId": 13183,
+   "trailerKey": "89xoXmHgG00",
+   "colorHex": 4282595530,
    "audio": [
     "dubbed",
     "subtitled"
@@ -3268,7 +3270,7 @@
    ],
    "genre": "Romantik / Dram",
    "logline": "Jamal Malik, Mumbai’nin gecekondu mahallelerinden birinde yaşayan 18 yaşında bir yetimdir. Hindistan’da katıldığı bir bilgi yarışmasında 20 milyon rupi kazanmasına sadece bir adım kalmıştır.",
-   "whyWatch": "TMDB'de 11.746 oyla ★7.7: romantik sevenlerin ortak kararı.",
+   "whyWatch": "TMDB'de 11.768 oyla ★7.7: romantik sevenlerin ortak kararı.",
    "posterPath": "/kUWM6uZXAf5oodgCOQcpnoLXFIc.jpg",
    "tmdbId": 12405,
    "trailerKey": "AIzbwV7on6Q",
@@ -3343,7 +3345,7 @@
    ],
    "genre": "Dram / Bilim Kurgu",
    "logline": "Bir virüs, insan ırkını kana susamış mutantlara çevirir. Uygarlığın son umudu, virüsten etkilenmeyen tek kişi olan bilim adamı Robert Neville'dir.",
-   "whyWatch": "TMDB'de 17.569 oyla ★7.2: dram sevenlerin ortak kararı.",
+   "whyWatch": "TMDB'de 17.590 oyla ★7.2: dram sevenlerin ortak kararı.",
    "posterPath": "/6aN0R1fmC4H5CeWWOm6WikyNgMP.jpg",
    "tmdbId": 6479,
    "trailerKey": "4uDU6SUpr8k",
@@ -3361,7 +3363,7 @@
    "originalTitle": "Ratatouille",
    "year": 2007,
    "durationMins": 111,
-   "imdb": 7.8,
+   "imdb": 7.9,
    "moodTag": "animation",
    "platforms": [
     "Disney+"
@@ -3543,7 +3545,7 @@
    ],
    "genre": "Komedi / Dram",
    "logline": "New York moda dünyasının göz alıcı karmaşasında, sıfır bedenli muhteşem kadınlar içindeyken saçınızın kötü olduğu bir gün iş hayatınızın sonu olabilir. İşte Runway Dergisi bu inanılmaz cehennemin tam ortasıdır.",
-   "whyWatch": "TMDB'de 14.441 oyla ★7.4: komedi sevenlerin ortak kararı.",
+   "whyWatch": "TMDB'de 14.463 oyla ★7.4: komedi sevenlerin ortak kararı.",
    "posterPath": "/3hOdkmU8Y2C1vO1cyBcBVUmrj04.jpg",
    "tmdbId": 350,
    "trailerKey": "t4isatjZ0BM",
@@ -3561,7 +3563,7 @@
    "originalTitle": "Babam ve Oğlum",
    "year": 2005,
    "durationMins": 108,
-   "imdb": 7.3,
+   "imdb": 7.4,
    "moodTag": "easy_watch",
    "platforms": [
     "Prime Video"
@@ -3668,7 +3670,7 @@
    ],
    "genre": "Animasyon / Romantik",
    "logline": "Victor Van Dort kısa süre sonra güzel Victoria ile evlenecektir. Ancak genç adam kendini henüz evlenmeye hazır biri gibi hissetmemektedir.",
-   "whyWatch": "TMDB'de 10.672 oyla ★7.6: animasyon sevenlerin ortak kararı.",
+   "whyWatch": "TMDB'de 10.700 oyla ★7.6: animasyon sevenlerin ortak kararı.",
    "posterPath": "/qE3dAUInYF2OXvuGbcIkKUaTdlE.jpg",
    "tmdbId": 3933,
    "trailerKey": "BgwJEpmPKk8",
@@ -3721,7 +3723,7 @@
    ],
    "genre": "Romantik / Dram",
    "logline": "Sararmış bir not defterinden anlatılan ve yıllar önceden kopup gelen bir aşk hikayesi. 40'lı yıllarda ABD, Kuzey Karolayna'daki sahil kasabası Seabrook'a genç bir kız gelir.",
-   "whyWatch": "TMDB'de 13.056 oyla ★7.9: romantik sevenlerin ortak kararı.",
+   "whyWatch": "TMDB'de 13.079 oyla ★7.9: romantik sevenlerin ortak kararı.",
    "posterPath": "/zOQxNgI8aTS5Wcv6qVu2fpVErZo.jpg",
    "tmdbId": 11036,
    "trailerKey": "FC6biTjEyZw",
@@ -3896,7 +3898,7 @@
    ],
    "genre": "Animasyon / Aile",
    "logline": "Dünyaya gelir gelmez annesini kaybeden Nemo babası tarafından büyütülmektedir. Artık İlkokul çağına geldiğinde babasının ilgisinden sıkılmaya başlar. Bir süzgeci küçük olduğu için babası Okyanusta yüzmeyi Nemo'ya yasaklamıştır.",
-   "whyWatch": "TMDB'de 21.231 oyla ★7.8: animasyon sevenlerin ortak kararı.",
+   "whyWatch": "TMDB'de 21.257 oyla ★7.8: animasyon sevenlerin ortak kararı.",
    "posterPath": "/vz6BmebarfIsK1ZSzSXonZsuY3c.jpg",
    "tmdbId": 12,
    "trailerKey": "SPHfeNgogVs",
@@ -4327,7 +4329,7 @@
    ],
    "genre": "Fantastik / Dram",
    "logline": "Edgecomb, hikayesini anlatırken bir huzurevinde yaşamaktadır ve hapishanedeki görevinin üzerinden yıllar geçmiştir.",
-   "whyWatch": "TMDB'de 20.145 oyla ★8.5: fantastik sevenlerin ortak kararı.",
+   "whyWatch": "TMDB'de 20.184 oyla ★8.5: fantastik sevenlerin ortak kararı.",
    "posterPath": "/6ZNnKbdDRQm0ftkq3OKiDrwZkIN.jpg",
    "tmdbId": 497,
    "trailerKey": "Bg7epsq0OIQ",
@@ -4352,7 +4354,7 @@
    ],
    "genre": "Komedi / Dram",
    "logline": "Truman küçük kasabasının aslında, yenilikçi bir yapımcı/yönetmen/ yazar (Ed Harris) tarafından kurulan devasa bir stüdyo olduğunun farkında değildir.",
-   "whyWatch": "TMDB'de 21.238 oyla ★8.2: komedi sevenlerin ortak kararı.",
+   "whyWatch": "TMDB'de 21.283 oyla ★8.2: komedi sevenlerin ortak kararı.",
    "posterPath": "/vuza0WqY239yBXOadKlGwJsZJFE.jpg",
    "tmdbId": 37165,
    "trailerKey": "N1VlDVRiFrk",
@@ -4555,7 +4557,7 @@
    "genre": "Romantik / Komedi",
    "logline": "Forrest Gump, düşük IQ’su olmasına rağmen, Amerikan tarihinin en önemli olaylarının tam ortasında yer alan biridir.",
    "whyWatch": "Hayat bir kutu çikolata gibidir... İçinden ne çıkacağını hiçbir zaman bilemezsin.",
-   "posterPath": "/saHP97rTPS5eLmrLQEcANmKrsFl.jpg",
+   "posterPath": "/Cw4hIUIAmSYfK9QfaUW5igp9La.jpg",
    "tmdbId": 13,
    "trailerKey": "Mj9IA9tTfio",
    "colorHex": 4290648157,
@@ -4616,31 +4618,6 @@
    "isCult": false
   },
   {
-   "id": "t9479",
-   "kind": "movie",
-   "title": "Noel Gecesi Kabusu",
-   "originalTitle": "The Nightmare Before Christmas",
-   "year": 1993,
-   "durationMins": 73,
-   "imdb": 7.9,
-   "moodTag": "animation",
-   "platforms": [
-    "Disney+"
-   ],
-   "genre": "Animasyon / Fantastik",
-   "logline": "Balkabağı Kral Jack Skellington, Halloweentown'ı yönetmektedir. Kabuslardan fırlamış bir kasabayı andıran Halloweentown, cinler, ruhlar ve yarasalardan oluşan bir nüfusa sahiptir.",
-   "whyWatch": "Yatağının altında saklanan benim",
-   "posterPath": "/4RTTyUUaYXsADB0loE2dSWYdsMc.jpg",
-   "tmdbId": 9479,
-   "trailerKey": "IoYahD_xNR0",
-   "colorHex": 4278556265,
-   "audio": [
-    "dubbed",
-    "subtitled"
-   ],
-   "isCult": false
-  },
-  {
    "id": "t812",
    "kind": "movie",
    "title": "Alaaddin",
@@ -4654,7 +4631,7 @@
    ],
    "genre": "Animasyon / Aile",
    "logline": "Agrabah şehrinin kalbinde, köylü Alaaddin ve onun yaramaz maymunu Abu, özgür ruhlu güzel prenses Yasemin'i kurtarmak için savaş vermektedirler.",
-   "whyWatch": "TMDB'de 12.412 oyla ★7.7: animasyon sevenlerin ortak kararı.",
+   "whyWatch": "TMDB'de 12.424 oyla ★7.7: animasyon sevenlerin ortak kararı.",
    "posterPath": "/eLFfl7vS8dkeG1hKp5mwbm37V83.jpg",
    "tmdbId": 812,
    "trailerKey": "XBrfbWtmvWs",
@@ -4704,7 +4681,7 @@
    ],
    "genre": "Animasyon / Romantik",
    "logline": "Tüm zamanların en mükemmel animasyonlarından biri olan Film, ayaklarınızı yerden kesecek! Kendini esrarengiz bir yaratığa dönüşen prensin şatosunda bulan Belle’in maceralarına göz atın.",
-   "whyWatch": "TMDB'de 11.040 oyla ★7.7: animasyon sevenlerin ortak kararı.",
+   "whyWatch": "TMDB'de 11.061 oyla ★7.7: animasyon sevenlerin ortak kararı.",
    "posterPath": "/erfm2nSEU958S5HljJoopZzsePM.jpg",
    "tmdbId": 10020,
    "trailerKey": "UUVpyeS_fVw",
@@ -4917,6 +4894,32 @@
    "isCult": true
   },
   {
+   "id": "t1366",
+   "kind": "movie",
+   "title": "Rocky",
+   "originalTitle": "Rocky",
+   "year": 1976,
+   "durationMins": 119,
+   "imdb": 7.8,
+   "moodTag": "cult_award",
+   "platforms": [
+    "Prime Video",
+    "HBO Max"
+   ],
+   "genre": "Dram",
+   "logline": "Dünya Ağır Sıklet şampiyonu Apollo Creed’in Philadelphia’da yapacağı unvan maçında ki rakibi maç gününe beş hafta kala sakatlanır.",
+   "whyWatch": "Bütün hayatı milyonda bir yumruktan ibaretti.",
+   "posterPath": "/oWABvAo7vWGGaFk37yUd0SKhrch.jpg",
+   "tmdbId": 1366,
+   "trailerKey": "dmd9tEt9F30",
+   "colorHex": 4288614969,
+   "audio": [
+    "dubbed",
+    "subtitled"
+   ],
+   "isCult": false
+  },
+  {
    "id": "t578",
    "kind": "movie",
    "title": "Jaws",
@@ -4930,7 +4933,7 @@
    ],
    "genre": "Korku / Gerilim",
    "logline": "Küçük bir sahil kasabasının tek geçim kaynağı yaz ayları boyunca kasabaya tatil yapmaya gelen turistlerin bıraktığı paradır.",
-   "whyWatch": "TMDB'de 12.036 oyla ★7.7: korku sevenlerin ortak kararı.",
+   "whyWatch": "TMDB'de 12.062 oyla ★7.7: korku sevenlerin ortak kararı.",
    "posterPath": "/tZB1crCkYi3DI90lwYgZlnmeRw6.jpg",
    "tmdbId": 578,
    "trailerKey": "N9hzLQUGr34",
@@ -5031,7 +5034,7 @@
    "genre": "Gizem / Dram",
    "logline": "Babasının ani ve zamansız ölümünün ardından kendini acımasız bir devlet lisesi ortamının içinde bulan Carrie, çevresini sarsan ve hızla yayılan bir zorbalık skandalıyla, sosyal medya çağının amansız baskısı ve kayıtsız zulmüyle…",
    "whyWatch": "Tek isteği bir arkadaştı. Onlar ise savaş başlattı.",
-   "posterPath": "/6mUMquPQBFJGqTACS3Azkwwrx8d.jpg",
+   "posterPath": "/sSFwvLI4rVqRil8J2cZOM3rOYGv.jpg",
    "tmdbId": 288673,
    "trailerKey": "QTDxm__I_vU",
    "colorHex": 4282595530,
@@ -5048,14 +5051,14 @@
    "originalTitle": "Crystal Lake",
    "year": 2026,
    "durationMins": 43,
-   "imdb": 8.6,
+   "imdb": 8.5,
    "moodTag": "thriller",
    "platforms": [
     "HBO Max"
    ],
    "genre": "Dram / Gizem",
    "logline": "Oğlunun ölümünden sonra, Pamela Voorhees'in geçmişi ve karanlık bir sır ortaya çıkar.",
-   "whyWatch": "Tek sezonluk, ★8.6 puanlı bir dram dizisi: bir hafta sonunda bitir.",
+   "whyWatch": "Tek sezonluk, ★8.5 puanlı bir dram dizisi: bir hafta sonunda bitir.",
    "posterPath": "/3ENhExiD2fcjk5FX0AcAXcvLu9N.jpg",
    "tmdbId": 213562,
    "trailerKey": "Rs49eRHFD9c",
@@ -5097,7 +5100,7 @@
    "title": "Marshals",
    "originalTitle": "Marshals",
    "year": 2026,
-   "durationMins": 45,
+   "durationMins": 43,
    "imdb": 8.0,
    "moodTag": "thriller",
    "platforms": [
@@ -5142,20 +5145,45 @@
    "seasonCount": 2
   },
   {
+   "id": "tv276161",
+   "kind": "series",
+   "title": "Teach You a Lesson",
+   "originalTitle": "참교육",
+   "year": 2026,
+   "durationMins": 70,
+   "imdb": 9.3,
+   "moodTag": "comedy",
+   "platforms": [
+    "Netflix"
+   ],
+   "genre": "Aksiyon / Dram",
+   "logline": "Okullarda otoriteye saygı yerle bir olduğunda işleri yoluna koymak için gelen sıra dışı müfettişler, ders kitaplarında bulunmayan katı ve ciddi dersler vermeye başlar.",
+   "whyWatch": "Tek sezonluk, ★9.3 puanlı bir aksiyon dizisi: bir hafta sonunda bitir.",
+   "posterPath": "/44iAuz8HkEDCOxjBmF4oogaXjnI.jpg",
+   "tmdbId": 276161,
+   "trailerKey": "LdezlX84py0",
+   "colorHex": 4290920716,
+   "audio": [
+    "subtitled"
+   ],
+   "isCult": false,
+   "seasonCount": 1
+  },
+  {
    "id": "tv213375",
    "kind": "series",
    "title": "VisionQuest",
    "originalTitle": "VisionQuest",
    "year": 2026,
    "durationMins": 72,
-   "imdb": 8.3,
+   "imdb": 8.2,
    "moodTag": "mind_bender",
    "platforms": [
     "Disney+"
    ],
    "genre": "Bilim Kurgu / Dram",
    "logline": "Başına konulan ödül yüzünden Vision, hayatta kalabilmek için kendi doğasıyla yüzleşmeli ve Ultron’un etkisine direnmelidir.",
-   "whyWatch": "Tek sezonluk, ★8.3 puanlı bir bilim kurgu dizisi: bir hafta sonunda bitir.",
+   "whyWatch": "Tek sezonluk, ★8.2 puanlı bir bilim kurgu dizisi: bir hafta sonunda bitir.",
    "posterPath": "/vNAE76jPwWeIOl9UrbtuL3SssaW.jpg",
    "tmdbId": 213375,
    "trailerKey": "AaRCHES7g7Q",
@@ -5172,7 +5200,7 @@
    "title": "Dexter: Resurrection",
    "originalTitle": "Dexter: Resurrection",
    "year": 2025,
-   "durationMins": 45,
+   "durationMins": 60,
    "imdb": 8.5,
    "moodTag": "mind_bender",
    "platforms": [
@@ -5222,16 +5250,15 @@
    "title": "MobLand",
    "originalTitle": "MobLand",
    "year": 2025,
-   "durationMins": 47,
+   "durationMins": 46,
    "imdb": 8.7,
    "moodTag": "thriller",
    "platforms": [
-    "Netflix",
-    "TOD"
+    "Netflix"
    ],
    "genre": "Suç / Dram",
    "logline": "İki düşman Londra suç ailesi olan Harrigan’lar ve Stevenson’lar arasında, imparatorlukları yıkma ve hayatları mahvetme tehdidi oluşturan öl ya da öldür savaşında güç ele geçirilmeyi bekliyor.",
-   "whyWatch": "2 sezonluk, ★8.7 puanlı bir suç dizisi.",
+   "whyWatch": "3 sezonluk, ★8.7 puanlı bir suç dizisi.",
    "posterPath": "/5Xc7WpWsgflfgEMoBlf9TmWhfbH.jpg",
    "tmdbId": 247718,
    "trailerKey": "qKGgw7Ob5f4",
@@ -5240,7 +5267,7 @@
     "subtitled"
    ],
    "isCult": false,
-   "seasonCount": 2
+   "seasonCount": 3
   },
   {
    "id": "tv250307",
@@ -5268,23 +5295,23 @@
    "seasonCount": 3
   },
   {
-   "id": "tv82452",
+   "id": "tv225385",
    "kind": "series",
-   "title": "Avatar: The Last Airbender",
-   "originalTitle": "Avatar: The Last Airbender",
+   "title": "Black Doves",
+   "originalTitle": "Black Doves",
    "year": 2024,
-   "durationMins": 69,
-   "imdb": 7.8,
+   "durationMins": 54,
+   "imdb": 7.1,
    "moodTag": "mind_bender",
    "platforms": [
     "Netflix"
    ],
-   "genre": "Aksiyon / Bilim Kurgu",
-   "logline": "Avatar olarak bilinen bir çocuk, savaş hâlindeki dünyayı kurtarmak için dört element gücünde de ustalaşmalı ve onu durdurmaya kararlı olan acımasız bir düşmanla savaşmalıdır.",
-   "whyWatch": "Elementinin efendisi ol.",
-   "posterPath": "/lzZpWEaqzP0qVA5nkCc5ASbNcSy.jpg",
-   "tmdbId": 82452,
-   "trailerKey": "dLhRaS0uapo",
+   "genre": "Aksiyon / Dram",
+   "logline": "Bir siyasetçinin eşi rolündeki bir casus, sevgilisinin öldürüldüğünü öğrenince eski bir suikastçı dostuyla birlikte gerçeğin ve intikamın peşine düşer.",
+   "whyWatch": "2 sezonluk, ★7.1 puanlı bir aksiyon dizisi.",
+   "posterPath": "/srlsyEfIBz2MNWBndVc3opOaNGS.jpg",
+   "tmdbId": 225385,
+   "trailerKey": "shzJzjVscno",
    "colorHex": 4290920716,
    "audio": [
     "subtitled"
@@ -5293,23 +5320,23 @@
    "seasonCount": 2
   },
   {
-   "id": "tv225385",
+   "id": "tv106379",
    "kind": "series",
-   "title": "Black Doves",
-   "originalTitle": "Black Doves",
+   "title": "Fallout",
+   "originalTitle": "Fallout",
    "year": 2024,
-   "durationMins": 54,
-   "imdb": 7.0,
+   "durationMins": 57,
+   "imdb": 8.1,
    "moodTag": "mind_bender",
    "platforms": [
-    "Netflix"
+    "Prime Video"
    ],
-   "genre": "Aksiyon / Gizem",
-   "logline": "Bir siyasetçinin eşi rolündeki bir casus, sevgilisinin öldürüldüğünü öğrenince eski bir suikastçı dostuyla birlikte gerçeğin ve intikamın peşine düşer.",
-   "whyWatch": "2 sezonluk, ★7.0 puanlı bir aksiyon dizisi.",
-   "posterPath": "/srlsyEfIBz2MNWBndVc3opOaNGS.jpg",
-   "tmdbId": 225385,
-   "trailerKey": "shzJzjVscno",
+   "genre": "Aksiyon / Bilim Kurgu",
+   "logline": "Kıyametten 200 yıl sonra, lüks nükleer sığınakların edepli sakinleri, kendilerini yüzeyde bekleyen inanılmaz karmaşık, oldukça tuhaf ve çok vahşi dünyaya adım atmak zorunda kalıyor.",
+   "whyWatch": "Dünya daha iyi bir sonu hak ediyor.",
+   "posterPath": "/c15BtJxCXMrISLVmysdsnZUPQft.jpg",
+   "tmdbId": 106379,
+   "trailerKey": "yyWOZcwOUKE",
    "colorHex": 4290920716,
    "audio": [
     "subtitled"
@@ -5350,7 +5377,7 @@
    "originalTitle": "High Potential",
    "year": 2024,
    "durationMins": 43,
-   "imdb": 8.3,
+   "imdb": 8.2,
    "moodTag": "mind_bender",
    "platforms": [
     "Disney+"
@@ -5361,31 +5388,6 @@
    "posterPath": "/xTCFYqx11WHUZRUDKpNLdkXRYJ6.jpg",
    "tmdbId": 226637,
    "trailerKey": "B5Hn1higb_8",
-   "colorHex": 4288614969,
-   "audio": [
-    "subtitled"
-   ],
-   "isCult": false,
-   "seasonCount": 3
-  },
-  {
-   "id": "tv157741",
-   "kind": "series",
-   "title": "Landman",
-   "originalTitle": "Landman",
-   "year": 2024,
-   "durationMins": 73,
-   "imdb": 8.2,
-   "moodTag": "easy_watch",
-   "platforms": [
-    "Netflix"
-   ],
-   "genre": "Dram",
-   "logline": "Batı Teksas'ın petrol kuleleri dünyasında servet arayışının modern bir hikayesi. Doğanın sınırlarını zorlayan bu dünyada, zenginlik ve güç peşinde verilen mücadele hem kişisel hem de ahlaki bir sınav haline geliyor.",
-   "whyWatch": "3 sezonluk, ★8.2 puanlı bir dram dizisi.",
-   "posterPath": "/hYthRgS1nvQkGILn9YmqsF8kSk6.jpg",
-   "tmdbId": 157741,
-   "trailerKey": "wXzhEhCOlnM",
    "colorHex": 4288614969,
    "audio": [
     "subtitled"
@@ -5514,6 +5516,32 @@
    "tmdbId": 113962,
    "trailerKey": "uEjcXhW7CXo",
    "colorHex": 4288614969,
+   "audio": [
+    "subtitled"
+   ],
+   "isCult": false,
+   "seasonCount": 3
+  },
+  {
+   "id": "tv103540",
+   "kind": "series",
+   "title": "Percy Jackson and the Olympians",
+   "originalTitle": "Percy Jackson and the Olympians",
+   "year": 2023,
+   "durationMins": 47,
+   "imdb": 7.3,
+   "moodTag": "mind_bender",
+   "platforms": [
+    "Netflix",
+    "Disney+"
+   ],
+   "genre": "Aksiyon / Bilim Kurgu",
+   "logline": "Percy Jackson tehlikeli bir maceraya atılır. Zeus'un İlk Şimşeğini geri getirmek ve topyekûn bir savaşı engellemek için Amerika'yı boydan boya kat etmesi, bu esnada da peşindeki canavarlardan kurtulması ve kurnazlığıyla tanrıları…",
+   "whyWatch": "Tanrılar bekliyor.",
+   "posterPath": "/zofPiEpwCRYaezOncTlQwXebHFU.jpg",
+   "tmdbId": 103540,
+   "trailerKey": "yT1ng2tiwLA",
+   "colorHex": 4290920716,
    "audio": [
     "subtitled"
    ],
@@ -5704,7 +5732,7 @@
    "originalTitle": "The Summer I Turned Pretty",
    "year": 2022,
    "durationMins": 79,
-   "imdb": 8.1,
+   "imdb": 8.0,
    "moodTag": "easy_watch",
    "platforms": [
     "Prime Video"
@@ -5746,32 +5774,6 @@
    ],
    "isCult": false,
    "seasonCount": 3
-  },
-  {
-   "id": "tv123249",
-   "kind": "series",
-   "title": "My Dress-Up Darling",
-   "originalTitle": "その着せ替え人形は恋をする",
-   "year": 2022,
-   "durationMins": 24,
-   "imdb": 8.4,
-   "moodTag": "animation",
-   "platforms": [
-    "Netflix"
-   ],
-   "genre": "Animasyon / Komedi",
-   "logline": "Wakana Gojo, geleneksel Japon Hina bebeklerini yapan usta bir zanaatkar olan kaşirashi olmak isteyen liseli bir çocuktur.",
-   "whyWatch": "Tek sezonluk, ★8.4 puanlı bir animasyon dizisi: bir hafta sonunda bitir.",
-   "posterPath": "/yDry50KhVrNJyS0Cjzv6auNJ0cx.jpg",
-   "tmdbId": 123249,
-   "trailerKey": "8oveGY6h6T8",
-   "colorHex": 4278556265,
-   "audio": [
-    "dubbed",
-    "subtitled"
-   ],
-   "isCult": false,
-   "seasonCount": 1
   },
   {
    "id": "tv108978",
@@ -5880,7 +5882,7 @@
    "title": "The Gilded Age",
    "originalTitle": "The Gilded Age",
    "year": 2022,
-   "durationMins": 45,
+   "durationMins": 52,
    "imdb": 7.7,
    "moodTag": "easy_watch",
    "platforms": [
@@ -5905,7 +5907,7 @@
    "title": "Tulsa King",
    "originalTitle": "Tulsa King",
    "year": 2022,
-   "durationMins": 43,
+   "durationMins": 39,
    "imdb": 8.3,
    "moodTag": "thriller",
    "platforms": [
@@ -5982,7 +5984,7 @@
    "title": "Yüzüklerin Efendisi: Güç Yüzükleri",
    "originalTitle": "The Lord of the Rings: The Rings of Power",
    "year": 2022,
-   "durationMins": 57,
+   "durationMins": 65,
    "imdb": 7.2,
    "moodTag": "mind_bender",
    "platforms": [
@@ -6145,7 +6147,7 @@
    "genre": "Bilim Kurgu / Gizem",
    "logline": "Yorucu bir hayatı arkalarında bırakmak isteyen süper kahramanlar Wanda ve Vision, güçlerini kullanmak zorunda olmadıkları bir hayatı arzular.",
    "whyWatch": "Yeni bir gerçeklik vizyonunu deneyimleyin.",
-   "posterPath": "/ijWWwINc8h71NQ8j1LTJMFSj5wr.jpg",
+   "posterPath": "/glKDfE6btIRcVB5zrjspRIs4r52.jpg",
    "tmdbId": 85271,
    "trailerKey": "UBhlqe2OTt4",
    "colorHex": 4280110808,
@@ -6606,14 +6608,14 @@
    "originalTitle": "Börü",
    "year": 2018,
    "durationMins": 80,
-   "imdb": 7.1,
+   "imdb": 7.0,
    "moodTag": "easy_watch",
    "platforms": [
     "Diğer"
    ],
    "genre": "Aksiyon / Savaş",
    "logline": "2014 baharında Türkiye. Sınırda düşmanların çoğaldığı, içeride tehlikeler çemberinin giderek daraldığı bir dönem. Türkiye Cumhuriyeti yakın tarihinin en büyük tehditleriyle karşı karşıya.",
-   "whyWatch": "Tek sezonluk, ★7.1 puanlı bir aksiyon dizisi: bir hafta sonunda bitir.",
+   "whyWatch": "Tek sezonluk, ★7.0 puanlı bir aksiyon dizisi: bir hafta sonunda bitir.",
    "posterPath": "/jSJy27yMybtzou7eiUZTa03zWFI.jpg",
    "tmdbId": 75365,
    "trailerKey": "9Qd5AJUSm_c",
@@ -6891,7 +6893,7 @@
    "originalTitle": "The Good Doctor",
    "year": 2017,
    "durationMins": 46,
-   "imdb": 8.5,
+   "imdb": 8.4,
    "moodTag": "cult_award",
    "platforms": [
     "Netflix"
